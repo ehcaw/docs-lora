@@ -1,0 +1,357 @@
+---
+title: "Portfolio features"
+description: "Detailed exploration of the IDE-inspired portfolio's features including the file tree, tabbed interface, markdown rendering, image galleries, and theming capabilities."
+---
+
+## File tree component
+
+The file tree is the primary navigation mechanism, displaying your portfolio content in a hierarchical structure that developers instantly recognize from their code editors.
+
+### Structure
+
+The file tree supports:
+
+- **Files** - Individual content items (about, projects, etc.)
+- **Folders** - Containers that group related content
+- **Nested folders** - Unlimited nesting depth for complex organization
+- **Icons** - Visual indicators for file types
+
+### Interaction
+
+Users interact with the file tree through:
+
+| Action | Behavior |
+|--------|----------|
+| Click file | Opens file content in a new tab |
+| Click folder | Expands/collapses folder contents |
+| Hover | Visual feedback indicating clickable elements |
+
+### Customization
+
+The file tree appearance can be customized through:
+
+- Icon selection for different file types
+- Custom colors for folders and file types
+- Indentation and spacing adjustments
+- Font and typography settings
+
+## Tabbed interface
+
+The tab system provides a familiar multi-document interface:
+
+### Tab behavior
+
+- **Opening tabs** - Clicking a file creates a new tab
+- **Switching tabs** - Click any tab to view its content
+- **Closing tabs** - Click the X button on a tab
+- **Active indicator** - Current tab is visually distinct
+- **Minimum tabs** - At least one tab always remains open
+
+### Tab state
+
+The tab system maintains:
+
+```typescript
+interface Tab {
+  id: string;      // Unique identifier
+  name: string;    // Display name (filename)
+  content: string; // Markdown content
+}
+```
+
+### Visual design
+
+Tabs match the IDE aesthetic:
+
+- Connected appearance with main content area
+- Active tab appears "raised" or highlighted
+- Inactive tabs have subtle background difference
+- Close button appears on hover for non-essential tabs
+- Tab overflow scrolls horizontally on narrow screens
+
+## Markdown renderer
+
+Content is written in Markdown and rendered with full formatting support:
+
+### Supported elements
+
+<Tabs>
+  <Tab title="Text formatting">
+    - **Bold** text with `**bold**`
+    - *Italic* text with `*italic*`
+    - `Inline code` with backticks
+    - ~~Strikethrough~~ with `~~text~~`
+    - Links with `[text](url)`
+  </Tab>
+  
+  <Tab title="Structure">
+    - Headings H1-H6 with `#` prefixes
+    - Ordered lists with numbers
+    - Unordered lists with `-` or `*`
+    - Blockquotes with `>`
+    - Horizontal rules with `---`
+  </Tab>
+  
+  <Tab title="Code">
+    - Inline code with single backticks
+    - Fenced code blocks with triple backticks
+    - Syntax highlighting for many languages
+    - Language specification in code fence
+  </Tab>
+</Tabs>
+
+### Code syntax highlighting
+
+Code blocks support syntax highlighting for popular languages:
+
+```typescript
+// TypeScript example
+interface Project {
+  name: string;
+  description: string;
+  technologies: string[];
+}
+
+const myProject: Project = {
+  name: "Portfolio",
+  description: "IDE-inspired developer portfolio",
+  technologies: ["Next.js", "TypeScript", "Tailwind"],
+};
+```
+
+```python
+# Python example
+def greet(name: str) -> str:
+    return f"Hello, {name}!"
+
+print(greet("World"))
+```
+
+### Renderer implementation
+
+The Markdown renderer:
+
+1. Parses raw Markdown content
+2. Converts to React components
+3. Applies styling consistent with the IDE theme
+4. Handles special elements (images, links)
+5. Supports custom extensions
+
+## Project images
+
+Projects can include image galleries for screenshots and visuals:
+
+### Image display
+
+Images are displayed in a gallery format:
+
+- Thumbnail grid layout
+- Consistent sizing and spacing
+- Responsive to container width
+- Lazy loading for performance
+
+### Image modal
+
+Clicking an image opens a full-size view:
+
+- Centered modal overlay
+- Full resolution image display
+- Click outside or X to close
+- Keyboard navigation (Escape to close)
+
+### Image optimization
+
+For best performance:
+
+- Use appropriate image formats (WebP, PNG, JPEG)
+- Compress images before adding
+- Provide responsive sizes where possible
+- Use CDN hosting for production
+
+## Theme system
+
+The portfolio supports light and dark themes:
+
+### Theme toggle
+
+The top bar includes a theme toggle:
+
+- Sun icon for light mode
+- Moon icon for dark mode
+- Instant theme switch without reload
+- Persists preference (via CSS/JS)
+
+### Color palette
+
+<Tabs>
+  <Tab title="Light mode">
+    | Element | Color |
+    |---------|-------|
+    | Background | White/Light gray |
+    | Text | Dark gray/Black |
+    | Sidebar | Slightly darker background |
+    | Borders | Light gray |
+    | Accents | Brand color |
+  </Tab>
+  
+  <Tab title="Dark mode">
+    | Element | Color |
+    |---------|-------|
+    | Background | Dark gray |
+    | Text | Light gray/White |
+    | Sidebar | Darker background |
+    | Borders | Dark gray |
+    | Accents | Brand color (adjusted) |
+  </Tab>
+</Tabs>
+
+### CSS variables
+
+Themes are implemented using CSS custom properties:
+
+```css
+:root {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 3.9%;
+  --sidebar-background: 0 0% 98%;
+  --sidebar-foreground: 0 0% 10%;
+  /* ... more variables */
+}
+
+.dark {
+  --background: 0 0% 3.9%;
+  --foreground: 0 0% 98%;
+  --sidebar-background: 0 0% 5%;
+  --sidebar-foreground: 0 0% 90%;
+  /* ... dark mode overrides */
+}
+```
+
+## Top bar
+
+The top bar provides global controls and information:
+
+### Traffic lights
+
+macOS-inspired window control dots:
+
+- Red, yellow, green circles
+- Decorative (non-functional)
+- Adds to the IDE aesthetic
+
+### Title
+
+Displays the portfolio owner's name or identifier.
+
+### Actions
+
+Action buttons on the right:
+
+| Button | Action |
+|--------|--------|
+| GitHub | Opens GitHub profile in new tab |
+| Email | Opens email client with mailto link |
+| Theme toggle | Switches between light/dark mode |
+| Menu (mobile) | Opens/closes sidebar |
+
+## Responsive behavior
+
+The portfolio adapts to different screen sizes:
+
+### Desktop (1024px+)
+
+- Full sidebar always visible
+- Multiple tabs comfortable
+- Optimal viewing experience
+
+### Tablet (768px - 1023px)
+
+- Sidebar may be collapsible
+- Tab bar scrolls horizontally
+- Touch-friendly interactions
+
+### Mobile (< 768px)
+
+- Sidebar hidden by default
+- Menu button reveals sidebar as overlay
+- Single-column layout
+- Simplified navigation
+
+### Mobile sidebar
+
+On mobile devices:
+
+1. Sidebar is hidden initially
+2. Menu button in top bar toggles visibility
+3. Overlay covers main content
+4. Clicking outside closes sidebar
+5. Selecting a file closes sidebar and opens content
+
+## Accessibility
+
+The portfolio includes accessibility features:
+
+- Keyboard navigation support
+- Focus indicators on interactive elements
+- Semantic HTML structure
+- ARIA labels where appropriate
+- Color contrast compliance
+- Screen reader compatibility
+
+## Performance
+
+Performance optimizations include:
+
+- Next.js static generation
+- Image optimization
+- Code splitting
+- Lazy loading
+- Minimal JavaScript bundle
+- Efficient CSS with Tailwind
+
+## Extending the portfolio
+
+### Adding new file types
+
+To support new content types:
+
+1. Define the content structure in `portfolio-data.ts`
+2. Add rendering logic in `markdown-renderer.tsx`
+3. Update file tree icons if needed
+4. Style the new content type appropriately
+
+### Integrating external data
+
+The portfolio can be extended to fetch content from:
+
+- CMS platforms (Contentful, Sanity)
+- GitHub repositories (auto-generate from READMEs)
+- Notion databases
+- Custom APIs
+
+### Adding interactivity
+
+Potential interactive additions:
+
+- Contact form with email integration
+- Live code playgrounds
+- Interactive demos embedded in content
+- Analytics and visitor tracking
+- Comments or guestbook
+
+## Best practices summary
+
+<CardGroup cols={2}>
+  <Card title="Content organization" icon="folder">
+    Group related content logically. Use folders for categories like "Projects" or "Experience".
+  </Card>
+  <Card title="Visual consistency" icon="palette">
+    Maintain consistent styling across all content. Use the same heading hierarchy and formatting patterns.
+  </Card>
+  <Card title="Performance" icon="gauge-high">
+    Optimize images and minimize external dependencies. Fast loading creates a professional impression.
+  </Card>
+  <Card title="Mobile experience" icon="mobile">
+    Test the mobile experience regularly. Many visitors will view your portfolio on phones.
+  </Card>
+</CardGroup>

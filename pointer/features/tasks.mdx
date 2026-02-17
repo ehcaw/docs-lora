@@ -1,0 +1,322 @@
+---
+title: "Task management"
+description: "Stay organized and productive with Pointer's integrated task management system featuring task creation, categorization, due dates, tagging, and completion tracking."
+---
+
+## Overview
+
+While Pointer excels at capturing ideas and knowledge, it also recognizes that many of those ideas translate into actionable tasks. The integrated task management system allows you to track to-dos, set deadlines, categorize work, and manage your productivity without leaving the application. Tasks live alongside your notes, creating a unified workspace for both thinking and doing.
+
+The task management feature is designed to be lightweight yet capable. It's not trying to replace dedicated project management tools for complex projects with dependencies and team assignments. Instead, it provides a quick, frictionless way to capture and track tasks that emerge from your notes, meetings, and brainstorming sessions.
+
+## Creating tasks
+
+### Basic task creation
+
+<Steps>
+  <Step title="Open the tasks view">
+    Navigate to the Tasks section from the main navigation. Your task dashboard shows all your tasks organized by status and filtered by your preferences.
+  </Step>
+  
+  <Step title="Click Add Task">
+    Click the "Add Task" button to open the task creation form. The form focuses on essential fields while providing optional enhancements for detailed task tracking.
+  </Step>
+  
+  <Step title="Enter task name">
+    Provide a clear, actionable task name. Good task names are specific and start with a verb:
+    - "Review Q4 budget proposal"
+    - "Schedule meeting with design team"
+    - "Fix login page styling bug"
+    - "Write documentation for API endpoints"
+  </Step>
+  
+  <Step title="Add optional details">
+    Enhance your task with optional fields:
+    - **Description** - Additional context, requirements, or notes
+    - **Category** - Group related tasks together
+    - **Due date** - When the task should be completed
+    - **Tags** - Flexible labels for filtering and organization
+  </Step>
+  
+  <Step title="Create the task">
+    Click Create or press Enter to add the task to your list. The task appears immediately in your task view.
+  </Step>
+</Steps>
+
+### Quick capture
+
+For rapid task entry, you can create tasks with just a name and add details later. The minimal required information is:
+
+```
+Task name: "Call vendor about pricing"
+```
+
+Everything else—description, category, due date, tags—can be added by editing the task after creation.
+
+## Task properties
+
+Each task in Pointer includes the following properties:
+
+| Property | Required | Description |
+|----------|----------|-------------|
+| `taskName` | Yes | The main task title/description |
+| `taskDescription` | No | Extended description or notes |
+| `category` | No | Single category for grouping |
+| `dueBy` | No | Deadline date and time |
+| `tags` | No | Array of tag strings |
+| `completed` | Auto | Boolean completion status |
+| `createdAt` | Auto | Timestamp when task was created |
+| `tenantId` | Auto | Owner's user identifier |
+
+### Task name best practices
+
+<CardGroup cols={2}>
+  <Card title="Be specific" icon="bullseye">
+    Instead of "Email", write "Send project update to stakeholders"
+  </Card>
+  <Card title="Start with verbs" icon="play">
+    Action verbs clarify what needs to be done: Write, Review, Schedule, Fix, Call
+  </Card>
+  <Card title="Include context" icon="info">
+    Add enough context to understand the task later: "Review proposal (marketing team)"
+  </Card>
+  <Card title="Keep it concise" icon="compress">
+    Details go in the description; keep names scannable
+  </Card>
+</CardGroup>
+
+## Categories and tags
+
+Pointer provides two complementary organization systems for tasks:
+
+### Categories
+
+Categories are single-value labels for broad grouping:
+
+- Each task belongs to at most one category
+- Categories are useful for high-level organization
+- Examples: "Work", "Personal", "Urgent", "Project Alpha"
+
+**Use categories when:**
+- You want to filter tasks by major area
+- You have a small set of consistent groupings
+- You're organizing by project or life area
+
+### Tags
+
+Tags are flexible, multi-value labels for nuanced organization:
+
+- Each task can have multiple tags
+- Tags are useful for cross-cutting concerns
+- Examples: ["urgent", "blocked"], ["meeting", "follow-up"], ["design", "review"]
+
+**Use tags when:**
+- Tasks belong to multiple groupings
+- You want to filter by combinations
+- You need ad-hoc, flexible organization
+
+## Managing tasks
+
+### Completing tasks
+
+To mark a task as complete:
+
+1. Click the checkbox next to the task name
+2. The task is immediately marked as completed
+3. Completed tasks can be filtered or hidden
+
+To mark a completed task as incomplete:
+
+1. Click the checkbox again to toggle the status
+2. The task returns to your active list
+
+### Editing tasks
+
+To modify an existing task:
+
+1. Click on the task to open it
+2. Edit any field—name, description, category, due date, or tags
+3. Changes save automatically
+
+Editable fields include:
+- Task name
+- Description
+- Category
+- Due date
+- Tags
+
+### Deleting tasks
+
+To permanently remove a task:
+
+1. Click on the task to open it
+2. Click the delete button
+3. Confirm deletion (this action cannot be undone)
+
+<Warning>
+  Deleted tasks cannot be recovered. If you're unsure, consider marking the task as complete instead.
+</Warning>
+
+## Filtering and views
+
+The task dashboard supports several ways to filter and view your tasks:
+
+### Filter options
+
+| Filter | Description |
+|--------|-------------|
+| All | Show all tasks regardless of status |
+| Active | Show only incomplete tasks |
+| Completed | Show only completed tasks |
+| By category | Show tasks in a specific category |
+| By due date | Show tasks due today, this week, etc. |
+| By tag | Show tasks with specific tags |
+
+### Sorting
+
+Tasks can be sorted by:
+
+- **Creation date** - Newest or oldest first
+- **Due date** - Soonest deadlines first
+- **Name** - Alphabetical order
+- **Completion status** - Incomplete tasks first
+
+## Due dates
+
+### Setting due dates
+
+When creating or editing a task, you can set a due date:
+
+1. Click the due date field
+2. Select a date from the calendar picker
+3. Optionally add a time for specific deadlines
+
+### Due date indicators
+
+The task list shows visual indicators for due dates:
+
+- **Overdue** - Red indicator for past-due tasks
+- **Today** - Yellow indicator for tasks due today
+- **This week** - Tasks due within 7 days
+- **Future** - Normal display for tasks due later
+
+### Working with deadlines
+
+<Tip>
+  Set realistic due dates. It's better to have accurate deadlines you meet than aggressive ones you consistently miss.
+</Tip>
+
+<Tip>
+  Review due dates regularly. Adjust them if circumstances change rather than leaving overdue tasks lingering.
+</Tip>
+
+## Task workflows
+
+### Daily review
+
+A recommended daily workflow:
+
+1. **Morning review** - Check today's due tasks and plan your day
+2. **Capture immediately** - Add new tasks as they come up during the day
+3. **Evening close** - Mark completed tasks, review tomorrow's priorities
+
+### Weekly planning
+
+A weekly planning workflow:
+
+1. **Review all tasks** - See everything on your plate
+2. **Set due dates** - Assign deadlines for the coming week
+3. **Categorize** - Ensure tasks are properly organized
+4. **Prioritize** - Identify the most important tasks
+
+### From notes to tasks
+
+When tasks emerge from your notes:
+
+1. Identify actionable items in your notes
+2. Create tasks for each action
+3. Link mental context by using consistent naming
+4. Review tasks in the task view
+
+## API reference
+
+### Query: Get user tasks
+
+Retrieve all tasks for the authenticated user:
+
+```typescript
+const tasks = await ctx.db
+  .query("userTasks")
+  .withIndex("by_tenant", (q) => q.eq("tenantId", identity.subject))
+  .order("desc")
+  .collect();
+```
+
+### Mutation: Create task
+
+```typescript
+createTask({
+  taskName: string,           // Required
+  taskDescription?: string,   // Optional
+  category?: string,          // Optional
+  dueBy?: string,            // Optional ISO date string
+})
+```
+
+### Mutation: Update task
+
+```typescript
+updateTask({
+  taskId: Id<"userTasks">,    // Required
+  taskName: string,           // Required
+  taskDescription?: string,   // Optional
+  category?: string,          // Optional
+  dueBy?: string,            // Optional
+  tags?: string[],           // Optional
+})
+```
+
+### Mutation: Toggle completion
+
+```typescript
+toggleTaskComplete({
+  taskId: Id<"userTasks">,
+  completed: boolean,
+})
+```
+
+### Mutation: Delete task
+
+```typescript
+deleteTask({
+  taskId: Id<"userTasks">,
+})
+```
+
+## Best practices
+
+<CardGroup cols={2}>
+  <Card title="Capture quickly" icon="bolt">
+    Don't overthink when adding tasks. Capture the essential action and add details later when you have more time.
+  </Card>
+  <Card title="Review regularly" icon="calendar-check">
+    Stale task lists become useless. Set a regular cadence (daily or weekly) to review and update your tasks.
+  </Card>
+  <Card title="Use descriptions" icon="align-left">
+    Task names should be brief. Use the description field for context, requirements, and notes you'll need later.
+  </Card>
+  <Card title="Complete or delete" icon="trash">
+    Don't let completed tasks linger. Mark them done for the satisfaction, or delete tasks that are no longer relevant.
+  </Card>
+</CardGroup>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Notes" icon="file-lines" href="/pointer/features/notes">
+    Learn how to capture ideas that turn into actionable tasks.
+  </Card>
+  <Card title="Version history" icon="clock-rotate-left" href="/pointer/features/version-history">
+    Understand how Pointer preserves your work over time.
+  </Card>
+</CardGroup>

@@ -1,48 +1,54 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "ehcaw Projects Documentation",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#78716C",
+    "light": "#D6D3D1",
+    "dark": "#44403C"
   },
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Pointer",
         "groups": [
           {
             "group": "Getting started",
             "pages": [
-              "index",
-              "quickstart",
-              "development"
+              "pointer/introduction",
+              "pointer/quickstart",
+              "pointer/installation"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Features",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "pointer/features/notes",
+              "pointer/features/collaboration",
+              "pointer/features/whiteboards",
+              "pointer/features/tasks",
+              "pointer/features/version-history"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Architecture",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
+              "pointer/architecture/overview",
+              "pointer/architecture/database-schema",
+              "pointer/architecture/real-time-sync"
             ]
-          },
+          }
+        ]
+      },
+      {
+        "tab": "Portfolio",
+        "groups": [
           {
-            "group": "AI tools",
+            "group": "Overview",
             "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "portfolio/introduction",
+              "portfolio/features"
             ]
           }
         ]
@@ -51,18 +57,28 @@
         "tab": "API reference",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Notes API",
             "pages": [
-              "api-reference/introduction"
+              "api-reference/notes/overview",
+              "api-reference/notes/create",
+              "api-reference/notes/read",
+              "api-reference/notes/update",
+              "api-reference/notes/delete",
+              "api-reference/notes/sharing"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Whiteboards API",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/whiteboards/overview",
+              "api-reference/whiteboards/operations"
+            ]
+          },
+          {
+            "group": "Tasks API",
+            "pages": [
+              "api-reference/tasks/overview",
+              "api-reference/tasks/operations"
             ]
           }
         ]
@@ -71,14 +87,14 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "GitHub - Pointer",
+          "href": "https://github.com/ehcaw/pointer",
+          "icon": "github"
         },
         {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "GitHub - Portfolio",
+          "href": "https://github.com/ehcaw/portfolio",
+          "icon": "github"
         }
       ]
     }
@@ -96,8 +112,8 @@
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Try Pointer",
+      "href": "https://github.com/ehcaw/pointer"
     }
   },
   "contextual": {
@@ -114,9 +130,7 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "github": "https://github.com/ehcaw"
     }
   }
 }

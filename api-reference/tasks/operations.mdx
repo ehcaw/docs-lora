@@ -1,0 +1,407 @@
+---
+title: "Task operations"
+description: "Detailed API reference for all task management operations in Pointer including creating, updating, completing, and deleting tasks."
+---
+
+## getUserTasks
+
+Retrieves all tasks for the authenticated user.
+
+### Function signature
+
+```typescript
+getUserTasks: query({
+  args: {},
+})
+```
+
+### Parameters
+
+None.
+
+### Returns
+
+Array of task documents, sorted by creation date (newest first).
+
+Returns empty array if not authenticated.
+
+### Example
+
+```typescript
+const tasks = useQuery(api.taskManagement.getUserTasks);
+
+// Filter by completion
+const pending = tasks?.filter(t => !t.completed);
+const completed = tasks?.filter(t => t.completed);
+
+// Filter by category
+const workTasks = tasks?.filter(t => t.category === "Work");
+
+// Filter by due date
+const overdue = tasks?.filter(t => 
+  t.dueBy && new Date(t.dueBy) < new Date()
+);
+```
+
+---
+
+## createTask
+
+Creates a new task for the authenticated user.
+
+### Function signature
+
+```typescript
+createTask: mutation({
+  args: {
+    taskName: v.string(),
+    taskDescription: v.optional(v.string()),
+    category: v.optional(v.string()),
+    dueBy: v.optional(v.string()),
+  },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `taskName` | string | Yes | Task title |
+| `taskDescription` | string | No | Extended description |
+| `category` | string | No | Category for grouping |
+| `dueBy` | string | No | Deadline (ISO timestamp) |
+
+### Returns
+
+Returns the created task's document ID.
+
+### Behavior
+
+1. Verifies authentication
+2. Creates task with `completed: false`
+3. Sets `createdAt` to current timestamp
+4. Associates with user's tenantId
+
+### Example
+
+```typescript
+const createTask = useMutation(api.taskManagement.createTask);
+
+// Minimal task
+await createTask({
+  taskName: "Review PR #42",
+});
+
+// Full task
+await createTask({
+  taskName: "Prepare presentation",
+  taskDescription: "Q4 results for stakeholder meeting",
+  category: "Work",
+  dueBy: new Date("2024-01-20").toISOString(),
+});
+```
+
+---
+
+## updateTask
+
+Updates an existing task's fields.
+
+### Function signature
+
+```typescript
+updateTask: mutation({
+  args: {
+    taskId: v.id("userTasks"),
+    taskName: v.string(),
+    taskDescription: v.optional(v.string()),
+    category: v.optional(v.string()),
+    dueBy: v.optional(v.string()),
+    tags: v.optional(v.array(v.string())),
+  },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `taskId` | Id | Yes | Task to update |
+| `taskName` | string | Yes | New task title |
+| `taskDescription` | string | No | New description |
+| `category` | string | No | New category |
+| `dueBy` | string | No | New deadline |
+| `tags` | string[] | No | New tags array |
+
+### Returns
+
+Returns the updated task's document ID.
+
+### Behavior
+
+1. Verifies authentication
+2. Verifies user owns the task
+3. Updates provided fields only
+4. Preserves fields not in request
+
+### Example
+
+```typescript
+const updateTask = useMutation(api.taskManagement.updateTask);
+
+// Update title and category
+await updateTask({
+  taskId: task._id,
+  taskName: "Updated task name",
+  category: "Personal",
+});
+
+// Add tags
+await updateTask({
+  taskId: task._id,
+  taskName: task.taskName, // Required, keep existing
+  tags: ["urgent", "follow-up"],
+});
+```
+
+---
+
+## toggleTaskComplete
+
+Toggles a task's completion status.
+
+### Function signature
+
+```typescript
+toggleTaskComplete: mutation({
+  args: {
+    taskId: v.id("userTasks"),
+    completed: v.boolean(),
+  },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `taskId` | Id | Yes | Task to toggle |
+| `completed` | boolean | Yes | New completion status |
+
+### Returns
+
+Returns the task's document ID.
+
+### Behavior
+
+1. Verifies authentication
+2. Verifies user owns the task
+3. Updates `completed` field
+
+### Example
+
+```typescript
+const toggleComplete = useMutation(api.taskManagement.toggleTaskComplete);
+
+// Mark complete
+await toggleComplete({
+  taskId: task._id,
+  completed: true,
+});
+
+// Mark incomplete
+await toggleComplete({
+  taskId: task._id,
+  completed: false,
+});
+```
+
+### UI pattern
+
+```typescript
+function TaskCheckbox({ task }) {
+  const toggle = useMutation(api.taskManagement.toggleTaskComplete);
+  
+  return (
+    <input
+      type="checkbox"
+      checked={task.completed}
+      onChange={() => toggle({
+        taskId: task._id,
+        completed: !task.completed,
+      })}
+    />
+  );
+}
+```
+
+---
+
+## deleteTask
+
+Permanently deletes a task.
+
+### Function signature
+
+```typescript
+deleteTask: mutation({
+  args: {
+    taskId: v.id("userTasks"),
+  },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `taskId` | Id | Yes | Task to delete |
+
+### Returns
+
+Returns the deleted task's document ID.
+
+### Behavior
+
+1. Verifies authentication
+2. Verifies user owns the task
+3. Permanently deletes the task
+
+<Warning>
+  Deletion is permanent. There is no undo or trash system.
+</Warning>
+
+### Example
+
+```typescript
+const deleteTask = useMutation(api.taskManagement.deleteTask);
+
+const handleDelete = async (taskId: Id<"userTasks">) => {
+  if (!confirm("Delete this task?")) return;
+  
+  await deleteTask({ taskId });
+};
+```
+
+---
+
+## Common patterns
+
+### Task list with filters
+
+```typescript
+function TaskDashboard() {
+  const tasks = useQuery(api.taskManagement.getUserTasks);
+  const [filter, setFilter] = useState("all");
+  
+  const filteredTasks = useMemo(() => {
+    if (!tasks) return [];
+    
+    switch (filter) {
+      case "pending":
+        return tasks.filter(t => !t.completed);
+      case "completed":
+        return tasks.filter(t => t.completed);
+      case "overdue":
+        return tasks.filter(t => 
+          !t.completed && 
+          t.dueBy && 
+          new Date(t.dueBy) < new Date()
+        );
+      default:
+        return tasks;
+    }
+  }, [tasks, filter]);
+
+  return (
+    <div>
+      <FilterButtons value={filter} onChange={setFilter} />
+      <TaskList tasks={filteredTasks} />
+    </div>
+  );
+}
+```
+
+### Quick add form
+
+```typescript
+function QuickAddTask() {
+  const createTask = useMutation(api.taskManagement.createTask);
+  const [name, setName] = useState("");
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+    
+    await createTask({ taskName: name.trim() });
+    setName("");
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="Add a task..."
+      />
+      <button type="submit">Add</button>
+    </form>
+  );
+}
+```
+
+### Batch completion
+
+```typescript
+function CompleteAllButton({ tasks }) {
+  const toggleComplete = useMutation(api.taskManagement.toggleTaskComplete);
+  
+  const handleCompleteAll = async () => {
+    const pending = tasks.filter(t => !t.completed);
+    
+    await Promise.all(
+      pending.map(task =>
+        toggleComplete({
+          taskId: task._id,
+          completed: true,
+        })
+      )
+    );
+  };
+
+  return (
+    <button onClick={handleCompleteAll}>
+      Complete All
+    </button>
+  );
+}
+```
+
+---
+
+## Error handling
+
+All mutations verify ownership before operating:
+
+```typescript
+const task = await ctx.db.get(args.taskId);
+if (!task || task.tenantId !== identity.subject) {
+  throw new Error("Task not found");
+}
+```
+
+| Error | Cause |
+|-------|-------|
+| `"Not authenticated"` | User not logged in |
+| `"Task not found"` | Invalid ID or not owned by user |
+
+## Related pages
+
+<CardGroup cols={2}>
+  <Card title="Tasks feature" icon="list-check" href="/pointer/features/tasks">
+    Learn about the tasks user experience.
+  </Card>
+  <Card title="Notes API" icon="file-lines" href="/api-reference/notes/overview">
+    Notes API for document management.
+  </Card>
+</CardGroup>

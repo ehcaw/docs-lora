@@ -1,0 +1,91 @@
+---
+title: "Introduction to Pointer"
+description: "A comprehensive note-taking and collaboration platform designed to help you do your best thinking through rich text editing, real-time collaboration, whiteboards, and intelligent task management."
+---
+
+## What is Pointer?
+
+Pointer is a modern, feature-rich note-taking and knowledge management application that combines the power of a sophisticated rich text editor with real-time collaboration capabilities, visual whiteboard tools, and comprehensive task management features. Built with the philosophy of helping you "do your best thinking," Pointer provides an elegant and intuitive environment for capturing, organizing, and sharing your ideas across individuals and teams.
+
+The application is designed from the ground up to be both powerful and approachable, offering a seamless experience whether you're jotting down quick notes, collaborating on complex documents with colleagues, sketching out visual diagrams on a whiteboard, or managing your daily tasks and projects. Pointer leverages cutting-edge web technologies to deliver a responsive, real-time experience that feels native across all modern browsers and devices.
+
+## Core philosophy
+
+Pointer is built around several key principles that guide every aspect of its design and development:
+
+<CardGroup cols={2}>
+  <Card title="Thoughtful design" icon="lightbulb">
+    Every feature in Pointer is carefully considered to enhance your thinking process rather than distract from it. The interface is clean and unobtrusive, putting your content front and center while keeping powerful tools easily accessible when you need them.
+  </Card>
+  <Card title="Real-time collaboration" icon="users">
+    Collaboration is not an afterthought in Pointer—it's a core feature built into the foundation of the application. Share documents instantly with colleagues, see their changes in real-time, and work together seamlessly without conflicts or confusion.
+  </Card>
+  <Card title="Flexible organization" icon="folder-tree">
+    Organize your notes and documents in a hierarchical folder structure that makes sense for how you work. Create nested folders, move documents between locations, and find what you need quickly with powerful search and navigation features.
+  </Card>
+  <Card title="Visual thinking" icon="shapes">
+    Not all ideas are best expressed in text. Pointer's integrated whiteboard feature powered by Excalidraw allows you to sketch diagrams, create flowcharts, and visualize concepts alongside your written notes for a complete thinking toolkit.
+  </Card>
+</CardGroup>
+
+## Key features
+
+Pointer offers a comprehensive suite of features designed to support every aspect of your note-taking and knowledge management workflow:
+
+### Rich text editing with TipTap
+
+At the heart of Pointer is a powerful rich text editor built on TipTap, providing a familiar and intuitive writing experience with advanced formatting capabilities. The editor supports a wide range of formatting options including headers, lists, code blocks with syntax highlighting, tables, images, links, and much more. The editor is highly extensible and customizable, allowing you to tailor your writing environment to your specific needs and preferences.
+
+### Real-time collaboration with PartyKit
+
+Pointer's real-time collaboration features are powered by PartyKit and Yjs, industry-leading technologies for building collaborative applications. Multiple users can edit the same document simultaneously with their changes appearing instantly for all participants. Presence indicators show you who else is viewing or editing a document, and conflict resolution is handled automatically so you never lose work or encounter merge conflicts.
+
+### Visual whiteboards with Excalidraw
+
+Sometimes the best way to capture an idea is to draw it. Pointer integrates Excalidraw, a powerful and intuitive whiteboard tool, directly into the application. Create diagrams, flowcharts, wireframes, mind maps, and freeform sketches alongside your notes. Whiteboard content is persisted automatically and can be accessed from anywhere.
+
+### Hierarchical folder organization
+
+Keep your notes organized with a flexible folder structure that supports unlimited nesting levels. Create folders and subfolders to mirror your mental model of your knowledge base. Move notes and folders between locations with drag-and-drop simplicity. The folder tree is always visible in the sidebar, making navigation quick and intuitive.
+
+### Comprehensive task management
+
+Stay on top of your to-dos with Pointer's integrated task management system. Create tasks with names, descriptions, categories, due dates, and tags. Mark tasks as complete, filter by category or status, and keep your work organized alongside your notes and documents.
+
+### Version history and backups
+
+Never worry about losing important changes. Pointer automatically creates version backups of your notes based on intelligent criteria, allowing you to review and restore previous versions of your documents when needed. The backup system is designed to capture meaningful changes without overwhelming you with trivial snapshots.
+
+### Desktop application with Tauri
+
+While Pointer works beautifully in any modern web browser, you can also install it as a native desktop application using Tauri. The desktop app provides a dedicated workspace for your notes with the full feature set of the web application plus native integrations and offline capabilities.
+
+## Technology stack
+
+Pointer is built with a modern, robust technology stack chosen for performance, reliability, and developer experience:
+
+| Layer | Technology | Purpose |
+|-------|------------|---------|
+| Frontend | Next.js 16+ | React-based framework with App Router for server-side rendering and optimal performance |
+| UI Components | Radix UI + shadcn/ui | Accessible, customizable component primitives with beautiful default styling |
+| Rich Text Editor | TipTap | Extensible, headless editor framework built on ProseMirror |
+| Real-time Sync | PartyKit + Yjs | Infrastructure for real-time collaborative editing with CRDT-based conflict resolution |
+| Backend | Convex | Serverless backend platform providing database, authentication, and real-time subscriptions |
+| Authentication | Clerk | Complete user management solution with multiple authentication providers |
+| Whiteboard | Excalidraw | Open-source virtual whiteboard for sketching and diagramming |
+| Desktop App | Tauri | Rust-based framework for building native desktop applications |
+| Styling | Tailwind CSS 4 | Utility-first CSS framework for rapid, consistent styling |
+| State Management | Zustand | Lightweight, flexible state management for React |
+
+## Getting started
+
+Ready to start using Pointer? Head over to the [Quickstart guide](/pointer/quickstart) to get up and running in minutes, or explore the [Installation guide](/pointer/installation) for detailed setup instructions including local development and self-hosting options.
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/pointer/quickstart">
+    Get started with Pointer in just a few minutes with our streamlined quickstart guide.
+  </Card>
+  <Card title="Installation" icon="download" href="/pointer/installation">
+    Detailed installation instructions for local development and self-hosting.
+  </Card>
+</CardGroup>

@@ -1,0 +1,107 @@
+---
+title: "Whiteboards API overview"
+description: "API reference for managing whiteboards in Pointer, including creation, retrieval, and updates of Excalidraw-based visual canvases."
+---
+
+## Overview
+
+The Whiteboards API provides operations for managing visual whiteboard content in Pointer. Each user has a single whiteboard that persists Excalidraw data for sketching diagrams, flowcharts, and visual notes.
+
+## Data model
+
+Whiteboards are stored with the following structure:
+
+```typescript
+{
+  _id: Id<"whiteboards">,
+  title: string,
+  tenantId: string,
+  serializedData: string,  // JSON string of Excalidraw state
+  lastModified: string,    // ISO timestamp
+}
+```
+
+### Serialized data format
+
+The `serializedData` field contains a JSON string with Excalidraw export format:
+
+```typescript
+{
+  type: "excalidraw",
+  version: 2,
+  source: "https://excalidraw.com",
+  elements: [...],  // Array of drawing elements
+  appState: {
+    viewBackgroundColor: "#ffffff",
+    theme: "light",
+    // ... other Excalidraw state
+  },
+}
+```
+
+## API endpoints
+
+| Function | Type | Description |
+|----------|------|-------------|
+| `create` | mutation | Create a new whiteboard |
+| `getWhiteboard` | query | Get user's whiteboard |
+| `getWhiteboardById` | query | Get whiteboard by ID |
+| `getOrCreateWhiteboard` | mutation | Get existing or create new |
+| `updateWhiteboard` | mutation | Update whiteboard content |
+
+## Authentication
+
+All whiteboard operations require authentication. The user's identity is obtained from the Clerk token:
+
+```typescript
+const identity = await ctx.auth.getUserIdentity();
+if (!identity) {
+  throw new Error("Unauthorized");
+}
+```
+
+## Quick example
+
+```typescript
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+function WhiteboardPage() {
+  // Get or create whiteboard
+  const getOrCreate = useMutation(api.whiteboards.getOrCreateWhiteboard);
+  const updateWhiteboard = useMutation(api.whiteboards.updateWhiteboard);
+  
+  const [whiteboard, setWhiteboard] = useState(null);
+  
+  useEffect(() => {
+    getOrCreate().then(setWhiteboard);
+  }, []);
+  
+  const handleChange = async (elements, appState) => {
+    if (!whiteboard) return;
+    
+    await updateWhiteboard({
+      id: whiteboard._id,
+      serializedData: JSON.stringify({
+        type: "excalidraw",
+        version: 2,
+        elements,
+        appState,
+      }),
+    });
+  };
+
+  return (
+    <Excalidraw
+      initialData={whiteboard ? JSON.parse(whiteboard.serializedData) : null}
+      onChange={handleChange}
+    />
+  );
+}
+```
+
+## Next steps
+
+<Card title="Operations" icon="gears" href="/api-reference/whiteboards/operations">
+  Detailed API reference for all whiteboard operations.
+</Card>

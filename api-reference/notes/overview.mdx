@@ -1,0 +1,144 @@
+---
+title: "Notes API overview"
+description: "Complete reference documentation for the Pointer Notes API including endpoints for creating, reading, updating, deleting, and sharing notes and folders."
+---
+
+## Overview
+
+The Notes API is the core of Pointer's backend, providing all operations needed to manage notes and folders. Built on Convex, the API offers real-time subscriptions, optimistic updates, and strong consistency guarantees.
+
+All API operations require authentication through Clerk. The authenticated user's identity is available in the request context and is used for authorization checks.
+
+## Base concepts
+
+### Note types
+
+Notes in Pointer can be one of two types:
+
+| Type | Description |
+|------|-------------|
+| `file` | A document containing rich text content |
+| `folder` | A container for organizing other notes and folders |
+
+### Identifiers
+
+Notes use two identifiers:
+
+| Identifier | Description |
+|------------|-------------|
+| `_id` | Convex-generated internal ID |
+| `pointer_id` | Client-generated UUID for cross-reference |
+
+The `pointer_id` is generated client-side and remains stable across devices, making it useful for collaboration and sharing features.
+
+### Tenant isolation
+
+All notes are associated with a `tenantId` (the owner's Clerk subject ID). Every API operation verifies that the requesting user has permission to access the requested resource.
+
+## API endpoints summary
+
+### Query functions
+
+| Function | Description |
+|----------|-------------|
+| `readNoteFromDb` | Get a single note by pointer_id |
+| `readNotesFromDb` | List all notes for authenticated user |
+| `readNotesFromDbByUserId` | List notes for a specific user |
+| `getPublicNote` | Get note by pointer_id (no auth required) |
+| `getSharedUsers` | List users a document is shared with |
+| `getSharedDocumentsByUserId` | List documents shared with a user |
+| `getTreeStructure` | Get hierarchical folder/note tree |
+
+### Mutation functions
+
+| Function | Description |
+|----------|-------------|
+| `createNoteInDb` | Create a new note |
+| `updateNoteInDb` | Update an existing note (or create if missing) |
+| `deleteNoteByPointerId` | Delete a note and related data |
+| `createFolderInDb` | Create a new folder |
+| `moveNode` | Move a note/folder to new parent |
+| `deleteFolder` | Delete a folder (with cascade option) |
+| `shareNote` | Share a note with users |
+| `unshareNote` | Remove sharing for a user |
+| `toggleCollaboration` | Enable/disable real-time collaboration |
+
+## Using the API
+
+### From React
+
+Use Convex React hooks for seamless integration:
+
+```typescript
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+// Query with automatic subscription
+const notes = useQuery(api.notes.readNotesFromDb);
+
+// Mutation with optimistic updates
+const createNote = useMutation(api.notes.createNoteInDb);
+```
+
+### From server-side code
+
+Use the Convex client for server-side operations:
+
+```typescript
+import { ConvexHttpClient } from "convex/browser";
+import { api } from "@/convex/_generated/api";
+
+const client = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+
+// Execute query
+const notes = await client.query(api.notes.readNotesFromDb);
+
+// Execute mutation
+const noteId = await client.mutation(api.notes.createNoteInDb, {
+  name: "New Note",
+  // ... other args
+});
+```
+
+## Error handling
+
+API operations may throw errors in these cases:
+
+| Error | Cause |
+|-------|-------|
+| `"Unauthorized"` | User not authenticated |
+| `"Note not found"` | Note doesn't exist |
+| `"Unauthorized: You don't own this note"` | User doesn't have access |
+| `"tenantId is required"` | Missing required field for creation |
+| `"Cannot move a folder into its own descendant"` | Circular reference prevention |
+| `"Cannot delete non-empty folder without cascade"` | Folder has children |
+
+## Content structure
+
+Note content is stored as a dual-format object:
+
+```typescript
+content: {
+  text: string,      // Plain text for search/preview
+  tiptap: string     // TipTap JSON for rich rendering
+}
+```
+
+The `text` field enables efficient full-text search, while `tiptap` preserves the complete rich text structure.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Create notes" icon="plus" href="/api-reference/notes/create">
+    Learn how to create notes and folders.
+  </Card>
+  <Card title="Read notes" icon="book-open" href="/api-reference/notes/read">
+    Query and list notes.
+  </Card>
+  <Card title="Update notes" icon="pen" href="/api-reference/notes/update">
+    Modify existing notes.
+  </Card>
+  <Card title="Delete notes" icon="trash" href="/api-reference/notes/delete">
+    Remove notes and folders.
+  </Card>
+</CardGroup>

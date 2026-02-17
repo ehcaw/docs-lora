@@ -1,0 +1,306 @@
+---
+title: "Architecture overview"
+description: "High-level architectural overview of Pointer, explaining how the frontend, backend, real-time collaboration, and desktop components work together to create a seamless note-taking experience."
+---
+
+## System architecture
+
+Pointer is built as a modern, cloud-native application with a clear separation of concerns between the frontend, backend, and real-time collaboration layers. This architecture enables responsive user experiences, reliable data persistence, and seamless real-time collaboration while maintaining flexibility for future enhancements.
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        Client Layer                              │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐  │
+│  │   Web Browser   │  │  Tauri Desktop  │  │   Mobile (PWA)  │  │
+│  │   (Next.js)     │  │   Application   │  │    (Future)     │  │
+│  └────────┬────────┘  └────────┬────────┘  └────────┬────────┘  │
+└───────────┼────────────────────┼────────────────────┼───────────┘
+            │                    │                    │
+            └────────────────────┼────────────────────┘
+                                 │
+┌────────────────────────────────┼────────────────────────────────┐
+│                        API Layer                                 │
+│  ┌─────────────────────────────┴─────────────────────────────┐  │
+│  │                      Next.js API Routes                    │  │
+│  │                  (Authentication, Proxying)                │  │
+│  └───────────────────────────────────────────────────────────┘  │
+└────────────────────────────────┬────────────────────────────────┘
+                                 │
+         ┌───────────────────────┼───────────────────────┐
+         │                       │                       │
+         ▼                       ▼                       ▼
+┌─────────────────┐   ┌─────────────────┐   ┌─────────────────┐
+│     Convex      │   │    PartyKit     │   │     Clerk       │
+│    Backend      │   │  Collaboration  │   │ Authentication  │
+│  ┌───────────┐  │   │  ┌───────────┐  │   │  ┌───────────┐  │
+│  │ Database  │  │   │  │ WebSocket │  │   │  │   User    │  │
+│  │ Functions │  │   │  │  Rooms    │  │   │  │  Mgmt     │  │
+│  │ Real-time │  │   │  │   Yjs     │  │   │  │  OAuth    │  │
+│  │   Subs    │  │   │  │  Sync     │  │   │  │  Tokens   │  │
+│  └───────────┘  │   │  └───────────┘  │   │  └───────────┘  │
+└─────────────────┘   └─────────────────┘   └─────────────────┘
+```
+
+## Component responsibilities
+
+### Frontend (Next.js)
+
+The frontend is built with Next.js using the App Router pattern, providing:
+
+| Responsibility | Implementation |
+|----------------|----------------|
+| UI rendering | React components with server-side rendering |
+| Routing | File-based routing with App Router |
+| State management | Zustand for client state, Convex for server state |
+| Rich text editing | TipTap with custom extensions |
+| Whiteboard | Excalidraw integration |
+| Real-time sync | Yjs via HocusPocus provider |
+
+### Backend (Convex)
+
+Convex serves as the primary backend, handling:
+
+| Responsibility | Implementation |
+|----------------|----------------|
+| Data persistence | Document database with schema validation |
+| Business logic | Server-side functions (queries, mutations, actions) |
+| Real-time subscriptions | Automatic UI updates on data changes |
+| File storage | Binary storage for images and attachments |
+| Background jobs | Cron jobs for maintenance tasks |
+
+### Real-time collaboration (PartyKit)
+
+PartyKit provides the infrastructure for real-time collaboration:
+
+| Responsibility | Implementation |
+|----------------|----------------|
+| WebSocket management | Persistent connections per document |
+| State synchronization | Yjs CRDT document sync |
+| Presence awareness | Cursor positions, user status |
+| Conflict resolution | Automatic via Yjs merge algorithms |
+
+### Authentication (Clerk)
+
+Clerk handles all authentication concerns:
+
+| Responsibility | Implementation |
+|----------------|----------------|
+| User registration | Email, OAuth (Google, GitHub, etc.) |
+| Session management | JWT tokens, secure cookies |
+| User profiles | Avatar, email, metadata |
+| Security | Rate limiting, brute force protection |
+
+## Data flow
+
+### Read path
+
+When a user opens a note:
+
+1. **Request** - Client requests note via Convex query
+2. **Authentication** - Convex validates user identity via Clerk
+3. **Authorization** - Convex checks user owns/has access to note
+4. **Query** - Database query retrieves note data
+5. **Response** - Note data returned to client
+6. **Subscription** - Client subscribes to real-time updates
+
+```
+Client ─────► Convex Query ─────► Auth Check ─────► DB Query
+   ▲                                                    │
+   │                                                    │
+   └────────────────── Real-time Update ◄───────────────┘
+```
+
+### Write path
+
+When a user edits a note:
+
+1. **Local update** - Change applied immediately in UI (optimistic)
+2. **Mutation** - Client sends mutation to Convex
+3. **Validation** - Convex validates input and permissions
+4. **Persistence** - Change written to database
+5. **Broadcast** - Subscribers notified of change
+6. **Confirmation** - Client receives acknowledgment
+
+```
+Client ──► Optimistic Update ──► Convex Mutation ──► DB Write
+                                                         │
+              All Subscribed Clients ◄─── Broadcast ◄────┘
+```
+
+### Collaboration path
+
+When multiple users edit simultaneously:
+
+1. **Local edit** - User types in their editor
+2. **Yjs update** - Change converted to Yjs operation
+3. **PartyKit send** - Operation sent to collaboration server
+4. **Broadcast** - Server broadcasts to all connected clients
+5. **Yjs merge** - Each client merges incoming operations
+6. **UI update** - Editors reflect merged state
+
+```
+User A ──► Yjs Op ──► PartyKit ──► Broadcast ──► User B
+                          │                         │
+                          │                         ▼
+                          └──────────────────► Yjs Merge
+```
+
+## Technology choices
+
+### Why Next.js?
+
+Next.js was chosen for the frontend because:
+
+- **Server-side rendering** - Fast initial page loads, SEO benefits
+- **App Router** - Modern routing with React Server Components
+- **API routes** - Backend logic when needed
+- **Turbopack** - Fast development experience
+- **Ecosystem** - Rich library and tool support
+
+### Why Convex?
+
+Convex was chosen for the backend because:
+
+- **Real-time by default** - Subscriptions are first-class
+- **Serverless** - No infrastructure management
+- **TypeScript** - End-to-end type safety
+- **Transactions** - ACID guarantees
+- **Developer experience** - Fast iteration, easy debugging
+
+### Why PartyKit?
+
+PartyKit was chosen for collaboration because:
+
+- **Edge deployment** - Low latency worldwide
+- **Yjs integration** - First-class CRDT support
+- **Simplicity** - Minimal boilerplate
+- **Scalability** - Handles many concurrent connections
+- **Cost** - Pay per use, scales to zero
+
+### Why Clerk?
+
+Clerk was chosen for authentication because:
+
+- **Complete solution** - Sign-up, sign-in, user management
+- **Multiple providers** - Email, OAuth, SSO
+- **Security** - Industry best practices built-in
+- **React integration** - Easy hooks and components
+- **Customization** - Branded authentication flows
+
+### Why TipTap?
+
+TipTap was chosen for rich text editing because:
+
+- **Headless** - Complete styling control
+- **Extensible** - Easy to add custom functionality
+- **Collaborative** - Built-in Yjs support
+- **ProseMirror** - Robust underlying engine
+- **TypeScript** - Excellent type support
+
+## Deployment architecture
+
+### Production environment
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        CDN (Vercel Edge)                     │
+│                     Static Assets, SSR                       │
+└───────────────────────────┬─────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    Vercel Serverless                         │
+│                   Next.js Application                        │
+└─────────────┬────────────────────────────────┬──────────────┘
+              │                                │
+              ▼                                ▼
+┌─────────────────────────┐      ┌─────────────────────────┐
+│    Convex Cloud         │      │    PartyKit Cloud       │
+│  Database + Functions   │      │  Collaboration Rooms    │
+└─────────────────────────┘      └─────────────────────────┘
+```
+
+### Desktop application
+
+The Tauri desktop app wraps the web application:
+
+```
+┌─────────────────────────────────────────┐
+│           Tauri Application             │
+│  ┌───────────────────────────────────┐  │
+│  │         WebView (WebKit)          │  │
+│  │    ┌───────────────────────────┐  │  │
+│  │    │    Next.js Application    │  │  │
+│  │    │   (Same as Web Version)   │  │  │
+│  │    └───────────────────────────┘  │  │
+│  └───────────────────────────────────┘  │
+│  ┌───────────────────────────────────┐  │
+│  │      Rust Native Layer            │  │
+│  │   (File system, OS integration)   │  │
+│  └───────────────────────────────────┘  │
+└─────────────────────────────────────────┘
+```
+
+## Scalability considerations
+
+### Horizontal scaling
+
+- **Frontend** - Stateless, scales automatically on Vercel
+- **Convex** - Managed scaling, handles spikes automatically
+- **PartyKit** - Edge-deployed, rooms scale independently
+
+### Data partitioning
+
+- **Tenant isolation** - All data is partitioned by `tenantId`
+- **Document isolation** - Collaboration rooms are per-document
+- **Efficient queries** - Indexes on common access patterns
+
+### Performance optimizations
+
+- **Optimistic updates** - UI responds immediately
+- **Debounced saves** - Batches rapid edits
+- **Lazy loading** - Components load on demand
+- **Caching** - Static assets cached at CDN
+
+## Security model
+
+### Authentication flow
+
+1. User authenticates with Clerk
+2. Clerk issues JWT token
+3. Token validated on every request
+4. User identity available to all layers
+
+### Authorization patterns
+
+- **Ownership check** - Most data is owner-access only
+- **Sharing** - Explicit grants for shared documents
+- **Tenant isolation** - Cross-tenant access impossible
+
+### Data protection
+
+- **Encryption in transit** - TLS everywhere
+- **Encryption at rest** - Managed by service providers
+- **Input validation** - Schema validation on all mutations
+- **Rate limiting** - Protection against abuse
+
+## Future considerations
+
+The architecture is designed to support future enhancements:
+
+- **Offline support** - Local-first with sync on reconnect
+- **Mobile apps** - React Native sharing code with web
+- **Plugins** - Third-party editor extensions
+- **Integrations** - Webhooks for external services
+- **AI features** - Content analysis, suggestions
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Database schema" icon="database" href="/pointer/architecture/database-schema">
+    Explore the complete database schema and data model.
+  </Card>
+  <Card title="Real-time sync" icon="rotate" href="/pointer/architecture/real-time-sync">
+    Deep dive into the collaboration and sync architecture.
+  </Card>
+</CardGroup>

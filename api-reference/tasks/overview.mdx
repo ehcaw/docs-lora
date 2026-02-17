@@ -1,0 +1,108 @@
+---
+title: "Tasks API overview"
+description: "API reference for managing tasks in Pointer, including creation, updates, completion tracking, and deletion of user tasks."
+---
+
+## Overview
+
+The Tasks API provides CRUD operations for Pointer's integrated task management feature. Tasks are simple, user-scoped entities designed for quick capture and tracking of to-dos.
+
+## Data model
+
+Tasks are stored with the following structure:
+
+```typescript
+{
+  _id: Id<"userTasks">,
+  tenantId: string,
+  taskName: string,
+  taskDescription?: string,
+  category?: string,
+  tags?: string[],
+  completed: boolean,
+  createdAt: string,
+  dueBy?: string,
+}
+```
+
+### Field descriptions
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `taskName` | string | Primary task title (required) |
+| `taskDescription` | string | Extended description or notes |
+| `category` | string | Single category for grouping |
+| `tags` | string[] | Multiple tags for flexible filtering |
+| `completed` | boolean | Whether task is done |
+| `createdAt` | string | ISO timestamp of creation |
+| `dueBy` | string | Optional deadline (ISO timestamp) |
+
+## API endpoints
+
+| Function | Type | Description |
+|----------|------|-------------|
+| `getUserTasks` | query | List all tasks for user |
+| `createTask` | mutation | Create a new task |
+| `updateTask` | mutation | Update task fields |
+| `toggleTaskComplete` | mutation | Toggle completion status |
+| `deleteTask` | mutation | Delete a task |
+
+## Authentication
+
+All task operations require authentication. Unauthorized requests return empty arrays or throw errors:
+
+```typescript
+const identity = await ctx.auth.getUserIdentity();
+if (!identity) {
+  throw new Error("Not authenticated");
+}
+```
+
+## Quick example
+
+```typescript
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+function TaskList() {
+  const tasks = useQuery(api.taskManagement.getUserTasks);
+  const createTask = useMutation(api.taskManagement.createTask);
+  const toggleComplete = useMutation(api.taskManagement.toggleTaskComplete);
+
+  const handleAdd = async () => {
+    await createTask({
+      taskName: "New task",
+      category: "Work",
+    });
+  };
+
+  const handleToggle = async (task) => {
+    await toggleComplete({
+      taskId: task._id,
+      completed: !task.completed,
+    });
+  };
+
+  return (
+    <div>
+      <button onClick={handleAdd}>Add Task</button>
+      {tasks?.map(task => (
+        <div key={task._id}>
+          <input
+            type="checkbox"
+            checked={task.completed}
+            onChange={() => handleToggle(task)}
+          />
+          {task.taskName}
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+## Next steps
+
+<Card title="Operations" icon="gears" href="/api-reference/tasks/operations">
+  Detailed API reference for all task operations.
+</Card>

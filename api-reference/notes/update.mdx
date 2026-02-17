@@ -1,0 +1,278 @@
+---
+title: "Update notes"
+description: "API reference for updating notes in Pointer, including content changes, metadata updates, folder moves, and collaboration settings."
+---
+
+## updateNoteInDb
+
+Updates an existing note or creates a new one if it doesn't exist (upsert behavior).
+
+### Function signature
+
+```typescript
+updateNoteInDb: mutation({
+  args: {
+    pointer_id: v.string(),
+    name: v.string(),
+    tenantId: v.optional(v.string()),
+    type: v.optional(v.union(v.literal("file"), v.literal("folder"))),
+    content: v.optional(v.object({
+      tiptap: v.optional(v.string()),
+      text: v.string(),
+    })),
+    lastAccessed: v.optional(v.string()),
+    lastEdited: v.optional(v.string()),
+    createdAt: v.optional(v.string()),
+    updatedAt: v.optional(v.string()),
+    collaborative: v.boolean(),
+  },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `pointer_id` | string | Yes | Identifies the note to update |
+| `name` | string | Yes | Note name |
+| `tenantId` | string | No* | Required only for creation |
+| `type` | string | No | "file" or "folder" |
+| `content` | object | No | Rich text content |
+| `content.text` | string | - | Plain text |
+| `content.tiptap` | string | - | TipTap JSON |
+| `lastAccessed` | string | No | ISO timestamp |
+| `lastEdited` | string | No | ISO timestamp |
+| `createdAt` | string | No | ISO timestamp |
+| `updatedAt` | string | No | ISO timestamp |
+| `collaborative` | boolean | Yes | Collaboration enabled |
+
+### Returns
+
+Returns the note's document ID.
+
+### Behavior
+
+**If note exists:**
+1. Updates the note document with provided fields
+2. If content is provided, updates/creates `notesContent` entry
+3. Evaluates if a version backup should be created
+4. Creates backup if criteria are met
+5. Returns existing note ID
+
+**If note doesn't exist:**
+1. Requires `tenantId` to be provided
+2. Creates new note document
+3. Creates `notesContent` entry
+4. Returns new note ID
+
+### Version backup criteria
+
+Backups are created when:
+- Significant content changes are detected
+- Sufficient time has passed since last backup
+
+### Example usage
+
+```typescript
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+function NoteEditor({ note }) {
+  const updateNote = useMutation(api.notes.updateNoteInDb);
+  
+  const handleSave = async (content: string, tiptapJson: string) => {
+    await updateNote({
+      pointer_id: note.pointer_id,
+      name: note.name,
+      collaborative: note.collaborative,
+      content: {
+        text: content,
+        tiptap: tiptapJson,
+      },
+      lastEdited: new Date().toISOString(),
+    });
+  };
+
+  return <Editor onSave={handleSave} />;
+}
+```
+
+---
+
+## moveNode
+
+Moves a note or folder to a new parent location.
+
+### Function signature
+
+```typescript
+moveNode: mutation({
+  args: {
+    pointer_id: v.string(),
+    new_parent_id: v.optional(v.string()),
+    user_id: v.string(),
+  },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `pointer_id` | string | Yes | Note to move |
+| `new_parent_id` | string | No | New parent folder (null for root) |
+| `user_id` | string | Yes | User making the request |
+
+### Returns
+
+Returns `{ success: true }` on success.
+
+### Behavior
+
+1. Finds note by `pointer_id`
+2. Verifies user owns the note
+3. Checks for circular references (can't move folder into its own descendant)
+4. Updates `parent_id` and `updatedAt`
+
+### Error cases
+
+| Error | Cause |
+|-------|-------|
+| `"Note not found"` | Invalid pointer_id |
+| `"Unauthorized"` | User doesn't own note |
+| `"Cannot move a folder into its own descendant"` | Circular reference |
+
+### Example usage
+
+```typescript
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+function DragDropHandler() {
+  const moveNode = useMutation(api.notes.moveNode);
+  const { user } = useUser();
+  
+  const handleDrop = async (nodeId: string, targetFolderId: string | null) => {
+    await moveNode({
+      pointer_id: nodeId,
+      new_parent_id: targetFolderId,
+      user_id: user.id,
+    });
+  };
+
+  return <TreeWithDragDrop onDrop={handleDrop} />;
+}
+```
+
+---
+
+## toggleCollaboration
+
+Enables or disables real-time collaboration for a document.
+
+### Function signature
+
+```typescript
+toggleCollaboration: mutation({
+  args: {
+    docId: v.string(),
+    collaborative: v.boolean(),
+  },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `docId` | string | Yes | Document ID (as string) |
+| `collaborative` | boolean | Yes | Enable/disable collaboration |
+
+### Behavior
+
+1. Normalizes document ID
+2. Updates `collaborative` field
+3. Does not validate ownership (ensure UI restricts to owners)
+
+### Example usage
+
+```typescript
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+function CollaborationToggle({ note }) {
+  const toggle = useMutation(api.notes.toggleCollaboration);
+  
+  const handleToggle = async () => {
+    await toggle({
+      docId: note._id,
+      collaborative: !note.collaborative,
+    });
+  };
+
+  return (
+    <Switch 
+      checked={note.collaborative} 
+      onChange={handleToggle}
+    />
+  );
+}
+```
+
+---
+
+## Content update patterns
+
+### Debounced saves
+
+For editor auto-save, debounce updates:
+
+```typescript
+import { useDebouncedCallback } from 'use-debounce';
+
+function Editor() {
+  const updateNote = useMutation(api.notes.updateNoteInDb);
+  
+  const debouncedSave = useDebouncedCallback(
+    async (content) => {
+      await updateNote({
+        pointer_id: note.pointer_id,
+        name: note.name,
+        collaborative: false,
+        content: {
+          text: extractPlainText(content),
+          tiptap: JSON.stringify(content),
+        },
+      });
+    },
+    500 // 500ms debounce
+  );
+
+  return <TipTapEditor onChange={debouncedSave} />;
+}
+```
+
+### Optimistic updates
+
+Content updates appear immediately due to optimistic UI:
+
+```typescript
+// The editor shows changes instantly
+// Convex handles sync in background
+// If sync fails, error is surfaced
+```
+
+### Conflict handling
+
+With collaborative mode enabled, use Yjs for conflict-free updates instead of direct mutations.
+
+## Related endpoints
+
+<CardGroup cols={2}>
+  <Card title="Create notes" icon="plus" href="/api-reference/notes/create">
+    Create new notes.
+  </Card>
+  <Card title="Delete notes" icon="trash" href="/api-reference/notes/delete">
+    Remove notes permanently.
+  </Card>
+</CardGroup>

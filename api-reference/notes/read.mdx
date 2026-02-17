@@ -1,0 +1,348 @@
+---
+title: "Read notes"
+description: "API reference for querying notes in Pointer, including single note retrieval, listing user notes, and fetching hierarchical folder structures."
+---
+
+## readNoteFromDb
+
+Retrieves a single note by its `pointer_id`.
+
+### Function signature
+
+```typescript
+readNoteFromDb: query({
+  args: { pointer_id: v.string() },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `pointer_id` | string | Yes | Client-generated unique ID |
+
+### Returns
+
+Returns the note document or `null` if not found.
+
+```typescript
+{
+  _id: Id<"notes">,
+  _creationTime: number,
+  name: string,
+  tenantId: string,
+  type: "file" | "folder",
+  pointer_id: string,
+  createdAt: string,
+  updatedAt: string,
+  lastAccessed: string,
+  lastEdited: string,
+  collaborative: boolean,
+  parent_id?: Id<"notes">,
+  content?: { text: string, tiptap?: string },
+}
+```
+
+### Example usage
+
+```typescript
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+function NoteViewer({ pointerId }: { pointerId: string }) {
+  const note = useQuery(api.notes.readNoteFromDb, { 
+    pointer_id: pointerId 
+  });
+
+  if (note === undefined) return <Loading />;
+  if (note === null) return <NotFound />;
+  
+  return <div>{note.name}</div>;
+}
+```
+
+---
+
+## readNotesFromDb
+
+Lists all notes belonging to the authenticated user.
+
+### Function signature
+
+```typescript
+readNotesFromDb: query({
+  args: {},
+})
+```
+
+### Parameters
+
+None. Uses the authenticated user's identity.
+
+### Returns
+
+Returns an array of note documents. Returns empty array if not authenticated.
+
+### Example usage
+
+```typescript
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+function NotesList() {
+  const notes = useQuery(api.notes.readNotesFromDb);
+
+  if (notes === undefined) return <Loading />;
+  if (notes.length === 0) return <EmptyState />;
+  
+  return (
+    <ul>
+      {notes.map(note => (
+        <li key={note._id}>{note.name}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+---
+
+## readNotesFromDbByUserId
+
+Lists all notes for a specific user (for admin or sharing features).
+
+### Function signature
+
+```typescript
+readNotesFromDbByUserId: query({
+  args: { userId: v.string() },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `userId` | string | Yes | Target user's tenant ID |
+
+### Returns
+
+Returns an array of note documents for the specified user.
+
+---
+
+## getPublicNote
+
+Retrieves a note by `pointer_id` without authentication. Used for public preview features.
+
+### Function signature
+
+```typescript
+getPublicNote: query({
+  args: { pointer_id: v.string() },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `pointer_id` | string | Yes | Note's pointer ID |
+
+### Returns
+
+Returns the note document or `null`.
+
+<Warning>
+  This endpoint has no authentication. Only use for intentionally public content.
+</Warning>
+
+---
+
+## getTreeStructure
+
+Retrieves the complete hierarchical folder/note structure for a user.
+
+### Function signature
+
+```typescript
+getTreeStructure: query({
+  args: { userId: v.string() },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `userId` | string | Yes | Target user's tenant ID |
+
+### Returns
+
+Returns an array of root-level nodes, each with a `children` array:
+
+```typescript
+type NoteTreeNode = Doc<"notes"> & { 
+  children: NoteTreeNode[] 
+};
+
+// Example structure:
+[
+  {
+    _id: "abc123",
+    name: "Projects",
+    type: "folder",
+    children: [
+      {
+        _id: "def456",
+        name: "Project A",
+        type: "file",
+        children: []
+      },
+      {
+        _id: "ghi789",
+        name: "Subfolders",
+        type: "folder",
+        children: [...]
+      }
+    ]
+  },
+  {
+    _id: "jkl012",
+    name: "Quick Note",
+    type: "file",
+    children: []
+  }
+]
+```
+
+### Example usage
+
+```typescript
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+function FileTree({ userId }: { userId: string }) {
+  const tree = useQuery(api.notes.getTreeStructure, { userId });
+
+  if (tree === undefined) return <Loading />;
+  
+  return <TreeView nodes={tree} />;
+}
+
+function TreeView({ nodes, depth = 0 }) {
+  return (
+    <ul style={{ paddingLeft: depth * 16 }}>
+      {nodes.map(node => (
+        <li key={node._id}>
+          {node.type === 'folder' ? '📁' : '📄'} {node.name}
+          {node.children.length > 0 && (
+            <TreeView nodes={node.children} depth={depth + 1} />
+          )}
+        </li>
+      ))}
+    </ul>
+  );
+}
+```
+
+---
+
+## getSharedDocumentsByUserId
+
+Lists all documents that have been shared with a specific user.
+
+### Function signature
+
+```typescript
+getSharedDocumentsByUserId: query({
+  args: { userId: v.string() },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `userId` | string | Yes | User ID to find shared documents for |
+
+### Returns
+
+Returns an array of note documents (excluding null for deleted documents).
+
+### Behavior
+
+1. Queries `documentShares` table for shares with this user
+2. Extracts document IDs from shares
+3. Fetches full documents for those IDs
+4. Filters out any null results (deleted documents)
+
+---
+
+## getSharedUsers
+
+Lists all users a document is shared with.
+
+### Function signature
+
+```typescript
+getSharedUsers: query({
+  args: { documentId: v.string() },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `documentId` | string | Yes | Document ID (as string, normalized internally) |
+
+### Returns
+
+Returns an array of share records:
+
+```typescript
+{
+  _id: Id<"documentShares">,
+  documentId: Id<"notes">,
+  userEmail: string,
+  userId: string,
+  ownerEmail: string,
+  ownerId: string,
+}[]
+```
+
+---
+
+## Filtering and sorting
+
+The query functions return raw arrays. Apply client-side filtering and sorting as needed:
+
+```typescript
+const notes = useQuery(api.notes.readNotesFromDb);
+
+// Filter by type
+const files = notes?.filter(n => n.type === 'file');
+const folders = notes?.filter(n => n.type === 'folder');
+
+// Sort by date
+const byRecent = notes?.sort((a, b) => 
+  new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+);
+
+// Sort alphabetically
+const byName = notes?.sort((a, b) => 
+  a.name.localeCompare(b.name)
+);
+```
+
+## Related endpoints
+
+<CardGroup cols={2}>
+  <Card title="Create notes" icon="plus" href="/api-reference/notes/create">
+    Create new notes to query.
+  </Card>
+  <Card title="Update notes" icon="pen" href="/api-reference/notes/update">
+    Modify retrieved notes.
+  </Card>
+</CardGroup>

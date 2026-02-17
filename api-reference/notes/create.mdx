@@ -1,0 +1,219 @@
+---
+title: "Create notes"
+description: "API reference for creating new notes and folders in Pointer, including required parameters, content structure, and folder hierarchies."
+---
+
+## createNoteInDb
+
+Creates a new note document in the database with content, metadata, and optional folder placement.
+
+### Function signature
+
+```typescript
+createNoteInDb: mutation({
+  args: {
+    name: v.string(),
+    tenantId: v.string(),
+    type: v.union(v.literal("file"), v.literal("folder")),
+    content: v.optional(v.object({
+      text: v.string(),
+      tiptap: v.string(),
+    })),
+    pointer_id: v.string(),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+    lastAccessed: v.optional(v.string()),
+    lastEdited: v.optional(v.string()),
+    collaborative: v.boolean(),
+    parent_id: v.optional(v.id("notes")),
+  },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `name` | string | Yes | Display name for the note |
+| `tenantId` | string | Yes | Owner's user ID |
+| `type` | "file" \| "folder" | Yes | Note type |
+| `content` | object | No | Rich text content (for files) |
+| `content.text` | string | - | Plain text representation |
+| `content.tiptap` | string | - | TipTap JSON structure |
+| `pointer_id` | string | Yes | Client-generated unique ID |
+| `createdAt` | string | Yes | ISO timestamp |
+| `updatedAt` | string | Yes | ISO timestamp |
+| `lastAccessed` | string | No | ISO timestamp |
+| `lastEdited` | string | No | ISO timestamp |
+| `collaborative` | boolean | Yes | Enable real-time collaboration |
+| `parent_id` | Id | No | Parent folder ID |
+
+### Returns
+
+Returns the Convex document ID (`Id<"notes">`) of the created note.
+
+### Behavior
+
+1. Checks if a note with the same `pointer_id` already exists
+2. If exists, returns the existing note's ID (idempotent)
+3. If not exists, creates the note document
+4. If type is "file" and content is provided, creates a `notesContent` entry
+
+### Example usage
+
+```typescript
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { v4 as uuid } from "uuid";
+
+function CreateNoteButton() {
+  const createNote = useMutation(api.notes.createNoteInDb);
+  const { user } = useUser();
+
+  const handleCreate = async () => {
+    const now = new Date().toISOString();
+    
+    const noteId = await createNote({
+      name: "My New Note",
+      tenantId: user.id,
+      type: "file",
+      pointer_id: uuid(),
+      createdAt: now,
+      updatedAt: now,
+      collaborative: false,
+      content: {
+        text: "",
+        tiptap: JSON.stringify({
+          type: "doc",
+          content: [{ type: "paragraph" }]
+        }),
+      },
+    });
+    
+    console.log("Created note:", noteId);
+  };
+
+  return <button onClick={handleCreate}>New Note</button>;
+}
+```
+
+---
+
+## createFolderInDb
+
+Creates a new folder for organizing notes hierarchically.
+
+### Function signature
+
+```typescript
+createFolderInDb: mutation({
+  args: {
+    name: v.string(),
+    tenantId: v.string(),
+    pointer_id: v.string(),
+    parent_id: v.optional(v.string()),
+  },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `name` | string | Yes | Folder name |
+| `tenantId` | string | Yes | Owner's user ID |
+| `pointer_id` | string | Yes | Client-generated unique ID |
+| `parent_id` | string | No | Parent folder ID (string, normalized internally) |
+
+### Returns
+
+Returns the Convex document ID of the created folder.
+
+### Behavior
+
+1. Generates current timestamp
+2. Normalizes `parent_id` if provided
+3. Creates folder document with `type: "folder"`
+4. Sets `collaborative: false` (folders don't support collaboration)
+
+### Example usage
+
+```typescript
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+function CreateFolderButton() {
+  const createFolder = useMutation(api.notes.createFolderInDb);
+  const { user } = useUser();
+
+  const handleCreate = async (parentId?: string) => {
+    const folderId = await createFolder({
+      name: "New Folder",
+      tenantId: user.id,
+      pointer_id: uuid(),
+      parent_id: parentId, // Optional: place inside another folder
+    });
+    
+    console.log("Created folder:", folderId);
+  };
+
+  return <button onClick={() => handleCreate()}>New Folder</button>;
+}
+```
+
+---
+
+## Best practices
+
+### Generating pointer_id
+
+Always use a UUID generator for `pointer_id`:
+
+```typescript
+import { v4 as uuid } from "uuid";
+
+const pointer_id = uuid();
+// Result: "550e8400-e29b-41d4-a716-446655440000"
+```
+
+### Timestamp handling
+
+Use ISO strings for all timestamps:
+
+```typescript
+const now = new Date().toISOString();
+// Result: "2024-01-15T10:30:00.000Z"
+```
+
+### Content initialization
+
+For new notes, initialize with minimal TipTap content:
+
+```typescript
+const emptyContent = {
+  text: "",
+  tiptap: JSON.stringify({
+    type: "doc",
+    content: [{ type: "paragraph" }]
+  }),
+};
+```
+
+### Idempotency
+
+The create function is idempotent on `pointer_id`. Multiple calls with the same `pointer_id` return the same note ID without creating duplicates.
+
+<Warning>
+  If you need to create a truly new note, always generate a fresh `pointer_id`.
+</Warning>
+
+## Related endpoints
+
+<CardGroup cols={2}>
+  <Card title="Read notes" icon="book-open" href="/api-reference/notes/read">
+    Query notes after creation.
+  </Card>
+  <Card title="Update notes" icon="pen" href="/api-reference/notes/update">
+    Modify note content.
+  </Card>
+</CardGroup>

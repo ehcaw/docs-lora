@@ -1,0 +1,292 @@
+---
+title: "Delete notes"
+description: "API reference for deleting notes and folders in Pointer, including cascade deletion, cleanup of related data, and security considerations."
+---
+
+## deleteNoteByPointerId
+
+Deletes a note and all associated data including content, shares, and image references.
+
+### Function signature
+
+```typescript
+deleteNoteByPointerId: mutation({
+  args: {
+    pointer_id: v.string(),
+    user_id: v.string(),
+  },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `pointer_id` | string | Yes | Note to delete |
+| `user_id` | string | Yes | User making the request |
+
+### Returns
+
+Returns the updated list of notes for the user after deletion.
+
+### Behavior
+
+1. Finds note by `pointer_id`
+2. Verifies user owns the note (`tenantId === user_id`)
+3. Queries related data in parallel:
+   - Document shares
+   - Image references
+4. Deletes in parallel:
+   - The main note document
+   - All document shares
+   - All image references
+5. Creates cleanup records for image storage
+6. Deletes associated `notesContent` entry
+7. Returns remaining notes for the user
+
+### Cleanup records
+
+When deleting image references, cleanup records are created in `imageReferencesCleanup`:
+
+```typescript
+{
+  tenantId: user_id,
+  documentOwner: note._id,
+  storageId: imageRef.storageId,
+  documentOwnerType: "notes",
+  createdAt: new Date().toISOString(),
+}
+```
+
+These records can be processed by a background job to delete actual storage files.
+
+### Example usage
+
+```typescript
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+function DeleteNoteButton({ note }) {
+  const deleteNote = useMutation(api.notes.deleteNoteByPointerId);
+  const { user } = useUser();
+  
+  const handleDelete = async () => {
+    if (!confirm(`Delete "${note.name}"?`)) return;
+    
+    await deleteNote({
+      pointer_id: note.pointer_id,
+      user_id: user.id,
+    });
+  };
+
+  return (
+    <button onClick={handleDelete} className="text-red-500">
+      Delete
+    </button>
+  );
+}
+```
+
+### Error cases
+
+| Error | Cause |
+|-------|-------|
+| `"Note not found"` | Invalid pointer_id |
+| `"Unauthorized: You don't own this note"` | User doesn't own note |
+
+---
+
+## deleteFolder
+
+Deletes a folder with optional cascade deletion of contents.
+
+### Function signature
+
+```typescript
+deleteFolder: mutation({
+  args: {
+    pointer_id: v.string(),
+    user_id: v.string(),
+    cascade: v.boolean(),
+  },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `pointer_id` | string | Yes | Folder to delete |
+| `user_id` | string | Yes | User making the request |
+| `cascade` | boolean | Yes | Delete all contents recursively |
+
+### Returns
+
+Returns `{ success: true }` on success.
+
+### Behavior
+
+**With cascade = true:**
+1. Recursively finds all children (folders and files)
+2. Deletes all files and their content entries
+3. Deletes all nested folders
+4. Deletes the target folder
+
+**With cascade = false:**
+1. Checks if folder has any children
+2. If children exist, throws error
+3. If empty, deletes the folder
+
+### Cascade deletion flow
+
+```
+Folder A (target)
+├── Note 1 ──► Delete note content, then note
+├── Folder B
+│   ├── Note 2 ──► Delete note content, then note
+│   └── Note 3 ──► Delete note content, then note
+└── Note 4 ──► Delete note content, then note
+
+All deleted bottom-up after children processed
+```
+
+### Example usage
+
+```typescript
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+function DeleteFolderButton({ folder }) {
+  const deleteFolder = useMutation(api.notes.deleteFolder);
+  const { user } = useUser();
+  
+  const handleDelete = async (cascade: boolean) => {
+    const message = cascade 
+      ? `Delete "${folder.name}" and all contents?`
+      : `Delete empty folder "${folder.name}"?`;
+      
+    if (!confirm(message)) return;
+    
+    try {
+      await deleteFolder({
+        pointer_id: folder.pointer_id,
+        user_id: user.id,
+        cascade,
+      });
+    } catch (error) {
+      if (error.message.includes("non-empty")) {
+        // Offer cascade option
+        if (confirm("Folder is not empty. Delete contents too?")) {
+          await deleteFolder({
+            pointer_id: folder.pointer_id,
+            user_id: user.id,
+            cascade: true,
+          });
+        }
+      }
+    }
+  };
+
+  return (
+    <button onClick={() => handleDelete(false)}>
+      Delete Folder
+    </button>
+  );
+}
+```
+
+### Error cases
+
+| Error | Cause |
+|-------|-------|
+| `"Folder not found"` | Invalid pointer_id |
+| `"Unauthorized: You don't own this folder"` | User doesn't own folder |
+| `"Can only delete folders with this mutation"` | Target is a file, not folder |
+| `"Cannot delete non-empty folder without cascade"` | Folder has children, cascade=false |
+
+---
+
+## Security considerations
+
+### Ownership verification
+
+Both delete functions verify ownership before deletion:
+
+```typescript
+if (note.tenantId !== args.user_id) {
+  throw new Error("Unauthorized: You don't own this note");
+}
+```
+
+<Warning>
+  Always pass the authenticated user's ID as `user_id`. Never trust client-provided user IDs without verification.
+</Warning>
+
+### Shared document handling
+
+When deleting a note:
+- All share records are automatically deleted
+- Collaborators lose access immediately
+- No notification is sent (consider implementing)
+
+### Data recovery
+
+<Warning>
+  **Deletion is permanent.** There is no trash or recovery system. Consider implementing soft delete for production use.
+</Warning>
+
+---
+
+## Soft delete pattern (recommended)
+
+For production applications, consider implementing soft delete:
+
+```typescript
+// Add to schema
+deletedAt: v.optional(v.string()),
+
+// Soft delete mutation
+softDeleteNote: mutation({
+  args: { pointer_id: v.string(), user_id: v.string() },
+  handler: async (ctx, args) => {
+    const note = await findAndVerifyNote(ctx, args);
+    await ctx.db.patch(note._id, {
+      deletedAt: new Date().toISOString(),
+    });
+  },
+});
+
+// Modify queries to exclude deleted
+readNotesFromDb: query({
+  handler: async (ctx) => {
+    return await ctx.db
+      .query("notes")
+      .withIndex("by_tenant", (q) => q.eq("tenantId", userId))
+      .filter((q) => q.eq(q.field("deletedAt"), undefined))
+      .collect();
+  },
+});
+
+// Restore mutation
+restoreNote: mutation({
+  args: { pointer_id: v.string() },
+  handler: async (ctx, args) => {
+    const note = await findNote(ctx, args);
+    await ctx.db.patch(note._id, { deletedAt: undefined });
+  },
+});
+
+// Periodic cleanup of old soft-deleted items
+// Run via cron job
+```
+
+## Related endpoints
+
+<CardGroup cols={2}>
+  <Card title="Create notes" icon="plus" href="/api-reference/notes/create">
+    Create new notes after deletion.
+  </Card>
+  <Card title="Read notes" icon="book-open" href="/api-reference/notes/read">
+    List remaining notes.
+  </Card>
+</CardGroup>
