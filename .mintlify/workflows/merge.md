@@ -8,4 +8,4 @@ repos:
   - "ehcaw/pointer"
 automerge: false
 ---
-Be very wordy in your changes. Pick up any change that occurs and update my docs accordingly.
+Be very wordy in your changes. Pick up any change to the configured repos and update my docs accordingly.
