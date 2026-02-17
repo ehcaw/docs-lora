@@ -1,0 +1,406 @@
+---
+title: "Note sharing"
+description: "API reference for sharing notes with other users in Pointer, including adding collaborators, removing access, and managing share permissions."
+---
+
+## shareNote
+
+Shares a note with one or more users, granting them access to view and edit the document.
+
+### Function signature
+
+```typescript
+shareNote: mutation({
+  args: {
+    dId: v.string(),
+    users: v.array(v.object({
+      userEmail: v.string(),
+      userId: v.string(),
+    })),
+    ownerEmail: v.string(),
+    ownerId: v.string(),
+  },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `dId` | string | Yes | Document ID to share |
+| `users` | array | Yes | Users to share with |
+| `users[].userEmail` | string | Yes | Collaborator's email |
+| `users[].userId` | string | Yes | Collaborator's user ID |
+| `ownerEmail` | string | Yes | Document owner's email |
+| `ownerId` | string | Yes | Document owner's user ID |
+
+### Returns
+
+```typescript
+{
+  success: boolean,
+  sharedWithCount: number,         // New shares created
+  totalUsersRequested: number,     // Total users in request
+  duplicatesSkipped: number,       // Already shared, not duplicated
+}
+```
+
+### Behavior
+
+1. Normalizes document ID
+2. For each user in the request:
+   - Checks if share already exists
+   - Skips duplicates
+3. Creates share records for new users only
+4. Returns summary of results
+
+### Deduplication
+
+The function automatically prevents duplicate shares:
+
+```typescript
+// Checking for existing share
+const existingShare = await ctx.db
+  .query("documentShares")
+  .withIndex("by_document_user", (q) =>
+    q.eq("documentId", documentId)
+     .eq("userId", user.userId)
+     .eq("userEmail", user.userEmail)
+  )
+  .first();
+```
+
+### Example usage
+
+```typescript
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+function ShareDialog({ note }) {
+  const shareNote = useMutation(api.notes.shareNote);
+  const { user } = useUser();
+  const [emails, setEmails] = useState<string[]>([]);
+  
+  const handleShare = async () => {
+    // Convert emails to user objects
+    // In practice, you'd look up userIds from emails
+    const users = emails.map(email => ({
+      userEmail: email,
+      userId: lookupUserId(email), // Implement user lookup
+    }));
+    
+    const result = await shareNote({
+      dId: note._id,
+      users,
+      ownerEmail: user.emailAddresses[0].emailAddress,
+      ownerId: user.id,
+    });
+    
+    console.log(`Shared with ${result.sharedWithCount} users`);
+    if (result.duplicatesSkipped > 0) {
+      console.log(`${result.duplicatesSkipped} already had access`);
+    }
+  };
+
+  return (
+    <Dialog>
+      <EmailInput onAdd={(email) => setEmails([...emails, email])} />
+      <Button onClick={handleShare}>Share</Button>
+    </Dialog>
+  );
+}
+```
+
+---
+
+## unshareNote
+
+Removes a user's access to a shared document.
+
+### Function signature
+
+```typescript
+unshareNote: mutation({
+  args: {
+    dId: v.string(),
+    userEmail: v.string(),
+    ownerEmail: v.string(),
+  },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `dId` | string | Yes | Document ID |
+| `userEmail` | string | Yes | Email of user to remove |
+| `ownerEmail` | string | Yes | Document owner's email |
+
+### Returns
+
+```typescript
+{
+  success: true,
+  deletedId: Id<"documentShares">,
+}
+```
+
+### Behavior
+
+1. Normalizes document ID
+2. Finds share record matching all three criteria
+3. Deletes the share record
+4. Returns success with deleted record ID
+
+### Error cases
+
+| Error | Cause |
+|-------|-------|
+| `"Invalid document ID"` | Document ID couldn't be normalized |
+| `"Note not found or you don't have permission"` | No matching share record |
+
+### Example usage
+
+```typescript
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+function CollaboratorList({ note, sharedUsers }) {
+  const unshare = useMutation(api.notes.unshareNote);
+  const { user } = useUser();
+  
+  const handleRemove = async (collaboratorEmail: string) => {
+    if (!confirm(`Remove ${collaboratorEmail}'s access?`)) return;
+    
+    await unshare({
+      dId: note._id,
+      userEmail: collaboratorEmail,
+      ownerEmail: user.emailAddresses[0].emailAddress,
+    });
+  };
+
+  return (
+    <ul>
+      {sharedUsers.map(collab => (
+        <li key={collab.userId}>
+          {collab.userEmail}
+          <button onClick={() => handleRemove(collab.userEmail)}>
+            Remove
+          </button>
+        </li>
+      ))}
+    </ul>
+  );
+}
+```
+
+---
+
+## getSharedUsers
+
+Retrieves the list of users a document is shared with.
+
+### Function signature
+
+```typescript
+getSharedUsers: query({
+  args: { documentId: v.string() },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `documentId` | string | Yes | Document ID to query |
+
+### Returns
+
+Array of share records:
+
+```typescript
+{
+  _id: Id<"documentShares">,
+  documentId: Id<"notes">,
+  userEmail: string,
+  userId: string,
+  ownerEmail: string,
+  ownerId: string,
+}[]
+```
+
+### Example usage
+
+```typescript
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+function ShareStatus({ noteId }) {
+  const sharedUsers = useQuery(api.notes.getSharedUsers, {
+    documentId: noteId,
+  });
+
+  if (sharedUsers === undefined) return <Loading />;
+  
+  if (sharedUsers.length === 0) {
+    return <span>Not shared</span>;
+  }
+  
+  return (
+    <span>
+      Shared with {sharedUsers.length} user(s)
+    </span>
+  );
+}
+```
+
+---
+
+## getSharedDocumentsByUserId
+
+Lists all documents shared with a specific user.
+
+### Function signature
+
+```typescript
+getSharedDocumentsByUserId: query({
+  args: { userId: v.string() },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `userId` | string | Yes | User to find shared documents for |
+
+### Returns
+
+Array of note documents that have been shared with the user.
+
+### Example usage
+
+```typescript
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+function SharedWithMe() {
+  const { user } = useUser();
+  const sharedDocs = useQuery(api.notes.getSharedDocumentsByUserId, {
+    userId: user?.id,
+  });
+
+  if (sharedDocs === undefined) return <Loading />;
+  
+  return (
+    <div>
+      <h2>Shared with me</h2>
+      {sharedDocs.length === 0 ? (
+        <p>No documents shared with you yet.</p>
+      ) : (
+        <ul>
+          {sharedDocs.map(doc => (
+            <li key={doc._id}>
+              <Link href={`/main?doc=${doc.pointer_id}`}>
+                {doc.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+```
+
+---
+
+## Sharing workflow
+
+### Complete sharing flow
+
+```
+1. Owner opens share dialog
+   │
+2. Owner enters collaborator email(s)
+   │
+3. UI looks up userId for each email (via Clerk or user table)
+   │
+4. shareNote() called with users array
+   │
+5. Share records created in documentShares table
+   │
+6. Collaborator sees document in "Shared with me"
+   │
+7. Collaborator opens document
+   │
+8. If collaborative mode enabled, real-time sync starts
+```
+
+### User lookup consideration
+
+The API requires both `userEmail` and `userId`. In practice:
+
+```typescript
+// Option 1: Look up user by email in Clerk
+const clerkUser = await clerkClient.users.getUserList({
+  emailAddress: [email],
+});
+const userId = clerkUser[0]?.id;
+
+// Option 2: Maintain your own user table
+const user = await ctx.db
+  .query("users")
+  .withIndex("by_email", (q) => q.eq("email", email))
+  .first();
+const userId = user?.clerkId;
+
+// Option 3: Share by email only, resolve userId on access
+// (Requires schema modification)
+```
+
+---
+
+## Security considerations
+
+### Permission model
+
+The current implementation has a simple permission model:
+
+- Shared users have full read/write access
+- Only the owner can share/unshare
+- No viewer-only permission level
+
+### Future enhancements
+
+Consider implementing:
+
+```typescript
+// Permission levels
+type Permission = "view" | "edit" | "admin";
+
+// Share record with permission
+documentShares: defineTable({
+  documentId: v.id("notes"),
+  userId: v.string(),
+  userEmail: v.string(),
+  permission: v.union(
+    v.literal("view"),
+    v.literal("edit"),
+    v.literal("admin")
+  ),
+  ownerId: v.string(),
+})
+```
+
+## Related endpoints
+
+<CardGroup cols={2}>
+  <Card title="Notes overview" icon="file-lines" href="/api-reference/notes/overview">
+    Return to Notes API overview.
+  </Card>
+  <Card title="Collaboration feature" icon="users" href="/pointer/features/collaboration">
+    Learn about real-time collaboration.
+  </Card>
+</CardGroup>

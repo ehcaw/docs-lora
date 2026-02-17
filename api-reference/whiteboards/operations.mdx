@@ -1,0 +1,348 @@
+---
+title: "Whiteboard operations"
+description: "Detailed API reference for all whiteboard operations in Pointer including creation, retrieval, and content updates."
+---
+
+## create
+
+Creates a new whiteboard for the authenticated user.
+
+### Function signature
+
+```typescript
+create: mutation({
+  args: {
+    title: v.string(),
+    serializedData: v.optional(v.string()),
+  },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `title` | string | Yes | Whiteboard name |
+| `serializedData` | string | No | Initial Excalidraw data |
+
+### Returns
+
+Returns the complete whiteboard document.
+
+### Behavior
+
+1. Verifies user is authenticated
+2. If no serializedData provided, creates empty Excalidraw state
+3. Inserts whiteboard with user's tenantId
+4. Returns the created document
+
+### Default serialized data
+
+```typescript
+const defaultSerializedData = JSON.stringify({
+  type: "excalidraw",
+  version: 2,
+  source: "https://excalidraw.com",
+  elements: [],
+  appState: {
+    viewBackgroundColor: "#ffffff",
+    theme: "light",
+  },
+});
+```
+
+### Example
+
+```typescript
+const createWhiteboard = useMutation(api.whiteboards.create);
+
+const whiteboard = await createWhiteboard({
+  title: "My Diagram",
+});
+```
+
+---
+
+## getWhiteboard
+
+Retrieves the whiteboard for the authenticated user.
+
+### Function signature
+
+```typescript
+getWhiteboard: query({
+  args: {},
+})
+```
+
+### Parameters
+
+None.
+
+### Returns
+
+Returns the whiteboard document or `null` if:
+- User is not authenticated
+- User has no whiteboard
+
+### Example
+
+```typescript
+const whiteboard = useQuery(api.whiteboards.getWhiteboard);
+
+if (whiteboard === undefined) return <Loading />;
+if (whiteboard === null) return <CreateWhiteboardPrompt />;
+
+return <Whiteboard data={whiteboard} />;
+```
+
+---
+
+## getWhiteboardById
+
+Retrieves a specific whiteboard by ID.
+
+### Function signature
+
+```typescript
+getWhiteboardById: query({
+  args: { id: v.id("whiteboards") },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | Id | Yes | Whiteboard document ID |
+
+### Returns
+
+Returns the whiteboard document or `null` if not found.
+
+<Warning>
+  This query does not verify ownership. Use for admin purposes or when you've already validated access.
+</Warning>
+
+---
+
+## getOrCreateWhiteboard
+
+Gets the user's existing whiteboard or creates a new one if none exists.
+
+### Function signature
+
+```typescript
+getOrCreateWhiteboard: mutation({
+  args: {},
+})
+```
+
+### Parameters
+
+None.
+
+### Returns
+
+Returns the whiteboard document (existing or newly created).
+
+### Behavior
+
+1. Verifies authentication
+2. Queries for existing whiteboard with user's tenantId
+3. If found, returns existing whiteboard
+4. If not found, creates new whiteboard with default data
+5. Returns the whiteboard
+
+### Example
+
+```typescript
+const getOrCreate = useMutation(api.whiteboards.getOrCreateWhiteboard);
+
+// On component mount
+useEffect(() => {
+  getOrCreate().then(setWhiteboard);
+}, []);
+```
+
+---
+
+## updateWhiteboard
+
+Updates a whiteboard's content and/or title.
+
+### Function signature
+
+```typescript
+updateWhiteboard: mutation({
+  args: {
+    id: v.id("whiteboards"),
+    title: v.optional(v.string()),
+    serializedData: v.string(),
+  },
+})
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | Id | Yes | Whiteboard to update |
+| `title` | string | No | New title (omit to keep existing) |
+| `serializedData` | string | Yes | New Excalidraw data |
+
+### Returns
+
+```typescript
+{ success: true } | { success: false }
+```
+
+### Behavior
+
+1. Verifies authentication
+2. Retrieves whiteboard and verifies ownership
+3. Updates serializedData and lastModified
+4. Updates title only if provided
+5. Returns success status
+
+### Ownership check
+
+```typescript
+const whiteboard = await ctx.db.get(id);
+if (!whiteboard || whiteboard.tenantId !== identity.subject) {
+  return { success: false };
+}
+```
+
+### Example
+
+```typescript
+const updateWhiteboard = useMutation(api.whiteboards.updateWhiteboard);
+
+// From Excalidraw onChange
+const handleChange = async (elements, appState) => {
+  await updateWhiteboard({
+    id: whiteboard._id,
+    serializedData: JSON.stringify({
+      type: "excalidraw",
+      version: 2,
+      source: "https://excalidraw.com",
+      elements,
+      appState: {
+        viewBackgroundColor: appState.viewBackgroundColor,
+        theme: appState.theme,
+      },
+    }),
+  });
+};
+```
+
+---
+
+## Integration with Excalidraw
+
+### Loading whiteboard data
+
+```typescript
+import { Excalidraw } from "@excalidraw/excalidraw";
+
+function WhiteboardView({ whiteboard }) {
+  const initialData = useMemo(() => {
+    if (!whiteboard?.serializedData) return null;
+    
+    try {
+      return JSON.parse(whiteboard.serializedData);
+    } catch {
+      return null;
+    }
+  }, [whiteboard]);
+
+  return (
+    <Excalidraw
+      initialData={initialData}
+      // ...
+    />
+  );
+}
+```
+
+### Debounced saves
+
+```typescript
+import { useDebouncedCallback } from "use-debounce";
+
+function WhiteboardView({ whiteboard }) {
+  const updateWhiteboard = useMutation(api.whiteboards.updateWhiteboard);
+  
+  const debouncedSave = useDebouncedCallback(
+    async (elements, appState) => {
+      await updateWhiteboard({
+        id: whiteboard._id,
+        serializedData: JSON.stringify({
+          type: "excalidraw",
+          version: 2,
+          elements,
+          appState: {
+            viewBackgroundColor: appState.viewBackgroundColor,
+            theme: appState.theme,
+          },
+        }),
+      });
+    },
+    500
+  );
+
+  return (
+    <Excalidraw
+      onChange={(elements, appState) => {
+        debouncedSave(elements, appState);
+      }}
+    />
+  );
+}
+```
+
+### Selective state preservation
+
+Only persist relevant appState fields to avoid issues:
+
+```typescript
+const sanitizeAppState = (appState) => ({
+  viewBackgroundColor: appState.viewBackgroundColor,
+  theme: appState.theme,
+  // Add other fields you want to persist
+  // Avoid: selection, cursor position, etc.
+});
+```
+
+---
+
+## Error handling
+
+```typescript
+try {
+  await updateWhiteboard({
+    id: whiteboardId,
+    serializedData: data,
+  });
+} catch (error) {
+  if (error.message.includes("not found")) {
+    // Whiteboard was deleted
+    handleDeleted();
+  } else {
+    // Network or other error
+    showRetryPrompt();
+  }
+}
+```
+
+## Related pages
+
+<CardGroup cols={2}>
+  <Card title="Whiteboards feature" icon="shapes" href="/pointer/features/whiteboards">
+    Learn about the whiteboard user experience.
+  </Card>
+  <Card title="Notes API" icon="file-lines" href="/api-reference/notes/overview">
+    Notes API for text-based content.
+  </Card>
+</CardGroup>

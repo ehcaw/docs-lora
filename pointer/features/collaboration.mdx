@@ -1,0 +1,301 @@
+---
+title: "Real-time collaboration"
+description: "Comprehensive guide to Pointer's real-time collaboration features including document sharing, simultaneous editing, presence awareness, and conflict-free synchronization powered by PartyKit and Yjs."
+---
+
+## Overview
+
+Pointer's collaboration features transform note-taking from a solitary activity into a powerful team capability. Built on PartyKit and Yjs, the collaboration system enables multiple users to edit the same document simultaneously with changes syncing in real-time across all participants. The system handles all the complexity of concurrent editing, conflict resolution, and presence management so you can focus on creating content together.
+
+Real-time collaboration in Pointer is designed to feel natural and seamless. When you share a document with colleagues, you'll see their cursors moving through the document, their text appearing as they type, and their selections highlighted in their assigned color. It's the closest digital approximation to sitting next to someone and writing together.
+
+## How it works
+
+### Conflict-free replicated data types (CRDTs)
+
+At the heart of Pointer's collaboration system is Yjs, a CRDT implementation that ensures all participants eventually converge on the same document state regardless of the order in which edits arrive. This is crucial for real-time collaboration because:
+
+- Users may have different network latencies
+- Edits may arrive out of order
+- Users may make conflicting changes to the same region
+- Network partitions may temporarily separate users
+
+CRDTs solve these problems mathematically, guaranteeing that everyone's document will eventually match without requiring a central authority to resolve conflicts. This approach is more robust than operational transformation (used by older systems like Google Docs) and scales better to large numbers of collaborators.
+
+### PartyKit infrastructure
+
+PartyKit provides the real-time infrastructure that connects all collaborators. When you open a collaborative document:
+
+1. Your client connects to a PartyKit room specific to that document
+2. The PartyKit server maintains the authoritative document state
+3. Your local changes are sent to the server and broadcast to all other participants
+4. Changes from other participants are received and merged into your local state
+5. The Yjs CRDT ensures all merges produce consistent results
+
+The PartyKit server also handles:
+- Presence tracking (who's currently viewing/editing)
+- Cursor position synchronization
+- Connection management and reconnection
+- Rate limiting and abuse prevention
+
+## Sharing documents
+
+To collaborate on a document, you first need to share it with your collaborators. Pointer supports granular sharing controls that let you specify exactly who can access your content.
+
+### Sharing workflow
+
+<Steps>
+  <Step title="Open the share dialog">
+    Click the share button in the document header or use the keyboard shortcut (`Ctrl/Cmd + Shift + S`) to open the sharing dialog. This dialog is your control center for managing document access.
+  </Step>
+  
+  <Step title="Add collaborators">
+    Enter the email addresses of the people you want to share with. You can add multiple collaborators at once by entering each email address and pressing Enter or clicking Add.
+    
+    ```
+    collaborator1@example.com
+    collaborator2@example.com
+    team-member@company.com
+    ```
+  </Step>
+  
+  <Step title="Configure access">
+    For each collaborator, you can configure their access level:
+    - **Editor** - Full read and write access
+    - **Viewer** - Read-only access (coming soon)
+  </Step>
+  
+  <Step title="Send invitations">
+    Click the Share button to send invitations. Collaborators will be able to access the document immediately if they already have a Pointer account with the invited email address.
+  </Step>
+</Steps>
+
+### Managing shared users
+
+The share dialog also shows all current collaborators on a document:
+
+| Information | Description |
+|-------------|-------------|
+| Email | The collaborator's email address |
+| User ID | Unique identifier for the user |
+| Owner | The original document owner is indicated |
+| Remove | Button to revoke a collaborator's access |
+
+To remove a collaborator, click the remove button next to their entry. Their access will be revoked immediately, and if they have the document open, they'll be notified that they no longer have access.
+
+## Enabling collaborative mode
+
+Sharing a document gives others access, but real-time collaboration must be explicitly enabled. This two-step approach gives you control over when live editing is active.
+
+### Toggling collaboration
+
+To enable or disable real-time collaboration:
+
+1. Open the document you want to collaborate on
+2. Click the collaboration toggle in the document header
+3. When enabled, the toggle shows "Collaborative" with a connected status
+4. When disabled, the document works in standard single-user mode
+
+<Info>
+  **Why separate sharing and collaboration?**
+  
+  You might want to share a document for others to reference without enabling live editing. Or you might want to draft content privately before enabling collaboration. The two-step approach gives you this flexibility.
+</Info>
+
+### Collaboration status indicators
+
+When collaboration is enabled, the interface shows several status indicators:
+
+- **Connection status** - Shows whether you're connected to the collaboration server
+- **Collaborator count** - Number of people currently viewing the document
+- **Collaborator avatars** - Profile pictures or initials of active collaborators
+- **Sync status** - Indicates whether local changes have been synced
+
+## Real-time editing experience
+
+When multiple users are editing a document simultaneously, Pointer provides a rich collaborative experience with presence awareness and visual feedback.
+
+### Cursor presence
+
+You can see the cursors of all other collaborators in real-time:
+
+- Each collaborator is assigned a unique color
+- Their cursor appears with their name label
+- The cursor position updates in real-time as they navigate
+- Cursor movements are smoothed for visual comfort
+
+### Selection highlighting
+
+When a collaborator selects text:
+
+- Their selection is highlighted in their assigned color (with transparency)
+- You can see exactly what they're working on
+- Multiple overlapping selections are handled gracefully
+
+### Live text updates
+
+As collaborators type:
+
+- Their text appears character-by-character in real-time
+- Formatting changes apply instantly for all viewers
+- Deletions and insertions are reflected immediately
+- The editing experience feels nearly instantaneous
+
+### Handling conflicts
+
+When two users edit the same region simultaneously, Yjs handles the conflict automatically:
+
+1. Both users' changes are preserved
+2. The changes are merged using CRDT rules
+3. The final result is deterministic and consistent for all users
+4. No user's work is ever lost
+
+<Note>
+  In practice, conflicts are rare because users naturally tend to work on different parts of a document. When conflicts do occur, the merge typically produces sensible results (e.g., if two users add different words at the same position, both words appear in sequence).
+</Note>
+
+## Offline and reconnection
+
+Pointer's collaboration system gracefully handles network interruptions and offline periods:
+
+### Offline editing
+
+If you lose connectivity while editing a collaborative document:
+
+1. You can continue editing locally
+2. Your changes are queued for sync
+3. A status indicator shows you're offline
+4. No data is lost
+
+### Reconnection
+
+When connectivity is restored:
+
+1. Your queued changes are sent to the server
+2. Changes from other collaborators are received
+3. All changes are merged using CRDTs
+4. The document state converges automatically
+5. A notification confirms you're back online
+
+### Conflict resolution
+
+Even after an extended offline period with significant changes from multiple users, the CRDT guarantees:
+
+- All changes are preserved
+- The final document is identical for all users
+- No manual conflict resolution is needed
+
+## Best practices for collaboration
+
+<CardGroup cols={2}>
+  <Card title="Communicate" icon="comments">
+    Use external communication (chat, video) alongside document editing for complex collaborations. Pointer handles the technical sync, but human coordination makes collaboration effective.
+  </Card>
+  <Card title="Divide work" icon="scissors">
+    When possible, divide the document into sections and have each collaborator focus on different areas. This reduces the chance of conflicts and makes progress more visible.
+  </Card>
+  <Card title="Save checkpoints" icon="bookmark">
+    Before major collaborative editing sessions, consider the version history as a checkpoint. This gives you a restore point if needed.
+  </Card>
+  <Card title="Review changes" icon="magnifying-glass">
+    After a collaboration session, review the full document together. Real-time editing can sometimes lead to inconsistencies that are easier to catch in review.
+  </Card>
+</CardGroup>
+
+## Collaboration API
+
+For developers building on Pointer, the collaboration features are exposed through the Convex backend:
+
+### Sharing functions
+
+```typescript
+// Share a note with users
+shareNote({
+  dId: string,        // Document ID
+  users: Array<{
+    userEmail: string,
+    userId: string
+  }>,
+  ownerEmail: string,
+  ownerId: string
+})
+
+// Remove sharing for a user
+unshareNote({
+  dId: string,
+  userEmail: string,
+  ownerEmail: string
+})
+
+// Get list of shared users
+getSharedUsers({ documentId: string })
+
+// Toggle collaborative mode
+toggleCollaboration({
+  docId: string,
+  collaborative: boolean
+})
+```
+
+### Presence and sync
+
+The PartyKit server handles presence and sync automatically. Clients connect using the `@hocuspocus/provider` library which integrates with TipTap and Yjs.
+
+## Security considerations
+
+Pointer's collaboration system includes several security measures:
+
+| Measure | Description |
+|---------|-------------|
+| Authentication | Only authenticated users can access shared documents |
+| Authorization | Sharing permissions are checked on every access |
+| Tenant isolation | Users can only access documents they own or are shared with |
+| Audit logging | Share and unshare actions are logged for accountability |
+| Secure transport | All collaboration traffic uses encrypted connections |
+
+<Warning>
+  When sharing documents, be mindful of the content you're sharing. Collaborators have full access to the document content while sharing is active.
+</Warning>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Connection issues">
+    If you're having trouble connecting to collaborative documents:
+    
+    1. Check your internet connection
+    2. Refresh the page to re-establish the connection
+    3. Verify the collaboration toggle is enabled
+    4. Check if other collaborators can connect
+    5. Contact support if issues persist
+  </Accordion>
+  
+  <Accordion title="Changes not appearing">
+    If your changes aren't appearing for collaborators:
+    
+    1. Check the sync status indicator
+    2. Verify you're connected (not offline)
+    3. Refresh and check if changes persisted
+    4. Check browser console for errors
+  </Accordion>
+  
+  <Accordion title="Can't share document">
+    If the share function isn't working:
+    
+    1. Verify you're the document owner
+    2. Check that you have a valid email address
+    3. Ensure the collaborator's email is correct
+    4. Try refreshing and sharing again
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Notes" icon="file-lines" href="/pointer/features/notes">
+    Learn more about the note editing features available in collaborative documents.
+  </Card>
+  <Card title="Architecture" icon="sitemap" href="/pointer/architecture/real-time-sync">
+    Deep dive into the technical architecture of real-time synchronization.
+  </Card>
+</CardGroup>

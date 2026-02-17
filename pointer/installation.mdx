@@ -1,0 +1,335 @@
+---
+title: "Installation"
+description: "Comprehensive installation guide for setting up Pointer locally for development, self-hosting for production use, or building the native desktop application with Tauri."
+---
+
+## Overview
+
+Pointer can be installed and run in several different configurations depending on your needs. This guide covers all the available options, from simple local development setup to full self-hosted production deployments. Choose the approach that best fits your use case and follow the detailed instructions below.
+
+<CardGroup cols={3}>
+  <Card title="Local development" icon="laptop-code">
+    Set up a complete development environment to contribute to Pointer or customize it for your needs.
+  </Card>
+  <Card title="Self-hosted" icon="server">
+    Deploy your own instance of Pointer with full control over your data and infrastructure.
+  </Card>
+  <Card title="Desktop app" icon="desktop">
+    Build the native Tauri desktop application for a dedicated, offline-capable experience.
+  </Card>
+</CardGroup>
+
+## Prerequisites
+
+Before proceeding with any installation method, ensure your system meets the following requirements:
+
+### System requirements
+
+| Requirement | Minimum | Recommended |
+|-------------|---------|-------------|
+| Node.js | 20.x | Latest LTS |
+| Package manager | npm 10+ | bun (latest) |
+| RAM | 4 GB | 8 GB+ |
+| Disk space | 2 GB | 5 GB+ |
+
+### Required accounts and services
+
+<Warning>
+  Pointer requires several third-party services to function. You'll need to create accounts and obtain API keys from each of these providers before proceeding with the installation.
+</Warning>
+
+1. **Convex** - Backend database and real-time infrastructure
+   - Create an account at [convex.dev](https://convex.dev)
+   - Create a new project and note your deployment URL
+
+2. **Clerk** - Authentication and user management
+   - Create an account at [clerk.com](https://clerk.com)
+   - Create a new application and configure your authentication providers
+   - Note your publishable key and secret key
+
+3. **PartyKit** - Real-time collaboration infrastructure
+   - Create an account at [partykit.io](https://partykit.io)
+   - Create a new project for your collaboration server
+
+## Local development setup
+
+Follow these steps to set up Pointer for local development:
+
+<Steps>
+  <Step title="Clone the repository">
+    Start by cloning the Pointer repository from GitHub to your local machine:
+    
+    ```bash
+    git clone https://github.com/ehcaw/pointer.git
+    cd pointer
+    ```
+  </Step>
+  
+  <Step title="Install dependencies">
+    Install all required dependencies using your preferred package manager. We recommend bun for faster installation:
+    
+    ```bash
+    # Using bun (recommended)
+    bun install
+    
+    # Using npm
+    npm install
+    ```
+    
+    This will install all frontend dependencies as well as development tools and testing utilities.
+  </Step>
+  
+  <Step title="Configure environment variables">
+    Create a `.env.local` file in the root directory with your service credentials:
+    
+    ```bash
+    # Clerk Authentication
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_xxxxx
+    CLERK_SECRET_KEY=sk_test_xxxxx
+    
+    # Convex Backend
+    NEXT_PUBLIC_CONVEX_URL=https://your-project.convex.cloud
+    
+    # PartyKit Collaboration
+    NEXT_PUBLIC_PARTYKIT_HOST=your-project.partykit.dev
+    ```
+    
+    <Info>
+      Never commit your `.env.local` file to version control. The repository includes a `.gitignore` entry to prevent accidental exposure of secrets.
+    </Info>
+  </Step>
+  
+  <Step title="Initialize Convex">
+    Set up your Convex backend by running the initialization command:
+    
+    ```bash
+    npx convex dev
+    ```
+    
+    This command will:
+    - Connect to your Convex project
+    - Push the database schema defined in `convex/schema.ts`
+    - Start watching for changes to your backend functions
+    
+    Keep this terminal open while developing—Convex will automatically sync your backend changes.
+  </Step>
+  
+  <Step title="Start the development server">
+    In a new terminal window, start the Next.js development server with Turbopack for fast refresh:
+    
+    ```bash
+    # Using bun
+    bun dev
+    
+    # Using npm
+    npm run dev
+    ```
+    
+    The application will be available at `http://localhost:3000`. The development server supports hot module replacement, so changes to your code will appear instantly without requiring a full page reload.
+  </Step>
+  
+  <Step title="Start the PartyKit server (optional)">
+    For real-time collaboration features, you'll also need to run the PartyKit server:
+    
+    ```bash
+    npx partykit dev
+    ```
+    
+    This starts a local PartyKit server that handles real-time synchronization between collaborators.
+  </Step>
+</Steps>
+
+## Development commands
+
+The Pointer repository includes several useful commands for development:
+
+| Command | Description |
+|---------|-------------|
+| `bun dev` | Start Next.js development server with Turbopack |
+| `bun build` | Build the application for production |
+| `bun start` | Start the production server |
+| `bun lint` | Run ESLint to check for code quality issues |
+| `bun test` | Run the test suite with Vitest |
+| `bun test:watch` | Run tests in watch mode during development |
+| `bun test:coverage` | Generate test coverage report |
+| `bun test:convex` | Run Convex backend tests specifically |
+| `bun test:all` | Run all tests including frontend and backend |
+
+## Building the desktop application
+
+Pointer includes a Tauri-based desktop application that provides a native experience with potential offline capabilities. Follow these steps to build it:
+
+### Additional prerequisites for Tauri
+
+<Tabs>
+  <Tab title="macOS">
+    Install Xcode Command Line Tools:
+    
+    ```bash
+    xcode-select --install
+    ```
+  </Tab>
+  <Tab title="Windows">
+    Install the following:
+    - [Microsoft Visual Studio C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+    - [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
+  </Tab>
+  <Tab title="Linux">
+    Install required system libraries:
+    
+    ```bash
+    # Debian/Ubuntu
+    sudo apt update
+    sudo apt install libwebkit2gtk-4.1-dev build-essential curl wget file libssl-dev libayatana-appindicator3-dev librsvg2-dev
+    
+    # Fedora
+    sudo dnf install webkit2gtk4.1-devel openssl-devel curl wget file libappindicator-gtk3-devel librsvg2-devel
+    ```
+  </Tab>
+</Tabs>
+
+### Install Rust
+
+Tauri requires Rust to build the native application wrapper:
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+After installation, restart your terminal and verify:
+
+```bash
+rustc --version
+cargo --version
+```
+
+### Build the desktop app
+
+<Steps>
+  <Step title="Install Tauri CLI">
+    The Tauri CLI is included in the project's dev dependencies, but you can also install it globally:
+    
+    ```bash
+    cargo install tauri-cli
+    ```
+  </Step>
+  
+  <Step title="Build the application">
+    Run the Tauri build command to compile the desktop application:
+    
+    ```bash
+    # Development build
+    cargo tauri dev
+    
+    # Production build
+    cargo tauri build
+    ```
+    
+    The production build will create distributable binaries in `src-tauri/target/release/bundle/`.
+  </Step>
+  
+  <Step title="Run the desktop app">
+    For development, `cargo tauri dev` will automatically launch the application with hot reload enabled.
+    
+    For production builds, find the installer or executable in the bundle directory appropriate for your platform.
+  </Step>
+</Steps>
+
+## Project structure
+
+Understanding the project structure will help you navigate the codebase efficiently:
+
+```
+pointer/
+├── src/
+│   ├── app/              # Next.js App Router pages
+│   │   ├── api/          # API routes
+│   │   ├── main/         # Main application pages
+│   │   ├── preview/      # Public preview pages
+│   │   └── sign-up/      # Authentication pages
+│   ├── components/       # React components
+│   │   ├── graph/        # Graph visualization components
+│   │   ├── history/      # Version history components
+│   │   ├── navigation/   # Navigation components
+│   │   ├── sidebar/      # Sidebar components
+│   │   ├── tiptap/       # TipTap editor components
+│   │   ├── ui/           # Base UI components (shadcn)
+│   │   ├── views/        # Main view components
+│   │   └── whiteboard/   # Whiteboard components
+│   ├── contexts/         # React contexts
+│   ├── hooks/            # Custom React hooks
+│   ├── lib/              # Utility functions
+│   ├── providers/        # Provider components
+│   ├── styles/           # Global styles
+│   └── types/            # TypeScript type definitions
+├── convex/               # Convex backend
+│   ├── __tests__/        # Backend tests
+│   ├── _generated/       # Generated Convex code
+│   ├── schema.ts         # Database schema
+│   ├── notes.ts          # Notes API functions
+│   ├── whiteboards.ts    # Whiteboard API functions
+│   ├── taskManagement.ts # Task API functions
+│   └── ...               # Other backend modules
+├── partykit/             # PartyKit collaboration server
+│   └── server.ts         # Real-time sync server
+├── src-tauri/            # Tauri desktop app
+│   ├── src/              # Rust source code
+│   ├── icons/            # App icons
+│   └── tauri.conf.json   # Tauri configuration
+├── __tests__/            # Frontend tests
+└── public/               # Static assets
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Convex connection errors">
+    If you're seeing connection errors with Convex:
+    
+    1. Verify your `NEXT_PUBLIC_CONVEX_URL` is correct in `.env.local`
+    2. Ensure you've run `npx convex dev` and it's still running
+    3. Check that your Convex project is not paused in the dashboard
+    4. Try restarting both the Convex dev process and the Next.js server
+  </Accordion>
+  
+  <Accordion title="Clerk authentication issues">
+    If authentication isn't working:
+    
+    1. Double-check both Clerk environment variables are set correctly
+    2. Verify your Clerk application configuration includes the correct redirect URLs
+    3. Clear browser cookies and try signing in again
+    4. Check the Clerk dashboard for any error logs
+  </Accordion>
+  
+  <Accordion title="PartyKit connection failures">
+    If real-time collaboration isn't syncing:
+    
+    1. Ensure the PartyKit server is running (`npx partykit dev`)
+    2. Verify `NEXT_PUBLIC_PARTYKIT_HOST` is set correctly
+    3. Check for any CORS issues in the browser console
+    4. Confirm your PartyKit project is configured correctly
+  </Accordion>
+  
+  <Accordion title="Tauri build failures">
+    If the desktop app won't build:
+    
+    1. Verify Rust is installed correctly: `rustc --version`
+    2. Update Rust to the latest version: `rustup update`
+    3. On Linux, ensure all WebKit dependencies are installed
+    4. Try cleaning the build cache: `cargo clean`
+    5. Check the Tauri documentation for platform-specific requirements
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+With your development environment set up, you're ready to start building with Pointer:
+
+<CardGroup cols={2}>
+  <Card title="Architecture overview" icon="sitemap" href="/pointer/architecture/overview">
+    Understand the high-level architecture and how all the pieces fit together.
+  </Card>
+  <Card title="API reference" icon="code" href="/api-reference/notes/overview">
+    Explore the Convex backend APIs for building integrations.
+  </Card>
+</CardGroup>

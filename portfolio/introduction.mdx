@@ -1,0 +1,246 @@
+---
+title: "Portfolio"
+description: "A beautifully crafted developer portfolio website built with Next.js, featuring an IDE-inspired layout with file tree navigation, tabbed interface, and markdown rendering."
+---
+
+## Overview
+
+The Portfolio project is a personal developer portfolio website that breaks away from traditional portfolio designs by presenting content through an IDE-inspired interface. Instead of conventional pages and navigation menus, visitors explore your work through a familiar file tree structure, opening projects and content as tabs in a code editor-like environment.
+
+This unique approach resonates with developers and technical audiences, creating an immediately recognizable and engaging experience. The portfolio effectively demonstrates technical proficiency while showcasing your projects and experience in an interactive, memorable format.
+
+## Design philosophy
+
+The portfolio is built around several key design decisions that create its distinctive character:
+
+<CardGroup cols={2}>
+  <Card title="IDE-inspired layout" icon="laptop-code">
+    The interface mimics the layout of popular code editors with a sidebar file tree, tab bar, and main content area—instantly familiar to any developer.
+  </Card>
+  <Card title="Content as files" icon="folder-tree">
+    Projects, about information, and other content are organized as files and folders, making navigation intuitive and exploration natural.
+  </Card>
+  <Card title="Markdown rendering" icon="file-code">
+    Content is written in Markdown and rendered beautifully with syntax highlighting, making it easy to write and maintain.
+  </Card>
+  <Card title="Dark mode support" icon="moon">
+    Toggle between light and dark themes with a single click, respecting users' preferences and reducing eye strain.
+  </Card>
+</CardGroup>
+
+## Key features
+
+### File tree navigation
+
+The left sidebar displays a hierarchical file tree containing all your portfolio content:
+
+- **About** - Introduction and personal information
+- **Projects** - Folder containing individual project files
+- **Experience** - Work history and professional background
+- **Skills** - Technical competencies and expertise
+- **Contact** - Contact information and links
+
+Clicking on any file opens it in the main content area. The tree structure supports nested folders for organizing complex portfolios with many projects or categories.
+
+### Tabbed interface
+
+Like a real code editor, the portfolio supports opening multiple content items as tabs:
+
+- Click any file in the tree to open it as a new tab
+- Switch between open tabs by clicking on them
+- Close tabs with the X button (except the last remaining tab)
+- The currently active tab is visually highlighted
+
+This multi-tab approach lets visitors keep interesting content open while exploring other sections, mimicking how developers work with multiple files in their IDE.
+
+### Markdown content
+
+All portfolio content is written in Markdown, which is then rendered with rich formatting:
+
+- Headings with proper hierarchy
+- Bold, italic, and other text formatting
+- Code blocks with syntax highlighting
+- Links (both internal navigation and external)
+- Lists (bulleted and numbered)
+- Tables for structured information
+- Blockquotes for callouts
+
+### Project showcases
+
+Each project file can include:
+
+- Project title and description
+- Technology stack used
+- Key features and highlights
+- Screenshots and images
+- Links to live demos and source code
+- Detailed technical writeups
+
+### Image galleries
+
+Projects can include multiple images that are displayed in an attractive gallery format:
+
+- Thumbnail previews in the project content
+- Full-size image modal on click
+- Support for various image formats
+- Lazy loading for performance
+
+### Theme toggle
+
+The top bar includes a theme toggle button that switches between:
+
+- **Light mode** - Clean, professional appearance with light backgrounds
+- **Dark mode** - Easy on the eyes, matching popular IDE dark themes
+
+Theme preference is applied instantly without page reload.
+
+### Responsive design
+
+While the IDE layout is designed for desktop viewing, the portfolio includes responsive adaptations:
+
+- Collapsible sidebar on mobile devices
+- Touch-friendly navigation
+- Optimized layouts for different screen sizes
+- Mobile-first progressive enhancement
+
+## Technology stack
+
+The portfolio is built with modern web technologies:
+
+| Technology | Purpose |
+|------------|---------|
+| Next.js 14+ | React framework with App Router |
+| TypeScript | Type-safe JavaScript |
+| Tailwind CSS 4 | Utility-first styling |
+| shadcn/ui | Accessible UI components |
+| Radix UI | Headless UI primitives |
+| Lucide React | Icon library |
+| Geist Font | Modern, readable typography |
+
+### Component architecture
+
+The portfolio is organized into well-structured components:
+
+```
+src/
+├── app/
+│   ├── page.tsx          # Main entry point
+│   ├── layout.tsx        # Root layout
+│   └── globals.css       # Global styles
+├── components/
+│   ├── file-tree.tsx     # Hierarchical file navigation
+│   ├── ide-layout.tsx    # Main IDE-inspired layout
+│   ├── image-modal.tsx   # Full-size image viewer
+│   ├── markdown-renderer.tsx  # Content rendering
+│   ├── project-images.tsx     # Image gallery
+│   └── ui/               # Base UI components
+└── lib/
+    └── portfolio-data.ts # Content data structure
+```
+
+## Content structure
+
+Portfolio content is defined in a typed data structure:
+
+```typescript
+interface FileNode {
+  id: string;
+  name: string;
+  type: "file" | "folder";
+  content?: string;      // Markdown content for files
+  children?: FileNode[]; // Child nodes for folders
+  images?: string[];     // Image URLs for projects
+  githubUrl?: string;    // Link to source code
+}
+```
+
+This structure allows for:
+- Flexible content organization
+- Type-safe content management
+- Easy content updates without code changes
+- Rich metadata for each content item
+
+## Customization
+
+### Adding content
+
+To add new content to the portfolio:
+
+1. Open `lib/portfolio-data.ts`
+2. Add a new entry to the appropriate location in the tree
+3. Include Markdown content, images, and metadata
+4. The new content appears automatically in the file tree
+
+### Styling
+
+The portfolio uses Tailwind CSS for styling:
+
+- Colors are defined in the CSS custom properties
+- Theme variants are handled through CSS classes
+- Component styling uses Tailwind utility classes
+- Custom components can be added following the same patterns
+
+### Extending functionality
+
+The modular architecture makes it easy to extend:
+
+- Add new component types for different content formats
+- Integrate with CMS for dynamic content
+- Add analytics and tracking
+- Implement contact forms or interactive elements
+
+## Getting started
+
+### Running locally
+
+```bash
+# Clone the repository
+git clone https://github.com/ehcaw/portfolio.git
+cd portfolio
+
+# Install dependencies
+bun install   # or npm install
+
+# Start development server
+bun dev       # or npm run dev
+
+# Open http://localhost:3000
+```
+
+### Deploying
+
+The portfolio can be deployed to any platform that supports Next.js:
+
+- **Vercel** - Zero-config deployment (recommended)
+- **Netlify** - Simple drag-and-drop or Git integration
+- **AWS Amplify** - Full AWS integration
+- **Self-hosted** - Any Node.js environment
+
+## Best practices
+
+<Tip>
+  **Keep content updated:** Regularly update your portfolio with new projects and experiences. A stale portfolio suggests inactivity.
+</Tip>
+
+<Tip>
+  **Optimize images:** Compress and resize images before adding them. Large images slow down the site and hurt user experience.
+</Tip>
+
+<Tip>
+  **Write engaging descriptions:** Don't just list technologies—tell the story of your projects, the problems they solve, and your role in building them.
+</Tip>
+
+<Tip>
+  **Test on mobile:** While the IDE layout is desktop-focused, many visitors will view on mobile. Ensure the experience is still good.
+</Tip>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Features deep dive" icon="sparkles" href="/portfolio/features">
+    Explore all the features and customization options in detail.
+  </Card>
+  <Card title="Pointer" icon="pen-nib" href="/pointer/introduction">
+    Check out Pointer, a full-featured note-taking application.
+  </Card>
+</CardGroup>

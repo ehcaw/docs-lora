@@ -1,0 +1,438 @@
+---
+title: "Database schema"
+description: "Complete documentation of Pointer's Convex database schema including tables, fields, indexes, and relationships for notes, whiteboards, tasks, and supporting entities."
+---
+
+## Overview
+
+Pointer's data model is designed around multi-tenancy, flexible content storage, and support for collaborative features. The schema is defined in Convex, which provides automatic TypeScript types, validation, and reactive subscriptions.
+
+All tables include a `tenantId` field for user isolation, ensuring that users can only access their own data. The schema is designed to be efficient for common queries while supporting the full feature set of the application.
+
+## Schema definition
+
+```typescript
+import { defineSchema, defineTable } from "convex/server";
+import { v } from "convex/values";
+
+export default defineSchema({
+  notes,
+  notesCopy,
+  notesContent,
+  jots,
+  tags,
+  whiteboards,
+  imageReferences,
+  imageReferencesCleanup,
+  documentShares,
+  userTasks,
+  notesHistoryMetadata,
+  notesHistoryContent,
+});
+```
+
+## Notes table
+
+The primary table for storing notes and folders in a hierarchical structure.
+
+### Schema
+
+```typescript
+notes: defineTable({
+  // Content (optional, only for files)
+  content: v.optional(v.object({
+    text: v.string(),
+    tiptap: v.optional(v.string()),
+  })),
+  
+  // Timestamps
+  createdAt: v.string(),
+  lastAccessed: v.string(),
+  lastEdited: v.string(),
+  updatedAt: v.string(),
+  
+  // Identification
+  name: v.string(),
+  quibble_id: v.optional(v.string()),
+  pointer_id: v.string(),
+  tenantId: v.string(),
+  
+  // Type and hierarchy
+  type: v.optional(v.union(v.literal("file"), v.literal("folder"))),
+  parent_id: v.optional(v.id("notes")),
+  
+  // Features
+  collaborative: v.boolean(),
+  last_backed_up_at: v.optional(v.number()),
+})
+```
+
+### Indexes
+
+| Index name | Fields | Purpose |
+|------------|--------|---------|
+| `by_pointer_id` | `pointer_id` | Lookup notes by client-side ID |
+| `by_tenant` | `tenantId` | List all notes for a user |
+| `by_parent` | `parent_id` | Find children of a folder |
+| `by_type_parent` | `type`, `parent_id` | Filter by type within a folder |
+
+### Fields explained
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `content` | Object | Legacy content storage (now in separate table) |
+| `content.text` | String | Plain text for search/preview |
+| `content.tiptap` | String | TipTap JSON for rich rendering |
+| `createdAt` | String | ISO timestamp of creation |
+| `lastAccessed` | String | When note was last opened |
+| `lastEdited` | String | When content was last modified |
+| `updatedAt` | String | When any field was last updated |
+| `name` | String | Display name of note/folder |
+| `pointer_id` | String | Client-generated unique ID |
+| `tenantId` | String | Owner's user ID (Clerk subject) |
+| `type` | Literal | "file" or "folder" |
+| `parent_id` | ID | Parent folder reference (null for root) |
+| `collaborative` | Boolean | Whether real-time collab is enabled |
+| `last_backed_up_at` | Number | Timestamp of last version backup |
+
+## Notes content table
+
+Separate storage for note content, enabling efficient metadata queries without loading content.
+
+### Schema
+
+```typescript
+notesContent: defineTable({
+  noteId: v.id("notes"),
+  content: v.object({
+    text: v.string(),
+    tiptap: v.optional(v.string()),
+  }),
+  tenantId: v.string(),
+})
+```
+
+### Indexes
+
+| Index name | Fields | Purpose |
+|------------|--------|---------|
+| `by_owner` | `tenantId` | List all content for a user |
+| `by_noteid` | `noteId` | Get content for a specific note |
+
+### Design rationale
+
+Separating content from metadata provides several benefits:
+
+- **Faster queries** - List notes without loading content
+- **Smaller payloads** - Metadata-only responses for navigation
+- **Independent scaling** - Content storage can grow independently
+- **Easier migration** - Content format changes don't affect metadata
+
+## Document shares table
+
+Manages sharing relationships between users and notes.
+
+### Schema
+
+```typescript
+documentShares: defineTable({
+  documentId: v.id("notes"),
+  userEmail: v.string(),
+  userId: v.string(),
+  ownerEmail: v.string(),
+  ownerId: v.string(),
+})
+```
+
+### Indexes
+
+| Index name | Fields | Purpose |
+|------------|--------|---------|
+| `by_document_user` | `documentId`, `userId`, `userEmail` | Check if user has access |
+| `by_userId` | `userId` | Find all documents shared with user |
+
+### Relationships
+
+```
+┌─────────────┐         ┌──────────────────┐
+│    notes    │◄────────│  documentShares  │
+│             │         │                  │
+│  _id        │         │  documentId      │──────► notes._id
+│  tenantId   │         │  userId          │──────► recipient user
+│             │         │  ownerId         │──────► owner user
+└─────────────┘         └──────────────────┘
+```
+
+## Whiteboards table
+
+Stores whiteboard data for visual collaboration.
+
+### Schema
+
+```typescript
+whiteboards: defineTable({
+  title: v.string(),
+  tenantId: v.string(),
+  serializedData: v.optional(v.string()),
+  lastModified: v.string(),
+})
+```
+
+### Indexes
+
+| Index name | Fields | Purpose |
+|------------|--------|---------|
+| `by_owner` | `tenantId` | Get user's whiteboard |
+
+### Fields explained
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `title` | String | Whiteboard name |
+| `tenantId` | String | Owner's user ID |
+| `serializedData` | String | Full Excalidraw state as JSON |
+| `lastModified` | String | ISO timestamp of last change |
+
+## User tasks table
+
+Stores tasks for the integrated task management feature.
+
+### Schema
+
+```typescript
+userTasks: defineTable({
+  tenantId: v.string(),
+  taskName: v.string(),
+  taskDescription: v.optional(v.string()),
+  category: v.optional(v.string()),
+  tags: v.optional(v.array(v.string())),
+  completed: v.boolean(),
+  createdAt: v.string(),
+  dueBy: v.optional(v.string()),
+})
+```
+
+### Indexes
+
+| Index name | Fields | Purpose |
+|------------|--------|---------|
+| `by_tenant` | `tenantId` | List user's tasks |
+
+### Fields explained
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `taskName` | String | Task title (required) |
+| `taskDescription` | String | Extended description |
+| `category` | String | Single category for grouping |
+| `tags` | Array | Multiple tags for filtering |
+| `completed` | Boolean | Completion status |
+| `createdAt` | String | ISO timestamp of creation |
+| `dueBy` | String | Optional deadline |
+
+## Version history tables
+
+Two tables work together to store note version history.
+
+### Metadata table
+
+```typescript
+notesHistoryMetadata: defineTable({
+  noteId: v.id("notes"),
+  tenantId: v.string(),
+  timestamp: v.number(),
+})
+```
+
+### Content table
+
+```typescript
+notesHistoryContent: defineTable({
+  metadataId: v.id("notesHistoryMetadata"),
+  content: v.object({
+    text: v.string(),
+    tiptap: v.optional(v.string()),
+  }),
+  tenantId: v.string(),
+})
+```
+
+### Indexes
+
+| Table | Index | Fields | Purpose |
+|-------|-------|--------|---------|
+| `notesHistoryMetadata` | `by_note_id` | `noteId` | Get versions for a note |
+| `notesHistoryMetadata` | `by_creation` | `timestamp` | Sort versions chronologically |
+| `notesHistoryContent` | `by_metadata_id` | `metadataId` | Get content for a version |
+
+### Design rationale
+
+Similar to notes/notesContent separation:
+
+- **Efficient listing** - Browse version history without loading content
+- **On-demand loading** - Content loaded only when previewing
+- **Storage optimization** - Could compress old content in future
+
+## Image references table
+
+Tracks image files uploaded to notes and whiteboards.
+
+### Schema
+
+```typescript
+imageReferences: defineTable({
+  storageId: v.string(),
+  tenantId: v.string(),
+  format: v.union(v.literal("image")),
+  documentOwnerType: v.union(v.literal("notes"), v.literal("whiteboards")),
+  documentOwner: v.union(v.id("notes"), v.id("whiteboards")),
+  createdAt: v.string(),
+})
+```
+
+### Indexes
+
+| Index name | Fields | Purpose |
+|------------|--------|---------|
+| `by_doc` | `documentOwner` | Find images for a document |
+| `by_storage` | `storageId` | Find reference by storage ID |
+| `by_doc_storage` | `documentOwner`, `storageId` | Check specific image in document |
+
+### Purpose
+
+Image references serve several purposes:
+
+- **Ownership tracking** - Know which document owns an image
+- **Cleanup** - Delete images when parent document is deleted
+- **Deduplication** - Potentially share images across documents
+
+## Tags table
+
+User-defined tags for organizing content.
+
+### Schema
+
+```typescript
+tags: defineTable({
+  tenantId: v.string(),
+  name: v.string(),
+})
+```
+
+### Usage
+
+Tags can be created, listed, and deleted per user. They provide a vocabulary of labels that users can apply to tasks and potentially other content types.
+
+## Jots table
+
+Quick capture of various content types.
+
+### Schema
+
+```typescript
+jots: defineTable({
+  tenantId: v.string(),
+  type: v.string(),
+  content: v.optional(v.string()),
+  title: v.optional(v.string()),
+  link: v.optional(v.string()),
+  description: v.optional(v.string()),
+})
+```
+
+### Purpose
+
+Jots provide a flexible container for quick captures that don't warrant a full note, such as:
+
+- Quick thoughts
+- Links with descriptions
+- Short snippets
+- Temporary items
+
+## Entity relationships
+
+```
+┌──────────────┐
+│    notes     │
+│              │◄──────────────┐
+│  _id         │               │ parent_id
+│  tenantId    │               │
+│  parent_id   │───────────────┘
+└──────┬───────┘
+       │
+       │ noteId
+       ▼
+┌──────────────┐     ┌──────────────────────┐
+│ notesContent │     │  notesHistoryMetadata│
+└──────────────┘     │                      │
+                     │  noteId ─────────────┼──► notes._id
+                     └──────────┬───────────┘
+                                │
+                                │ metadataId
+                                ▼
+                     ┌──────────────────────┐
+                     │ notesHistoryContent  │
+                     └──────────────────────┘
+```
+
+## Best practices
+
+### Querying patterns
+
+<Tip>
+  **Use indexes** - Always query with an index when filtering. The `withIndex` method ensures efficient queries.
+</Tip>
+
+```typescript
+// Good - uses index
+await ctx.db
+  .query("notes")
+  .withIndex("by_tenant", (q) => q.eq("tenantId", userId))
+  .collect();
+
+// Avoid - full table scan
+await ctx.db
+  .query("notes")
+  .filter((q) => q.eq(q.field("tenantId"), userId))
+  .collect();
+```
+
+### Tenant isolation
+
+<Warning>
+  **Always filter by tenantId** - Every query that returns user data must include a tenant check to prevent data leakage.
+</Warning>
+
+```typescript
+// Always verify tenant
+const note = await ctx.db.get(noteId);
+if (note?.tenantId !== identity.subject) {
+  throw new Error("Unauthorized");
+}
+```
+
+### Atomic operations
+
+<Tip>
+  **Use transactions** - Convex mutations are transactional. Group related operations in a single mutation for consistency.
+</Tip>
+
+```typescript
+// All operations succeed or fail together
+handler: async (ctx, args) => {
+  const noteId = await ctx.db.insert("notes", {...});
+  await ctx.db.insert("notesContent", { noteId, ... });
+  return noteId;
+}
+```
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Architecture overview" icon="sitemap" href="/pointer/architecture/overview">
+    Understand how the database fits into the overall architecture.
+  </Card>
+  <Card title="Real-time sync" icon="rotate" href="/pointer/architecture/real-time-sync">
+    Learn how data changes propagate in real-time.
+  </Card>
+</CardGroup>

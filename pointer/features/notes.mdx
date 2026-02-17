@@ -1,0 +1,247 @@
+---
+title: "Notes"
+description: "Deep dive into Pointer's powerful note-taking features including the TipTap-based rich text editor, hierarchical folder organization, and intelligent content management capabilities."
+---
+
+## Overview
+
+At its core, Pointer is a note-taking application, and the notes feature is where you'll spend most of your time. The notes system is designed to be powerful enough for complex documentation while remaining simple and intuitive for quick capture of ideas. Every note in Pointer is a rich text document that supports a wide variety of content types and formatting options, all persisted automatically to the cloud so you never lose your work.
+
+The notes feature is built around three key principles: seamless writing experience, flexible organization, and intelligent persistence. These principles manifest in every aspect of the feature, from the responsive editor that gets out of your way while writing to the hierarchical folder system that scales from a handful of notes to thousands.
+
+## The TipTap editor
+
+Pointer's note editor is built on TipTap, a headless editor framework that sits on top of ProseMirror. This architecture provides several important benefits: the editing experience is smooth and responsive, the editor is highly extensible for adding new capabilities, and the underlying document model is robust and well-suited for collaborative editing scenarios.
+
+### Rich text formatting
+
+The editor supports a comprehensive set of text formatting options that cover virtually any writing need:
+
+<CardGroup cols={2}>
+  <Card title="Text styles" icon="font">
+    Bold, italic, underline, strikethrough, code, highlight, subscript, and superscript formatting for expressive text styling.
+  </Card>
+  <Card title="Headings" icon="heading">
+    Six levels of headings for creating clear document structure and enabling automatic outline generation.
+  </Card>
+  <Card title="Lists" icon="list">
+    Bullet lists, numbered lists, and task lists with checkbox support for organizing information.
+  </Card>
+  <Card title="Code" icon="code">
+    Inline code formatting and fenced code blocks with syntax highlighting for over 100 programming languages.
+  </Card>
+</CardGroup>
+
+### Block elements
+
+Beyond basic text formatting, the editor supports a variety of block-level elements for structuring your content:
+
+| Element | Description | Use case |
+|---------|-------------|----------|
+| Paragraphs | Standard text blocks with proper spacing | General writing |
+| Code blocks | Syntax-highlighted code with language detection | Documentation, tutorials |
+| Tables | Full-featured tables with resizable columns | Structured data, comparisons |
+| Images | Inline images with upload and URL support | Visual content |
+| Horizontal rules | Visual separators between sections | Content organization |
+| Blockquotes | Indented quotation blocks | Citations, callouts |
+
+### Slash commands
+
+The slash command system provides quick access to all editor features without leaving your keyboard. Simply type `/` at the beginning of a line or after a space to open the command palette:
+
+```
+/heading1    Insert a level 1 heading
+/heading2    Insert a level 2 heading
+/bullet      Start a bullet list
+/numbered    Start a numbered list
+/code        Insert a code block
+/table       Insert a table
+/image       Insert an image
+/quote       Insert a blockquote
+/divider     Insert a horizontal rule
+```
+
+The command palette supports fuzzy search, so you can type partial commands to quickly find what you need. For example, typing `/h1` will match `/heading1`.
+
+### Keyboard shortcuts
+
+For power users, the editor supports extensive keyboard shortcuts that allow for rapid formatting without reaching for the mouse:
+
+<Tabs>
+  <Tab title="Text formatting">
+    | Shortcut | Action |
+    |----------|--------|
+    | `Ctrl/Cmd + B` | Bold |
+    | `Ctrl/Cmd + I` | Italic |
+    | `Ctrl/Cmd + U` | Underline |
+    | `Ctrl/Cmd + Shift + S` | Strikethrough |
+    | `Ctrl/Cmd + E` | Code |
+    | `Ctrl/Cmd + Shift + H` | Highlight |
+  </Tab>
+  <Tab title="Structure">
+    | Shortcut | Action |
+    |----------|--------|
+    | `Ctrl/Cmd + Shift + 1-6` | Heading levels 1-6 |
+    | `Ctrl/Cmd + Shift + 7` | Bullet list |
+    | `Ctrl/Cmd + Shift + 8` | Numbered list |
+    | `Ctrl/Cmd + Shift + 9` | Task list |
+  </Tab>
+  <Tab title="Editing">
+    | Shortcut | Action |
+    |----------|--------|
+    | `Ctrl/Cmd + Z` | Undo |
+    | `Ctrl/Cmd + Shift + Z` | Redo |
+    | `Ctrl/Cmd + K` | Insert link |
+    | `Ctrl/Cmd + S` | Manual save |
+    | `Tab` | Indent list item |
+    | `Shift + Tab` | Outdent list item |
+  </Tab>
+</Tabs>
+
+### Floating toolbar
+
+When you select text in the editor, a floating toolbar appears above your selection providing quick access to the most common formatting options. This contextual toolbar makes formatting fast and intuitive—select the text you want to format and click the appropriate button.
+
+The floating toolbar includes:
+- Text formatting (bold, italic, underline, strikethrough)
+- Code formatting
+- Highlight with color picker
+- Text alignment options
+- Link insertion
+- Comment and annotation tools (in collaborative mode)
+
+## Hierarchical folder organization
+
+Pointer supports a full hierarchical folder structure that allows you to organize your notes in whatever way makes sense for your workflow. The folder system is designed to be flexible and scalable, working equally well for personal note collections and large team knowledge bases.
+
+### Creating folders
+
+To create a new folder:
+
+1. Right-click in the sidebar or click the folder creation button
+2. Enter a name for your folder
+3. Optionally select a parent folder to nest it within
+4. Click create
+
+Folders can be nested to any depth, allowing you to create complex organizational hierarchies. However, we recommend keeping your structure relatively flat (3-4 levels maximum) for easier navigation.
+
+### Moving content
+
+Notes and folders can be moved between locations using drag-and-drop:
+
+1. Click and hold on the note or folder you want to move
+2. Drag it to the target folder
+3. Drop it to complete the move
+
+The system includes safeguards to prevent circular references (moving a folder into its own descendant) and validates that you have appropriate permissions for the move operation.
+
+### Folder operations
+
+Right-clicking on a folder reveals additional operations:
+
+- **Rename** - Change the folder's name
+- **Delete** - Remove the folder (with option to cascade delete or protect non-empty folders)
+- **Move** - Relocate the folder to a new parent
+- **New note** - Create a new note directly in this folder
+- **New subfolder** - Create a nested folder
+
+## Note persistence and sync
+
+Every change you make to a note is automatically persisted to the Convex cloud database. The persistence system is designed to be invisible—you should never have to think about saving your work because it happens continuously in the background.
+
+### Auto-save behavior
+
+The editor implements a debounced auto-save that triggers:
+- 500ms after you stop typing
+- Immediately when you click away from the editor
+- When you close the note or navigate elsewhere
+
+This approach balances responsiveness (your changes are saved quickly) with efficiency (we don't overwhelm the database with saves on every keystroke).
+
+### Optimistic updates
+
+When you make changes, they appear immediately in the UI while the save operation happens in the background. If the save fails for any reason (network issues, etc.), the system will retry automatically and alert you if the problem persists.
+
+### Content structure
+
+Notes in Pointer are stored with dual content representations:
+
+```typescript
+content: {
+  text: string,      // Plain text for search and previews
+  tiptap: string     // Full TipTap JSON for rich rendering
+}
+```
+
+This dual storage enables efficient full-text search across all your notes while preserving the complete rich text structure for rendering.
+
+## Version history
+
+Pointer automatically maintains version history for your notes, allowing you to review and restore previous versions of your documents. The versioning system uses intelligent criteria to determine when to create backups, avoiding both excessive storage usage and gaps in history.
+
+### Backup criteria
+
+A new version backup is created when:
+- Significant content changes are detected (not just minor edits)
+- A configurable time interval has passed since the last backup
+- You explicitly request a version snapshot
+
+### Viewing history
+
+To view the version history for a note:
+
+1. Open the note in the editor
+2. Click the history icon in the toolbar or header
+3. Browse through previous versions with timestamps
+4. Click any version to preview its content
+5. Restore a version to make it the current content
+
+### Storage considerations
+
+Version history is stored efficiently using delta compression where possible. Older versions may be pruned based on configurable retention policies to manage storage costs.
+
+## Note metadata
+
+Each note includes metadata that helps with organization and navigation:
+
+| Field | Description |
+|-------|-------------|
+| `name` | The display name of the note |
+| `createdAt` | When the note was first created |
+| `updatedAt` | When the note was last modified |
+| `lastAccessed` | When the note was last opened |
+| `lastEdited` | When content was last changed |
+| `type` | Either "file" (note) or "folder" |
+| `collaborative` | Whether real-time collaboration is enabled |
+| `parent_id` | Reference to the parent folder (if any) |
+
+This metadata enables features like:
+- Sorting notes by various criteria
+- Showing recently accessed notes
+- Identifying stale content that may need review
+- Building activity timelines
+
+## Best practices
+
+<Tip>
+  **Naming conventions:** Use clear, descriptive names for your notes that will help you find them later. Include relevant keywords and consider using a consistent naming pattern for related notes.
+</Tip>
+
+<Tip>
+  **Folder structure:** Create your folder structure based on how you naturally think about your content, not how you think you "should" organize it. The best organization is the one you'll actually use.
+</Tip>
+
+<Tip>
+  **Regular review:** Periodically review your notes to archive or delete outdated content. A smaller, well-maintained collection is more valuable than a large, cluttered one.
+</Tip>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Collaboration" icon="users" href="/pointer/features/collaboration">
+    Learn how to share notes and collaborate in real-time with others.
+  </Card>
+  <Card title="Version history" icon="clock-rotate-left" href="/pointer/features/version-history">
+    Deep dive into the version history and backup features.
+  </Card>
+</CardGroup>

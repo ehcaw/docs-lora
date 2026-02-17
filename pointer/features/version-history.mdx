@@ -1,0 +1,310 @@
+---
+title: "Version history"
+description: "Never lose important changes with Pointer's intelligent version history system that automatically creates backups of your notes based on meaningful change criteria."
+---
+
+## Overview
+
+Losing work is one of the most frustrating experiences in any writing or knowledge management tool. Pointer's version history feature ensures you never lose important changes by automatically creating backups of your notes at meaningful intervals. The system is designed to capture significant changes without overwhelming you with trivial snapshots, providing a reliable safety net for your creative and intellectual work.
+
+Version history operates transparently in the background—you don't need to remember to save versions or manage backups manually. When you need to recover previous content, the version history is there with a clear timeline of your document's evolution.
+
+## How version history works
+
+### Automatic backup triggers
+
+Pointer uses intelligent criteria to determine when to create a new version backup. A backup is triggered when:
+
+1. **Significant content changes** - The system analyzes changes and creates backups when the content has meaningfully evolved, not just for minor typos or formatting tweaks
+2. **Time-based intervals** - Even with continuous editing, backups are created at minimum time intervals to ensure coverage
+3. **Session boundaries** - Backups may be created when you close a document or navigate away
+4. **Manual triggers** - You can explicitly request a version snapshot
+
+### What gets saved
+
+Each version backup includes:
+
+| Component | Description |
+|-----------|-------------|
+| Full content | Complete note content in both text and TipTap JSON formats |
+| Timestamp | Exact date and time of the backup |
+| Note reference | Link to the parent note |
+| Tenant ID | Owner information for security |
+
+### Storage structure
+
+Version history is stored in two related tables:
+
+```typescript
+// Metadata about the version
+notesHistoryMetadata: {
+  noteId: Id<"notes">,
+  tenantId: string,
+  timestamp: number,  // Unix timestamp
+}
+
+// Content of the version
+notesHistoryContent: {
+  metadataId: Id<"notesHistoryMetadata">,
+  content: {
+    text: string,
+    tiptap?: string,
+  },
+  tenantId: string,
+}
+```
+
+This separation allows efficient querying of version metadata without loading full content.
+
+## Viewing version history
+
+To access the version history for a note:
+
+<Steps>
+  <Step title="Open the note">
+    Navigate to and open the note whose history you want to view.
+  </Step>
+  
+  <Step title="Open history panel">
+    Click the history icon in the toolbar or note header. This opens the version history panel showing all available backups.
+  </Step>
+  
+  <Step title="Browse versions">
+    Versions are listed chronologically with timestamps. Each entry shows:
+    - Date and time of the backup
+    - Relative time (e.g., "2 hours ago")
+  </Step>
+  
+  <Step title="Preview a version">
+    Click on any version to see a preview of its content. The preview shows the full document as it existed at that point in time.
+  </Step>
+  
+  <Step title="Restore if needed">
+    If you want to revert to a previous version, click the restore button. This replaces the current content with the selected version.
+  </Step>
+</Steps>
+
+## Restoring previous versions
+
+### Full restoration
+
+To completely replace the current note content with a previous version:
+
+1. Open the version history panel
+2. Select the version you want to restore
+3. Click "Restore this version"
+4. Confirm the restoration
+
+<Warning>
+  Restoring a version replaces your current content. The current content becomes a new version in the history, so you can still recover it if needed.
+</Warning>
+
+### Partial restoration
+
+If you only need specific content from a previous version:
+
+1. Open the version history panel
+2. Preview the version containing the content you need
+3. Manually copy the specific sections you want
+4. Paste into your current document
+
+This approach lets you selectively recover content without losing other changes.
+
+## Intelligent backup criteria
+
+Pointer's backup system uses smart criteria to determine when a new version should be created. The goal is to capture meaningful changes while avoiding cluttered history from trivial edits.
+
+### Change analysis
+
+The system considers several factors:
+
+- **Content length change** - Significant additions or deletions
+- **Structural changes** - New sections, reorganization
+- **Time since last backup** - Minimum intervals between backups
+- **Edit session patterns** - Natural break points in editing
+
+### Backup algorithm
+
+```typescript
+// Simplified backup decision logic
+async function shouldCreateBackup({
+  note_id: Id<"notes">,
+  current_content: NoteContent,
+}) {
+  // Check time since last backup
+  const lastBackup = await getLastBackup(note_id);
+  const timeSinceLastBackup = Date.now() - lastBackup.timestamp;
+  
+  // Check content differences
+  const contentChanged = hasSignificantChanges(
+    lastBackup.content,
+    current_content
+  );
+  
+  return {
+    shouldBackup: timeSinceLastBackup > MIN_INTERVAL || contentChanged
+  };
+}
+```
+
+## Version retention
+
+### Storage considerations
+
+Version history consumes storage space proportional to:
+
+- Number of notes
+- Frequency of backups
+- Size of note content
+- Retention period
+
+### Retention policies
+
+Pointer may implement retention policies to manage storage:
+
+- **Recent versions** - All versions within a recent window (e.g., 30 days)
+- **Milestone versions** - Selected versions at longer intervals for older history
+- **Manual versions** - Explicitly saved versions are never automatically deleted
+
+<Info>
+  Current implementation retains all versions. Future updates may introduce configurable retention policies.
+</Info>
+
+## Use cases
+
+<CardGroup cols={2}>
+  <Card title="Accidental deletion" icon="trash-restore">
+    Accidentally deleted important content? Browse history and restore the version before the deletion.
+  </Card>
+  <Card title="Content comparison" icon="code-compare">
+    Compare how a document has evolved over time by viewing different version snapshots.
+  </Card>
+  <Card title="Audit trail" icon="clock-rotate-left">
+    Track when significant changes were made to a document for compliance or review purposes.
+  </Card>
+  <Card title="Experimentation" icon="flask">
+    Try different approaches knowing you can always restore a previous version if experiments don't work out.
+  </Card>
+</CardGroup>
+
+## Best practices
+
+<Tip>
+  **Before major changes:** If you're about to make significant restructuring, consider viewing the current version in history to ensure a recent backup exists.
+</Tip>
+
+<Tip>
+  **Regular review:** Periodically review your most important documents' version history to understand how they've evolved and ensure backup coverage.
+</Tip>
+
+<Tip>
+  **Descriptive naming:** Use clear note names that help identify content when browsing version history across multiple documents.
+</Tip>
+
+## API reference
+
+### Query: Check if backup needed
+
+```typescript
+shouldCreateBackup({
+  note_id: Id<"notes">,
+  current_content: {
+    text: string,
+    tiptap?: string,
+  },
+}) => {
+  shouldBackup: boolean,
+  reason?: string,
+}
+```
+
+### Internal: Create backup
+
+Backups are created automatically by the note update mutation when criteria are met:
+
+```typescript
+async function createNoteBackupHelper(
+  ctx: MutationCtx,
+  {
+    noteId: Id<"notes">,
+    tenantId: string,
+    timestamp: number,
+    content: { text: string, tiptap?: string },
+  }
+) {
+  // Create metadata entry
+  const metadataId = await ctx.db.insert("notesHistoryMetadata", {
+    noteId,
+    tenantId,
+    timestamp,
+  });
+
+  // Create content entry
+  await ctx.db.insert("notesHistoryContent", {
+    metadataId,
+    content,
+    tenantId,
+  });
+}
+```
+
+### Query: Get version history
+
+To retrieve version history for a note:
+
+```typescript
+const versions = await ctx.db
+  .query("notesHistoryMetadata")
+  .withIndex("by_note_id", (q) => q.eq("noteId", noteId))
+  .order("desc")
+  .collect();
+```
+
+### Query: Get version content
+
+To retrieve the content of a specific version:
+
+```typescript
+const content = await ctx.db
+  .query("notesHistoryContent")
+  .withIndex("by_metadata_id", (q) => q.eq("metadataId", metadataId))
+  .first();
+```
+
+## Technical details
+
+### Performance
+
+Version history is designed for minimal performance impact:
+
+- Backups are created asynchronously
+- Metadata queries are fast (indexed by note ID)
+- Content is loaded only when previewing specific versions
+- The backup decision algorithm is lightweight
+
+### Security
+
+Version history respects the same security boundaries as notes:
+
+- Only the note owner can view version history
+- Tenant isolation prevents cross-user access
+- Version content is stored with owner references
+
+### Data integrity
+
+The two-table structure ensures data integrity:
+
+- Metadata exists independently of content
+- Content references metadata via ID
+- Foreign key relationships maintain consistency
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Notes" icon="file-lines" href="/pointer/features/notes">
+    Learn about the note editing features that create the content being versioned.
+  </Card>
+  <Card title="Database schema" icon="database" href="/pointer/architecture/database-schema">
+    Understand the complete data model including version history tables.
+  </Card>
+</CardGroup>

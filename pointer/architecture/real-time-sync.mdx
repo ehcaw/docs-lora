@@ -1,0 +1,443 @@
+---
+title: "Real-time synchronization"
+description: "Deep technical dive into Pointer's real-time synchronization architecture including Convex subscriptions, PartyKit collaboration, Yjs CRDTs, and the HocusPocus provider."
+---
+
+## Overview
+
+Real-time synchronization in Pointer operates on two levels: database-level reactivity through Convex subscriptions, and document-level collaboration through PartyKit and Yjs. These two systems complement each other to provide a seamless experience where users see changes instantly, whether those changes come from their own actions, background processes, or other collaborators.
+
+Understanding this dual-layer architecture is essential for anyone building on Pointer or debugging synchronization issues.
+
+## Convex real-time subscriptions
+
+### How subscriptions work
+
+Convex provides automatic real-time subscriptions for any query. When a client executes a query, Convex:
+
+1. Evaluates the query and returns results
+2. Tracks which data the query depends on
+3. Monitors the database for changes to that data
+4. Automatically re-runs the query when relevant data changes
+5. Sends updated results to the client
+
+```
+┌──────────────┐         ┌────────────────┐
+│    Client    │◄───────►│     Convex     │
+│              │         │                │
+│  useQuery()  │         │  Query Engine  │
+│              │         │       │        │
+└──────────────┘         │       ▼        │
+                         │  Change Track  │
+                         │       │        │
+                         │       ▼        │
+                         │  Re-evaluate   │
+                         │       │        │
+                         │       ▼        │
+                         │  Push Update   │
+                         └────────────────┘
+```
+
+### Client-side integration
+
+In React, Convex subscriptions are consumed through hooks:
+
+```typescript
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+function NotesList() {
+  // This automatically subscribes and reacts to changes
+  const notes = useQuery(api.notes.readNotesFromDb);
+  
+  if (notes === undefined) return <Loading />;
+  return <Notes data={notes} />;
+}
+```
+
+The `useQuery` hook:
+
+- Returns `undefined` while loading
+- Returns query results when available
+- Automatically updates when data changes
+- Cleans up subscription when component unmounts
+
+### Optimistic updates
+
+For immediate feedback, Convex supports optimistic updates:
+
+```typescript
+import { useMutation } from "convex/react";
+
+function CreateNote() {
+  const createNote = useMutation(api.notes.createNoteInDb);
+  
+  const handleCreate = async () => {
+    // UI updates immediately via subscription
+    await createNote({
+      name: "New Note",
+      tenantId: userId,
+      type: "file",
+      pointer_id: generateId(),
+      // ... other fields
+    });
+  };
+}
+```
+
+When a mutation succeeds:
+
+1. The database is updated
+2. All subscriptions that depend on the changed data re-evaluate
+3. All connected clients receive updated results
+
+## PartyKit collaboration architecture
+
+### Room-based model
+
+PartyKit uses a room-based model where each collaborative document gets its own room:
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                      PartyKit Edge                          │
+│                                                             │
+│  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐│
+│  │  Room: doc-A   │  │  Room: doc-B   │  │  Room: doc-C   ││
+│  │                │  │                │  │                ││
+│  │ User1 ──────── │  │ User1 ──────── │  │ User3 ──────── ││
+│  │ User2 ──────── │  │ User3 ──────── │  │ User4 ──────── ││
+│  │                │  │                │  │                ││
+│  └────────────────┘  └────────────────┘  └────────────────┘│
+└────────────────────────────────────────────────────────────┘
+```
+
+Each room:
+
+- Maintains its own WebSocket connections
+- Holds the Yjs document state
+- Broadcasts changes to all connected clients
+- Handles user presence
+
+### Server implementation
+
+The PartyKit server (`partykit/server.ts`) handles:
+
+```typescript
+// Simplified PartyKit server structure
+export default {
+  async onConnect(connection, room) {
+    // New user connected to room
+    // Initialize Yjs provider for this connection
+  },
+  
+  async onMessage(message, connection, room) {
+    // Handle incoming Yjs updates
+    // Broadcast to other connections in room
+  },
+  
+  async onClose(connection, room) {
+    // User disconnected
+    // Update presence information
+  },
+};
+```
+
+## Yjs CRDT foundation
+
+### What are CRDTs?
+
+Conflict-free Replicated Data Types (CRDTs) are data structures that can be modified concurrently by multiple users and automatically merge without conflicts. Yjs implements several CRDT types:
+
+| Type | Description | Use in Pointer |
+|------|-------------|----------------|
+| `Y.Text` | Collaborative text | Rich text content |
+| `Y.Array` | Ordered list | Lists, sequences |
+| `Y.Map` | Key-value store | Object properties |
+| `Y.XmlFragment` | XML structure | ProseMirror document |
+
+### How Yjs handles conflicts
+
+When two users make concurrent edits:
+
+```
+User A: "Hello World" → "Hello Beautiful World"
+User B: "Hello World" → "Hello Bright World"
+
+After sync:
+Both see: "Hello Beautiful Bright World"
+(or "Hello Bright Beautiful World" depending on timing)
+```
+
+Key properties:
+
+- **No conflicts** - All operations merge successfully
+- **Eventual consistency** - All clients converge to same state
+- **Deterministic** - Same operations always produce same result
+- **Intention preserving** - Both users' changes are kept
+
+### Document structure
+
+A TipTap document in Yjs is represented as:
+
+```typescript
+// Yjs document structure for TipTap
+const ydoc = new Y.Doc();
+
+// The main content fragment
+const fragment = ydoc.getXmlFragment("prosemirror");
+
+// Metadata map
+const meta = ydoc.getMap("meta");
+
+// The fragment contains XML nodes representing ProseMirror structure
+```
+
+## HocusPocus provider
+
+### Provider role
+
+The HocusPocus provider connects TipTap to PartyKit via Yjs:
+
+```
+┌──────────────────┐
+│    TipTap        │
+│    Editor        │
+└────────┬─────────┘
+         │ ProseMirror transactions
+         ▼
+┌──────────────────┐
+│  y-prosemirror   │
+│   Extension      │
+└────────┬─────────┘
+         │ Yjs operations
+         ▼
+┌──────────────────┐
+│   HocusPocus     │
+│    Provider      │
+└────────┬─────────┘
+         │ WebSocket messages
+         ▼
+┌──────────────────┐
+│    PartyKit      │
+│     Server       │
+└──────────────────┘
+```
+
+### Provider configuration
+
+```typescript
+import { HocuspocusProvider } from "@hocuspocus/provider";
+
+const provider = new HocuspocusProvider({
+  url: `wss://${process.env.NEXT_PUBLIC_PARTYKIT_HOST}/party/${documentId}`,
+  name: documentId,
+  document: ydoc,
+  
+  // Callbacks
+  onConnect() {
+    console.log("Connected to collaboration server");
+  },
+  onDisconnect() {
+    console.log("Disconnected from collaboration server");
+  },
+  onSynced() {
+    console.log("Document synced");
+  },
+});
+```
+
+### Awareness (presence)
+
+The provider also handles presence awareness:
+
+```typescript
+// Set local user state
+provider.awareness.setLocalState({
+  user: {
+    name: "Alice",
+    color: "#ff0000",
+  },
+  cursor: { x: 100, y: 200 },
+});
+
+// Listen to other users
+provider.awareness.on("change", () => {
+  const states = provider.awareness.getStates();
+  // Update UI with other users' positions
+});
+```
+
+## Synchronization flow
+
+### Document join
+
+When a user opens a collaborative document:
+
+```
+1. Client ──► Load note metadata from Convex
+2. Client ──► Create Yjs document
+3. Client ──► Connect HocusPocus provider to PartyKit
+4. PartyKit ──► Send current document state
+5. Client ──► Initialize TipTap with synced content
+6. Client ──► Render editor, show other users
+```
+
+### Edit propagation
+
+When a user types in the editor:
+
+```
+1. Keystroke ──► TipTap transaction
+2. Transaction ──► y-prosemirror converts to Yjs ops
+3. Yjs ops ──► Applied to local document
+4. Yjs ops ──► Sent via provider to PartyKit
+5. PartyKit ──► Broadcasts to all other clients
+6. Other clients ──► Receive and apply Yjs ops
+7. Other clients ──► TipTap updates via y-prosemirror
+```
+
+### Persistence to Convex
+
+Collaborative edits must also persist to Convex:
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    Edit Flow                                │
+│                                                             │
+│  TipTap ──► Yjs ──► PartyKit ──► Other Clients            │
+│                                                             │
+│     │                                                       │
+│     │ Debounced (500ms after edits stop)                   │
+│     ▼                                                       │
+│                                                             │
+│  Convex Mutation ──► Database ──► Subscriptions Update     │
+│                                                             │
+└────────────────────────────────────────────────────────────┘
+```
+
+The debouncing prevents excessive database writes during active typing.
+
+## Handling edge cases
+
+### Network interruption
+
+When a client loses connection:
+
+1. Local edits continue to work
+2. Changes queue in the provider
+3. On reconnection, queued changes sync
+4. Yjs merges any concurrent changes
+5. UI shows offline indicator
+
+### Late joiner
+
+When a user joins an active session:
+
+1. Provider connects to PartyKit room
+2. Server sends full document state
+3. Client initializes from received state
+4. Any in-flight edits from others arrive
+5. User sees current collaborative state
+
+### Concurrent editing same text
+
+When users edit the same word simultaneously:
+
+1. Each user's local Yjs makes atomic insertions/deletions
+2. Operations are tagged with unique IDs
+3. On sync, both sets of operations apply
+4. Characters interleave based on operation IDs
+5. Result preserves both users' input
+
+## Performance considerations
+
+### Bandwidth optimization
+
+Yjs minimizes bandwidth through:
+
+- **Delta encoding** - Only changes are sent, not full state
+- **Compression** - Updates can be compressed
+- **Batching** - Multiple changes batch into single messages
+
+### Memory management
+
+For large documents:
+
+- Yjs stores operation history for undo
+- History can be trimmed for memory savings
+- Snapshots can checkpoint state
+
+### Latency optimization
+
+PartyKit deploys to the edge:
+
+- Rooms run close to users geographically
+- Typical round-trip: < 50ms
+- Edit latency feels instantaneous
+
+## Debugging real-time sync
+
+### Common issues
+
+<AccordionGroup>
+  <Accordion title="Changes not syncing">
+    1. Check WebSocket connection status
+    2. Verify PartyKit server is running
+    3. Check browser console for errors
+    4. Verify document ID matches
+  </Accordion>
+  
+  <Accordion title="Duplicate content appearing">
+    1. Check if same document opened multiple times
+    2. Verify provider cleanup on unmount
+    3. Check for stale Yjs documents
+  </Accordion>
+  
+  <Accordion title="Presence not updating">
+    1. Verify awareness is configured
+    2. Check if local state is being set
+    3. Ensure provider is connected
+  </Accordion>
+</AccordionGroup>
+
+### Monitoring
+
+Key metrics to monitor:
+
+| Metric | Meaning |
+|--------|---------|
+| Connection count | Users in collaboration rooms |
+| Message rate | Sync traffic volume |
+| Reconnection rate | Network instability indicator |
+| Sync latency | Time for edits to propagate |
+
+## Security considerations
+
+### Authentication
+
+- PartyKit rooms should validate user tokens
+- Only authorized users can join document rooms
+- Presence information should be sanitized
+
+### Content validation
+
+- Yjs operations should be validated
+- Malicious clients could send invalid operations
+- Server-side validation prevents corruption
+
+### Rate limiting
+
+- Protect against spam/abuse
+- Limit operations per second per client
+- Throttle reconnection attempts
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Architecture overview" icon="sitemap" href="/pointer/architecture/overview">
+    See how real-time sync fits into the overall system.
+  </Card>
+  <Card title="Collaboration feature" icon="users" href="/pointer/features/collaboration">
+    Learn how users interact with collaboration features.
+  </Card>
+</CardGroup>
