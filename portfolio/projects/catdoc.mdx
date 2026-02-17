@@ -1,0 +1,174 @@
+---
+title: "CatDoc"
+description: "A CLI app that automatically generates documentation for your codebase using AI"
+---
+
+## Overview
+
+<Info>
+**Project**: CatDoc  
+**Event**: HackDavis 2025  
+**Team**: vibecoding  
+**Repository**: [github.com/ehcaw/catdoc](https://github.com/ehcaw/catdoc)
+</Info>
+
+CatDoc is a command-line interface application that automatically generates documentation for your codebase using AI. Built at HackDavis 2025, it reads your entire codebase and produces comprehensive documentation, with smart regeneration that only updates docs when files actually change. It also includes a chatbot for asking questions about your code after it's been indexed.
+
+## The problem
+
+Documentation is almost always out of date. The reasons are familiar:
+
+- **Manual process**: Writing docs takes time and effort
+- **Rapid changes**: Code evolves faster than documentation
+- **Maintenance burden**: Keeping docs in sync requires constant attention
+- **Context switching**: Developers prefer coding to writing documentation
+
+CatDoc automates this process, keeping documentation current with minimal effort.
+
+## What I built
+
+<CardGroup cols={2}>
+  <Card title="Automatic generation" icon="wand-magic-sparkles">
+    Point CatDoc at a codebase and it generates comprehensive documentation automatically. Functions, classes, modules, and their relationships are documented.
+  </Card>
+  <Card title="Smart regeneration" icon="rotate">
+    Using file hashes, CatDoc tracks which files have changed since the last documentation run. Only changed files trigger regeneration, saving time and API costs.
+  </Card>
+  <Card title="Large context processing" icon="expand">
+    Gemini 2.5's massive context window allows CatDoc to understand entire codebases in context, producing documentation that reflects the broader system design.
+  </Card>
+  <Card title="Code chatbot" icon="comments">
+    After indexing, ask questions about your code through a chatbot interface. Get explanations, find relationships, and understand architecture through conversation.
+  </Card>
+</CardGroup>
+
+## Technical architecture
+
+CatDoc is designed for efficiency and usability:
+
+<Steps>
+  <Step title="CLI interface with Ink React">
+    **Ink React** powers the command-line interface, providing a rich, interactive terminal experience. Progress indicators, formatted output, and interactive prompts make the tool pleasant to use.
+  </Step>
+  <Step title="Codebase scanning">
+    The tool scans the codebase, reading files and computing hashes. The file tree is built and files are categorized by type for appropriate processing.
+  </Step>
+  <Step title="Change detection">
+    File hashes are compared against a stored manifest from previous runs. Only files with changed hashes are sent for documentation regeneration.
+  </Step>
+  <Step title="AI documentation generation">
+    **Gemini 2.5 Pro** processes the changed files (along with relevant context) and generates documentation. The large context window allows it to understand how components fit together.
+  </Step>
+  <Step title="Documentation output">
+    Generated documentation is written in markdown format, organized by the codebase structure. Each module, class, and function gets appropriate documentation.
+  </Step>
+  <Step title="Chatbot interaction">
+    After indexing, the codebase information is available for conversational queries. Ask questions about architecture, relationships, or specific implementations.
+  </Step>
+</Steps>
+
+## Technical stack
+
+<CardGroup cols={2}>
+  <Card title="CLI framework" icon="terminal">
+    - **Ink React** for terminal UI
+    - Interactive prompts and progress display
+    - Rich formatting in the terminal
+  </Card>
+  <Card title="AI integration" icon="brain">
+    - **Gemini 2.5 Pro** for documentation generation
+    - Large context window for codebase understanding
+    - Efficient token usage through smart chunking
+  </Card>
+  <Card title="File processing" icon="file-code">
+    - File hashing for change detection
+    - AST parsing for code structure
+    - Multiple language support
+  </Card>
+</CardGroup>
+
+## Key features
+
+### Smart regeneration
+
+The change detection system is a key feature that makes CatDoc practical for regular use:
+
+<Accordion title="How file hashing works">
+  When CatDoc runs, it computes a hash (checksum) of each file's contents. These hashes are stored in a manifest file. On subsequent runs:
+  
+  1. New hashes are computed for all files
+  2. Hashes are compared against the stored manifest
+  3. Only files with different hashes are flagged for regeneration
+  4. The manifest is updated with new hashes
+  
+  This means running CatDoc on an unchanged codebase is essentially free - no API calls needed.
+</Accordion>
+
+<Accordion title="Incremental updates">
+  When files do change, only those files (plus their dependencies, if needed) are sent for documentation. This minimizes:
+  
+  - API costs (tokens used)
+  - Processing time
+  - Risk of introducing errors in unchanged documentation
+</Accordion>
+
+### Gemini 2.5's large context
+
+Gemini 2.5 Pro's context window is crucial for quality documentation:
+
+<Accordion title="Whole-codebase understanding">
+  Unlike models with smaller context windows, Gemini 2.5 can process substantial portions of a codebase at once. This means:
+  
+  - Documentation reflects actual relationships between components
+  - Cross-references are accurate
+  - Architectural patterns are recognized
+  - The documentation tells a coherent story
+</Accordion>
+
+### Code chatbot
+
+After documentation is generated, the indexed information powers a chatbot:
+
+- Ask about specific functions or classes
+- Understand how components interact
+- Find where certain patterns are used
+- Get high-level architectural explanations
+
+## Screenshots
+
+<Frame>
+  <img src="/catdoc/catdoc1.png" alt="CatDoc CLI interface showing documentation generation" />
+</Frame>
+
+<Frame>
+  <img src="/catdoc/catdoc2.png" alt="CatDoc chatbot interaction" />
+</Frame>
+
+## Use cases
+
+<CardGroup cols={2}>
+  <Card title="Project documentation" icon="book">
+    Generate initial documentation for a project, then keep it updated with minimal effort.
+  </Card>
+  <Card title="Onboarding" icon="user-plus">
+    New team members can use the chatbot to understand the codebase through questions.
+  </Card>
+  <Card title="Code review prep" icon="magnifying-glass">
+    Quickly understand unfamiliar parts of a codebase before reviewing changes.
+  </Card>
+  <Card title="Legacy code" icon="clock">
+    Generate documentation for legacy codebases that were never properly documented.
+  </Card>
+</CardGroup>
+
+## Hackathon context
+
+<Note>
+Documentation is always outdated - this keeps it current automatically. Built at HackDavis 2025 with team vibecoding.
+</Note>
+
+CatDoc was built in a hackathon environment, focusing on solving a real problem that developers face daily. The combination of automatic generation and smart incremental updates makes it practical for ongoing use, not just a one-time documentation dump.
+
+---
+
+*Explore more projects: [Pointer](/portfolio/projects/pointer) | [Toph Bot](/portfolio/projects/toph-bot) | [LSClear](/portfolio/projects/lsclear) | [Documix](/portfolio/projects/documix)*

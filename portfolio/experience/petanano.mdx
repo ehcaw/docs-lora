@@ -1,0 +1,119 @@
+---
+title: "SWE Intern at Petanano"
+description: "Developing optimized gradient descent and reverse kinematics algorithms for operating robot arms"
+---
+
+## Overview
+
+<Info>
+**Position**: Software Engineering Intern  
+**Company**: Petanano  
+**Duration**: June 2023 - September 2023
+</Info>
+
+At Petanano, I worked on a fascinating intersection of software and hardware - developing algorithms that control physical robot arms. This internship gave me hands-on experience with robotics, optimization algorithms, and the unique challenges that come with writing software that operates in the physical world.
+
+## What I built
+
+My primary focus was on developing and optimizing algorithms for robot arm movement control. This involved implementing sophisticated mathematical algorithms and seeing them come to life in actual hardware.
+
+<Steps>
+  <Step title="Gradient descent optimization">
+    I used a patented gradient descent algorithm to optimize robot arm movements, achieving a 50% improvement in movement efficiency. This algorithm helped the robot arms find optimal paths between positions while respecting physical constraints like joint limits and avoiding obstacles.
+  </Step>
+  <Step title="Robot arm development">
+    I developed both 3-link and 4-link robot arms using Dynamixel motors and 3D printed limbs. This involved mechanical design considerations, motor selection, and integration of all components into a functional system.
+  </Step>
+  <Step title="Movement simulation CLI">
+    To enable rapid testing and development, I created a command-line interface that could mock robot arm movements and test algorithms on a 3D plane before deploying them to actual hardware. This significantly sped up the development cycle.
+  </Step>
+</Steps>
+
+## Technical deep dive
+
+### Reverse kinematics
+
+One of the core challenges in robotics is **reverse kinematics** - given a desired end position (where you want the robot's hand to be), calculate the joint angles needed to get there. For a multi-link arm, this is a complex mathematical problem with potentially multiple solutions.
+
+<Accordion title="The kinematics problem">
+  Forward kinematics is straightforward: given joint angles, calculate where the end effector ends up. It's just geometry. Reverse kinematics inverts this problem: given where you want to be, figure out the joint angles. For arms with more than two links, there are often infinite solutions, and you need to find one that:
+  
+  - Respects joint angle limits
+  - Avoids self-collision
+  - Moves smoothly from the current position
+  - Minimizes energy or time
+</Accordion>
+
+<Accordion title="Gradient descent approach">
+  Instead of analytically solving the inverse kinematics equations, we used an optimization approach. The algorithm treats the desired position as a target and iteratively adjusts joint angles to minimize the distance between the current end effector position and the target. The patented gradient descent algorithm improved on standard approaches by:
+  
+  - Better handling of local minima
+  - Smoother trajectories
+  - Faster convergence
+</Accordion>
+
+### Technical stack
+
+<CardGroup cols={2}>
+  <Card title="Languages & Libraries" icon="code">
+    - **Python** as the primary development language
+    - **NumPy** for efficient matrix operations and mathematical computations
+    - **PyTorch** for advanced optimization algorithms
+    - **Matplotlib** for visualization and debugging
+  </Card>
+  <Card title="Hardware" icon="microchip">
+    - **Dynamixel SDK** for motor control and communication
+    - Dynamixel servo motors for precise joint control
+    - 3D printed custom limb segments
+    - Custom mounting and coupling hardware
+  </Card>
+</CardGroup>
+
+### The development workflow
+
+Developing robotics software required a different workflow than typical software development:
+
+1. **Algorithm design**: Start with mathematical models and simulations
+2. **Simulation testing**: Use the CLI tool to test on virtual 3D models
+3. **Hardware validation**: Deploy to actual robot arm and observe behavior
+4. **Iteration**: Adjust algorithms based on real-world performance
+
+The simulation step was crucial because hardware testing is slow and potentially damaging. Each physical test cycle takes time for setup, execution, and analysis. Being able to quickly iterate in simulation before committing to hardware tests dramatically sped up development.
+
+## The physical-digital gap
+
+Working on robotics taught me valuable lessons about the gap between digital simulations and physical reality:
+
+<Accordion title="Real motors aren't perfect">
+  In simulation, a motor moves exactly where you tell it to. In reality, there's backlash, friction, response time, and wear. Algorithms that work perfectly in simulation often need adjustment for these real-world effects.
+</Accordion>
+
+<Accordion title="Physics matters">
+  Gravity, momentum, and weight distribution all affect robot movement in ways that are easy to underestimate when working purely in software. A fast movement that looks smooth in simulation might cause oscillation in the real arm due to momentum.
+</Accordion>
+
+<Accordion title="Debugging is different">
+  When software doesn't work as expected, you can add logging, set breakpoints, and step through code. When hardware doesn't work, you might be dealing with loose connections, motor calibration issues, or environmental factors. Learning to debug at the hardware-software interface was a new skill.
+</Accordion>
+
+## Impact and outcomes
+
+The work I did at Petanano had measurable impacts on the project:
+
+- **50% movement optimization**: The gradient descent implementation significantly improved the efficiency of robot arm movements, making them faster and smoother.
+
+- **Functional prototypes**: Both the 3-link and 4-link robot arms I helped develop became working prototypes that could be demonstrated and iterated upon.
+
+- **Development tooling**: The simulation CLI I built became a standard part of the development workflow, used by other team members to test their own algorithm modifications.
+
+## Reflection
+
+<Note>
+My first robotics experience, and it was really rewarding to see my software working in the real world as opposed to strictly on a screen. There's something uniquely satisfying about writing code and then watching a physical robot respond to your commands.
+</Note>
+
+This internship fundamentally changed how I think about software. Seeing code manifest as physical movement in the real world - with all the constraints, challenges, and satisfactions that entails - gave me an appreciation for the entire spectrum of software development, from abstract algorithms to tangible, physical outcomes.
+
+---
+
+*Explore my other work experience at [Mintlify](/portfolio/experience/mintlify), [Amazon](/portfolio/experience/amazon), and [The Tutoring Center](/portfolio/experience/tutoring-center).*

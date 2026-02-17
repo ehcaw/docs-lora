@@ -1,0 +1,156 @@
+---
+title: "Shelly"
+description: "A terminal-based chatbot and code editor with basic AI agent features running entirely in your terminal"
+---
+
+## Overview
+
+<Info>
+**Project**: Shelly  
+**Status**: Completed  
+**Repository**: [github.com/ehcaw/shelly](https://github.com/ehcaw/shelly)
+</Info>
+
+Shelly is a TUI (Terminal User Interface) application that combines a chatbot with a simple code editor, all running entirely in your terminal. It's built for developers who live in the terminal and want AI assistance without leaving their command-line environment.
+
+## What I built
+
+Shelly demonstrates that powerful AI-assisted development tools don't need fancy graphical interfaces. Everything runs in the terminal, using text-based UI elements to create a functional and usable experience.
+
+<CardGroup cols={2}>
+  <Card title="Terminal interface" icon="terminal">
+    Built with Textual, Shelly provides a rich terminal interface with windows, panels, and interactive elements - all rendered in text.
+  </Card>
+  <Card title="Integrated chat" icon="message">
+    Chat with an AI assistant directly from your terminal. Ask questions, get explanations, and receive coding help without switching contexts.
+  </Card>
+  <Card title="Code editor" icon="code">
+    A simple but functional code editor within the TUI. Edit files, view syntax highlighting, and work on code alongside the AI chat.
+  </Card>
+  <Card title="Agent capabilities" icon="robot">
+    Basic AI agent features allow the assistant to perform actions beyond just chatting, like helping with code modifications.
+  </Card>
+</CardGroup>
+
+## Technical implementation
+
+Shelly is built with a focus on terminal-first development:
+
+<Steps>
+  <Step title="TUI framework">
+    **Textual** provides the foundation for the terminal user interface. Textual is a Python framework for building rich terminal applications with features like styling, layout management, and event handling.
+  </Step>
+  <Step title="Layout and navigation">
+    The application uses a split-pane layout with the chat interface on one side and the code editor on the other. Users can switch focus between panes and resize them as needed.
+  </Step>
+  <Step title="AI integration">
+    Various AI APIs power the chatbot functionality, providing intelligent responses to coding questions and requests for assistance.
+  </Step>
+  <Step title="Editor functionality">
+    The built-in editor handles basic file operations with syntax highlighting, making it possible to view and edit code without leaving the application.
+  </Step>
+</Steps>
+
+## Technical stack
+
+<CardGroup cols={2}>
+  <Card title="Core framework" icon="layer-group">
+    - **Textual** - Python TUI framework for rich terminal applications
+    - **Python** - Primary development language
+  </Card>
+  <Card title="AI capabilities" icon="brain">
+    - Various AI APIs for agent features
+    - Chat completion endpoints for conversational interface
+  </Card>
+</CardGroup>
+
+## Why a TUI?
+
+Building an AI assistant as a terminal application has several advantages:
+
+<Accordion title="Zero context switching">
+  Developers who work primarily in the terminal can access AI assistance without switching to a browser or GUI application. The terminal is already open - just use it.
+</Accordion>
+
+<Accordion title="SSH compatibility">
+  TUI applications work over SSH, meaning you can use Shelly on remote servers just as easily as on your local machine. This is valuable for development on cloud instances or shared servers.
+</Accordion>
+
+<Accordion title="Resource efficiency">
+  Text-based interfaces use minimal system resources compared to browser-based or Electron applications. Shelly can run comfortably alongside resource-heavy development tools.
+</Accordion>
+
+<Accordion title="Keyboard-centric workflow">
+  Everything in Shelly is keyboard-accessible, supporting the workflow of developers who prefer to keep their hands on the keyboard.
+</Accordion>
+
+## Features
+
+### Chat interface
+
+The chat interface provides conversational AI assistance:
+
+- Ask coding questions and receive detailed explanations
+- Request help with debugging or code review
+- Get suggestions for implementation approaches
+- Discuss technical concepts and best practices
+
+### Code editor
+
+The integrated editor supports basic development workflows:
+
+- Open and edit files from within the application
+- Syntax highlighting for common programming languages
+- Basic editing operations (copy, paste, search)
+- View code alongside chat for easy reference
+
+### Agent capabilities
+
+Beyond simple chat, Shelly includes basic agent features:
+
+- Suggest code modifications based on discussion
+- Help navigate and understand codebases
+- Provide context-aware assistance based on open files
+
+## Design philosophy
+
+Shelly was built with a specific philosophy in mind:
+
+<Note>
+Sometimes the terminal is all you need - wanted to see how much I could fit into a TUI. The answer is: quite a lot, actually.
+</Note>
+
+The project explores the boundaries of what's possible in a text-based interface. While it won't replace full-featured IDEs for complex projects, it proves that useful development tools can exist entirely within the terminal environment.
+
+## Screenshots
+
+The application provides a clean, functional interface:
+
+<Frame>
+  <img src="/shelly/shelly1.png" alt="Shelly main interface showing chat and editor panels" />
+</Frame>
+
+<Frame>
+  <img src="/shelly/shelly2.png" alt="Shelly code editing view" />
+</Frame>
+
+## Use cases
+
+<CardGroup cols={2}>
+  <Card title="Terminal developers" icon="terminal">
+    For developers who prefer working in the terminal and want AI assistance without context switching.
+  </Card>
+  <Card title="Remote development" icon="cloud">
+    When working on remote servers over SSH, Shelly provides AI assistance without requiring a local GUI.
+  </Card>
+  <Card title="Quick assistance" icon="bolt">
+    For quick coding questions or assistance, Shelly can be faster than opening a browser or separate application.
+  </Card>
+  <Card title="Learning tool" icon="graduation-cap">
+    The combination of chat and code editing makes it useful for learning, with immediate access to both explanations and experimentation.
+  </Card>
+</CardGroup>
+
+---
+
+*Explore more projects: [Pointer](/portfolio/projects/pointer) | [Toph Bot](/portfolio/projects/toph-bot) | [LSClear](/portfolio/projects/lsclear) | [Documix](/portfolio/projects/documix)*

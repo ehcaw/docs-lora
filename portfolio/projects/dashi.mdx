@@ -1,0 +1,170 @@
+---
+title: "Dashi"
+description: "A desktop voice assistant with actual memory - basically a better Siri that remembers your conversations"
+---
+
+## Overview
+
+<Info>
+**Project**: Dashi  
+**Event**: CalHacks AI 2025  
+**Repository**: [github.com/ehcaw/dashi](https://github.com/ehcaw/dashi)
+</Info>
+
+Dashi is a desktop voice assistant that's basically a better Siri with actual memory. Built at CalHacks AI 2025, it's a voice assistant that remembers conversations and can use tools to actually do things - not just answer questions and forget everything immediately like traditional voice assistants.
+
+## The problem with voice assistants
+
+Current voice assistants like Siri, Alexa, and Google Assistant have a fundamental limitation: they have no memory. Every interaction starts from scratch.
+
+- **No context**: Ask a follow-up question and they don't remember the previous one
+- **No personalization**: They don't learn your preferences over time
+- **Limited actions**: Mostly just search and simple commands
+- **No continuity**: Previous conversations are completely forgotten
+
+Dashi addresses these issues by building on a persistent memory architecture.
+
+## What I built
+
+<CardGroup cols={2}>
+  <Card title="Persistent memory" icon="brain">
+    Powered by Letta agents, Dashi remembers previous conversations. Context carries forward, preferences are learned, and conversations can pick up where they left off.
+  </Card>
+  <Card title="Voice interface" icon="microphone">
+    Groq Whisper provides fast, accurate speech-to-text conversion. Speak naturally and Dashi understands your requests.
+  </Card>
+  <Card title="Chat interface" icon="message">
+    When you don't want to talk, use the clean chat interface instead. All the same capabilities, just typed instead of spoken.
+  </Card>
+  <Card title="Tool support" icon="wrench">
+    MCP (Model Context Protocol) integration allows Dashi to use external tools - search the web, manage files, access services, and more.
+  </Card>
+</CardGroup>
+
+## Technical architecture
+
+Dashi combines several technologies to create a capable personal assistant:
+
+<Steps>
+  <Step title="Voice input with Whisper">
+    **Groq Whisper** handles speech-to-text conversion with low latency. This is crucial for a voice assistant - slow transcription breaks the conversational flow.
+  </Step>
+  <Step title="Agent framework with Letta">
+    **Letta** provides the agent framework with persistent memory. Each conversation is stored and retrievable, allowing the assistant to reference past interactions and learn user preferences.
+  </Step>
+  <Step title="Desktop app with Tauri">
+    **Tauri** wraps the application as a native desktop app. This enables system-level integration, persistent background operation, and quick access via keyboard shortcuts.
+  </Step>
+  <Step title="Tool integration with MCP">
+    **MCP** (Model Context Protocol) enables tool use. Dashi can call external services like Exa for search, interact with local files, or connect to any MCP-compatible service.
+  </Step>
+</Steps>
+
+## Technical stack
+
+<CardGroup cols={2}>
+  <Card title="Voice processing" icon="microphone">
+    - **Groq Whisper** for fast speech-to-text
+    - Low-latency transcription for natural conversation
+  </Card>
+  <Card title="Agent framework" icon="robot">
+    - **Letta** for persistent memory
+    - Long-term context management
+    - Conversation history storage
+  </Card>
+  <Card title="Desktop framework" icon="desktop">
+    - **Tauri** for native app packaging
+    - System integration
+    - Background operation
+  </Card>
+  <Card title="Tool ecosystem" icon="plug">
+    - **MCP** for tool integration
+    - **Exa** for web search
+    - Extensible tool architecture
+  </Card>
+</CardGroup>
+
+## Key features
+
+### Persistent memory
+
+The memory capability is what makes Dashi fundamentally different from traditional voice assistants:
+
+<Accordion title="Conversation continuity">
+  Dashi remembers previous conversations. You can say "remember when I asked about that restaurant?" and it will know what you're talking about. Follow-up questions work naturally because context is preserved.
+</Accordion>
+
+<Accordion title="Preference learning">
+  Over time, Dashi learns your preferences. If you consistently ask for certain types of information or prefer specific formats, the assistant adapts to serve you better.
+</Accordion>
+
+<Accordion title="Information recall">
+  Tell Dashi something important and it remembers. "Remember I have a meeting with John next Tuesday" actually gets remembered and can be recalled later.
+</Accordion>
+
+### Tool capabilities
+
+MCP integration allows Dashi to take actions, not just provide information:
+
+<Accordion title="Web search with Exa">
+  Search the web for current information. Unlike built-in assistant knowledge, this is real-time information from the internet.
+</Accordion>
+
+<Accordion title="Extensible tools">
+  The MCP architecture means new tools can be added. Any MCP-compatible service can be connected, expanding what Dashi can do.
+</Accordion>
+
+### Dual interface
+
+Use voice or text depending on the situation:
+
+<Accordion title="Voice mode">
+  Speak naturally to interact. Great for hands-free operation, quick questions, or when typing isn't convenient.
+</Accordion>
+
+<Accordion title="Chat mode">
+  Type your requests in a chat interface. Better for complex queries, quiet environments, or when you need to include precise information.
+</Accordion>
+
+## Screenshots
+
+<Frame>
+  <img src="/dashi/dashi1.png" alt="Dashi main interface" />
+</Frame>
+
+<Frame>
+  <img src="/dashi/dashi2.png" alt="Dashi chat interaction" />
+</Frame>
+
+<Frame>
+  <img src="/dashi/dashi3.png" alt="Dashi tool usage" />
+</Frame>
+
+## Use cases
+
+<CardGroup cols={2}>
+  <Card title="Personal assistant" icon="user">
+    A genuine personal assistant that knows your context, preferences, and history. More useful than starting from scratch each time.
+  </Card>
+  <Card title="Research helper" icon="magnifying-glass">
+    Ask questions, get answers, and build on previous queries. The assistant remembers what you've already explored.
+  </Card>
+  <Card title="Task management" icon="list-check">
+    Tell Dashi about tasks and deadlines. It remembers them and can remind you or provide context when relevant.
+  </Card>
+  <Card title="Knowledge base" icon="book">
+    Build up a personal knowledge base through conversations. Information you share is retained and can be recalled.
+  </Card>
+</CardGroup>
+
+## Hackathon context
+
+<Note>
+Siri forgets everything immediately - this one actually learns from our conversations. Built at CalHacks AI 2025 to explore what a memory-enabled voice assistant could be.
+</Note>
+
+Dashi was built to explore the question: what would a voice assistant be like if it actually remembered things? The answer turns out to be significantly more useful - the persistent memory transforms it from a search interface into something closer to an actual assistant.
+
+---
+
+*Explore more projects: [Pointer](/portfolio/projects/pointer) | [Toph Bot](/portfolio/projects/toph-bot) | [CatDoc](/portfolio/projects/catdoc) | [Splat](/portfolio/projects/splat)*
