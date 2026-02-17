@@ -1,0 +1,111 @@
+---
+title: "SDE Intern at Amazon"
+description: "Building feature lineage systems for the Amazon Search Data Platform team"
+---
+
+## Overview
+
+<Info>
+**Position**: Software Development Engineer Intern  
+**Company**: Amazon  
+**Team**: Amazon Search (Search Data Platform)  
+**Duration**: May 2025 - August 2025
+</Info>
+
+During my internship at Amazon, I worked on the Amazon Search team within the Search Data Platform group. My primary project focused on building a feature lineage system for the Offline Feature Store, a critical component of Amazon's search infrastructure that manages the features used by machine learning models to power search relevance.
+
+## Project: feature lineage system
+
+The Offline Feature Store at Amazon contains thousands of features that are used by search ranking models. Understanding how these features are derived, transformed, and related to each other is crucial for debugging, compliance, and optimization purposes. My project was to build a comprehensive lineage tracking system that would capture these relationships automatically.
+
+### The challenge
+
+When machine learning models use features from the feature store, it's often unclear:
+- Where each feature originally comes from
+- What transformations have been applied
+- Which upstream features affect downstream predictions
+- How changes to one feature might impact other features
+
+Without this visibility, debugging model behavior and ensuring data quality becomes extremely difficult at Amazon's scale.
+
+### The solution
+
+I designed and implemented a complete feature lineage system that addresses these challenges through multiple components:
+
+<Steps>
+  <Step title="Parsing algorithm and data model">
+    I developed a sophisticated parsing algorithm that analyzes feature transformation code to extract lineage relationships. This required understanding the various ways features can be derived, aggregated, and combined. The accompanying data model captures these relationships in a graph structure that can be efficiently queried.
+  </Step>
+  <Step title="Automated CI/CD pipeline">
+    To keep the lineage information up-to-date, I constructed a fully automated CI/CD pipeline that refreshes the lineage graph whenever model definitions are updated. This ensures that the lineage information is always current without requiring manual intervention from data scientists.
+  </Step>
+  <Step title="Scala API">
+    I created a Scala API that allows internal teams to programmatically query feature lineage information. This enables integration with other internal tools and workflows, making lineage data accessible where it's needed most.
+  </Step>
+  <Step title="Visualization dashboard">
+    To make the lineage information accessible to non-technical stakeholders, I built a Next.js dashboard that visualizes feature lineage graphs. Users can explore how features are connected, trace the impact of changes, and understand the full lineage chain for any given feature.
+  </Step>
+</Steps>
+
+## Technical implementation
+
+This project involved working with a diverse set of technologies across Amazon's infrastructure:
+
+<CardGroup cols={2}>
+  <Card title="Frontend" icon="desktop">
+    - **React** and **Next.js** for the dashboard application
+    - **D3.js** for interactive lineage graph visualizations
+  </Card>
+  <Card title="Backend" icon="server">
+    - **Python** for the parsing algorithm and data processing
+    - **Scala** for the API layer and integration with existing services
+    - **TypeScript** for type-safe development
+  </Card>
+  <Card title="AWS services" icon="aws">
+    - **AWS Neptune** for graph database storage of lineage relationships
+    - **AWS S3** for storing processed lineage data
+    - **AWS Lambda** for serverless processing
+    - **Amazon Pipelines** for CI/CD automation
+  </Card>
+  <Card title="Data engineering" icon="database">
+    - Custom parsing algorithms for feature transformation code
+    - Graph algorithms for lineage traversal and impact analysis
+    - Incremental update strategies for efficient processing
+  </Card>
+</CardGroup>
+
+## Key achievements
+
+During the internship, several key outcomes were delivered:
+
+- **Comprehensive lineage coverage**: The system successfully captures lineage for thousands of features in the Offline Feature Store, providing visibility that didn't exist before.
+
+- **Automated updates**: The CI/CD pipeline ensures lineage information stays current without manual intervention, reducing maintenance burden on the data platform team.
+
+- **Multiple access patterns**: By providing both a programmatic API and a visual dashboard, the system serves both technical users who want to integrate lineage into their workflows and non-technical users who need to explore lineage visually.
+
+- **Foundation for future work**: The lineage system provides a foundation for additional capabilities like automated impact analysis, compliance reporting, and data quality monitoring.
+
+## Learnings and reflection
+
+<Note>
+This role was incredibly valuable for learning about systems at scale and the importance of observability. Working at Amazon's scale means that even seemingly simple problems become complex when you need to handle millions of features, petabytes of data, and hundreds of consuming teams.
+</Note>
+
+### Key takeaways
+
+<Accordion title="Systems thinking at scale">
+  At Amazon, everything operates at a scale that fundamentally changes how you approach problems. Solutions that work for thousands of items might not work for millions. I learned to think about scalability from the very beginning of system design rather than as an afterthought.
+</Accordion>
+
+<Accordion title="Importance of observability">
+  The entire premise of this project was about observability - understanding what's happening inside complex systems. I gained a deep appreciation for how crucial it is to build systems that can explain themselves and their behavior.
+</Accordion>
+
+<Accordion title="Working with legacy systems">
+  Real-world systems rarely start from scratch. I learned how to integrate new capabilities with existing infrastructure, work around constraints, and deliver value without requiring massive rewrites.
+</Accordion>
+
+---
+
+*Explore my other work experience at [Mintlify](/portfolio/experience/mintlify), [The Tutoring Center](/portfolio/experience/tutoring-center), and [Petanano](/portfolio/experience/petanano).*

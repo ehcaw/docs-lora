@@ -1,0 +1,168 @@
+---
+title: "EliteCode"
+description: "A Next.js app for practicing coding interview explanations with voice - because the talking part is often harder than the coding"
+---
+
+## Overview
+
+<Info>
+**Project**: EliteCode  
+**Event**: SFHacks 2023  
+**Repository**: [github.com/ehcaw/sfhacks](https://github.com/ehcaw/sfhacks)
+</Info>
+
+EliteCode is a Next.js application for practicing coding interview explanations with voice. Built at SFHacks 2023, it helps you practice the part of coding interviews that's often overlooked: explaining your thought process out loud. You explain coding concepts verbally and get AI feedback on your explanations.
+
+## The problem
+
+Coding interviews aren't just about solving problems - they're about solving problems while communicating your thought process clearly. Many candidates who can solve problems struggle with:
+
+- **Thinking aloud**: Verbalizing your thought process while coding is unnatural
+- **Clear explanations**: Explaining technical concepts clearly is a skill that requires practice
+- **Time management**: Balancing explanation with actual problem-solving
+- **Handling feedback**: Responding to interviewer questions and hints
+
+You can practice solving problems on LeetCode, but practicing the communication aspect is harder to do alone.
+
+## What I built
+
+<CardGroup cols={2}>
+  <Card title="Voice input" icon="microphone">
+    Explain your solutions verbally using Whisper speech-to-text. Speak naturally as you would in an actual interview.
+  </Card>
+  <Card title="AI analysis" icon="brain">
+    OpenAI 3.5 Turbo analyzes your explanations, assessing clarity, completeness, and technical accuracy.
+  </Card>
+  <Card title="Voice feedback" icon="volume-high">
+    ElevenLabs provides spoken feedback, creating a more interview-like experience with back-and-forth dialogue.
+  </Card>
+  <Card title="Web interface" icon="desktop">
+    A clean Next.js webapp makes it easy to practice from anywhere, no installation required.
+  </Card>
+</CardGroup>
+
+## Technical architecture
+
+EliteCode creates a complete practice loop for interview communication:
+
+<Steps>
+  <Step title="Problem presentation">
+    A coding problem is presented, similar to what you'd see in a real interview. You can see the problem and start formulating your approach.
+  </Step>
+  <Step title="Voice explanation">
+    **Whisper** transcribes your verbal explanation as you talk through your approach. This is the core practice activity - explaining your thinking out loud.
+  </Step>
+  <Step title="AI evaluation">
+    **OpenAI 3.5 Turbo** evaluates your explanation against criteria like:
+    - Clarity of thought process
+    - Technical accuracy
+    - Completeness of explanation
+    - Communication effectiveness
+  </Step>
+  <Step title="Voice feedback">
+    **ElevenLabs** speaks the feedback, providing a conversational experience. This mirrors the back-and-forth you'd have with a real interviewer.
+  </Step>
+</Steps>
+
+## Technical stack
+
+<CardGroup cols={2}>
+  <Card title="Frontend" icon="desktop">
+    - **Next.js** for the application framework
+    - **React** for UI components
+    - Clean, focused interface for practice sessions
+  </Card>
+  <Card title="Speech processing" icon="waveform">
+    - **Whisper** for speech-to-text
+    - **ElevenLabs** for text-to-speech
+    - Natural conversational flow
+  </Card>
+  <Card title="AI evaluation" icon="robot">
+    - **OpenAI 3.5 Turbo** for explanation analysis
+    - Structured feedback generation
+    - Multiple evaluation criteria
+  </Card>
+</CardGroup>
+
+## How it helps
+
+### Practicing verbalization
+
+The core skill EliteCode builds is thinking aloud:
+
+<Accordion title="Structured thought process">
+  Interviews typically want you to:
+  
+  1. Restate and clarify the problem
+  2. Discuss potential approaches
+  3. Analyze time and space complexity
+  4. Talk through your implementation
+  5. Consider edge cases
+  
+  EliteCode helps you practice hitting all these points naturally.
+</Accordion>
+
+<Accordion title="Natural speaking">
+  It's one thing to know you should explain your thinking; it's another to do it smoothly while also solving a problem. Practice makes this more natural.
+</Accordion>
+
+### Getting feedback
+
+The AI feedback helps identify blind spots:
+
+<Accordion title="Clarity assessment">
+  Are you explaining things in a way that someone else can follow? The AI evaluates whether your explanation is clear and logical.
+</Accordion>
+
+<Accordion title="Technical accuracy">
+  Are you describing algorithms and data structures correctly? The AI catches technical inaccuracies in your explanations.
+</Accordion>
+
+<Accordion title="Completeness">
+  Did you cover all the important aspects? The AI notes if you skipped complexity analysis, edge cases, or other important elements.
+</Accordion>
+
+## Use cases
+
+<CardGroup cols={2}>
+  <Card title="Interview prep" icon="briefcase">
+    Practice explaining solutions before actual interviews. Build the muscle memory for thinking aloud.
+  </Card>
+  <Card title="Communication skills" icon="comments">
+    Technical communication is valuable beyond interviews. Practice explaining complex concepts clearly.
+  </Card>
+  <Card title="Self-assessment" icon="chart-line">
+    Get objective feedback on your explanations. Identify areas where your communication needs work.
+  </Card>
+  <Card title="Anxiety reduction" icon="heart">
+    Practice reduces anxiety. By the time you're in a real interview, explaining your thinking feels more natural.
+  </Card>
+</CardGroup>
+
+## The interview explanation challenge
+
+Why is explaining your solution so hard?
+
+<Accordion title="Cognitive load">
+  Solving a problem already takes mental bandwidth. Adding verbal explanation on top creates cognitive competition. The only way to make this easier is practice.
+</Accordion>
+
+<Accordion title="Implicit knowledge">
+  Often you know things that you don't realize you know. When solving a problem, you might skip steps that seem obvious to you but aren't to the interviewer.
+</Accordion>
+
+<Accordion title="Real-time thinking">
+  In an interview, you're explaining your thinking as you think it. This is different from preparing an explanation after you've solved the problem.
+</Accordion>
+
+## Reflection
+
+<Note>
+Coding interviews are hard enough without fumbling through explanations - this helps you practice the talking part. Most candidates spend all their prep time on problem-solving and none on communication.
+</Note>
+
+EliteCode addresses an overlooked aspect of interview preparation. While there are countless resources for practicing algorithm problems, there are very few for practicing the communication that goes alongside them. This project was built to fill that gap.
+
+---
+
+*Explore more projects: [Pointer](/portfolio/projects/pointer) | [Dashi](/portfolio/projects/dashi) | [Splat](/portfolio/projects/splat) | [Delta](/portfolio/projects/delta)*

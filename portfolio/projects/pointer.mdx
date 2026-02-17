@@ -1,0 +1,130 @@
+---
+title: "Pointer"
+description: "A Notion clone desktop app with better AI features and no subscription fees"
+---
+
+## Overview
+
+<Info>
+**Project**: Pointer  
+**Status**: In Development  
+**Repository**: [github.com/ehcaw/pointer](https://github.com/ehcaw/pointer)
+</Info>
+
+Pointer is a Notion clone I'm building because I don't want to pay for Notion Pro. It's a desktop note-taking application that aims to do everything Notion does but with better AI features and no subscription fees. The goal is to create a powerful, local-first note-taking experience that doesn't require paying $10/month just to take notes.
+
+## What I'm building
+
+The core vision for Pointer is a full-featured note-taking application that combines the flexibility of Notion with the power of local AI features. Rather than relying on cloud-based AI that requires subscriptions, Pointer integrates AI capabilities directly into the desktop application.
+
+### Key features
+
+<CardGroup cols={2}>
+  <Card title="Block-based editing" icon="cube">
+    All the basic Notion functionality - blocks, databases, and pages - implemented with a flexible, composable architecture that makes it easy to build complex documents.
+  </Card>
+  <Card title="AI writing assistance" icon="wand-magic-sparkles">
+    Intelligent writing assistance that's actually useful, helping with content generation, summarization, and smart suggestions without requiring a subscription.
+  </Card>
+  <Card title="Real-time sync" icon="sync">
+    Seamless synchronization between devices using Convex, so your notes are always up to date regardless of which device you're using.
+  </Card>
+  <Card title="Desktop native" icon="desktop">
+    A proper desktop application built with Tauri, giving you native performance and system integration that web apps can't match.
+  </Card>
+</CardGroup>
+
+## Technical architecture
+
+The technical approach for Pointer focuses on combining modern web technologies with native desktop capabilities:
+
+<Steps>
+  <Step title="Editor layer">
+    The rich text editing experience is built with **Tiptap**, a headless editor framework that provides the flexibility to create a custom editing experience. This powers all the block-based functionality - text formatting, embeds, code blocks, and more.
+  </Step>
+  <Step title="Frontend framework">
+    The user interface is built with **Next.js** and **React**, providing a familiar development experience while enabling server-side rendering and efficient routing. TypeScript ensures type safety throughout the codebase.
+  </Step>
+  <Step title="Real-time backend">
+    **Convex** handles the real-time synchronization layer, automatically syncing changes between devices without requiring manual save operations. This creates a seamless experience where your notes are always current.
+  </Step>
+  <Step title="Desktop wrapper">
+    **Tauri** wraps the web application into a native desktop app, providing better performance than Electron alternatives while enabling access to system APIs and local storage.
+  </Step>
+  <Step title="AI integration">
+    The **Vercel AI SDK** powers the AI features, providing a clean interface for integrating language models into the application for content generation and intelligent suggestions.
+  </Step>
+</Steps>
+
+## Technical stack
+
+<CardGroup cols={2}>
+  <Card title="Frontend" icon="desktop">
+    - Next.js for the application framework
+    - React for UI components
+    - TypeScript for type safety
+    - Tailwind CSS for styling
+    - Tiptap for the editor
+  </Card>
+  <Card title="Backend & Infrastructure" icon="server">
+    - Convex for real-time sync and database
+    - Tauri (Rust) for desktop app packaging
+    - Vercel AI SDK for AI features
+  </Card>
+</CardGroup>
+
+## Features in development
+
+### Core Notion functionality
+
+The foundation of Pointer is implementing all the features that make Notion useful:
+
+<Accordion title="Block-based documents">
+  Documents are composed of blocks that can be reordered, nested, and converted between types. This includes text blocks, headings, lists, code blocks, quotes, and more. The block architecture makes it easy to build complex documents while keeping the underlying data structure simple.
+</Accordion>
+
+<Accordion title="Databases">
+  Notion's database views - tables, boards, calendars, galleries - are a key part of the power user experience. Pointer aims to implement these with the same flexibility, allowing any page to become a database with custom properties and multiple views.
+</Accordion>
+
+<Accordion title="Linking and references">
+  Pages can link to each other, creating a networked knowledge base. Backlinks show where each page is referenced, making it easy to navigate the connections in your notes.
+</Accordion>
+
+### AI enhancements
+
+Beyond replicating Notion's features, Pointer adds AI capabilities that Notion either doesn't have or charges extra for:
+
+<Accordion title="Content generation">
+  AI-powered writing assistance that can help draft content, expand outlines, or generate ideas based on your notes. Unlike subscription-based AI features, these work locally or through API providers you control.
+</Accordion>
+
+<Accordion title="Smart suggestions">
+  Intelligent suggestions based on your writing context - related pages, relevant databases, or useful templates. The AI learns from your usage patterns to make increasingly relevant suggestions over time.
+</Accordion>
+
+### Quality of life features
+
+<Accordion title="Markdown support">
+  Full markdown support for those who prefer typing to clicking. Write in markdown and have it automatically rendered as formatted content.
+</Accordion>
+
+<Accordion title="Keyboard shortcuts">
+  Extensive keyboard shortcuts for power users who want to keep their hands on the keyboard. Every action is accessible without reaching for the mouse.
+</Accordion>
+
+## Why I'm building this
+
+<Note>
+Building this to learn desktop development and because paying $10/month for notes feels ridiculous. The goal is to prove that a powerful, AI-enhanced note-taking experience doesn't require a subscription.
+</Note>
+
+The motivation for Pointer is twofold:
+
+1. **Learning opportunity**: Building a complex desktop application is an excellent way to learn about desktop development, real-time synchronization, and AI integration. Tauri in particular is an interesting technology that I wanted to explore.
+
+2. **Practical utility**: I genuinely want a Notion alternative that doesn't cost money. While there are other free options, none of them combine the features I want with modern AI capabilities.
+
+---
+
+*Explore more projects: [Toph Bot](/portfolio/projects/toph-bot) | [LSClear](/portfolio/projects/lsclear) | [Shelly](/portfolio/projects/shelly) | [View all projects](/portfolio/projects/documix)*

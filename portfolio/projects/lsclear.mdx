@@ -1,0 +1,131 @@
+---
+title: "LSClear"
+description: "A web-based Python IDE with file persistence because sometimes you just need to code without installing anything"
+---
+
+## Overview
+
+<Info>
+**Project**: LSClear  
+**Status**: Completed  
+**Repository**: [github.com/ehcaw/lsclear](https://github.com/ehcaw/lsclear)
+</Info>
+
+LSClear is a web-based Python IDE that runs in your browser with file persistence across sessions. It's designed for situations where you need to write and run Python code quickly without setting up a local environment - whether you're on a shared computer, teaching a class, or just want to prototype something without the overhead of a full development setup.
+
+## What I built
+
+LSClear provides a complete Python development experience in the browser, combining a professional code editor with server-side execution and persistent storage.
+
+<CardGroup cols={2}>
+  <Card title="Monaco Editor" icon="code">
+    The editing experience is powered by Monaco, the same editor that powers VS Code. This means syntax highlighting, autocomplete, and all the editing features developers expect.
+  </Card>
+  <Card title="Server-side execution" icon="play">
+    Python code runs on a server (not in the browser via WASM), providing access to the full Python ecosystem including pip packages and system operations.
+  </Card>
+  <Card title="File persistence" icon="floppy-disk">
+    Files are stored in a database and persist between sessions. Come back tomorrow and your code is still there, exactly as you left it.
+  </Card>
+  <Card title="Clean interface" icon="laptop">
+    A smooth, modern interface built with Next.js that makes coding comfortable even for extended sessions.
+  </Card>
+</CardGroup>
+
+## Technical architecture
+
+The architecture of LSClear is designed to provide a smooth coding experience while handling the complexities of remote code execution:
+
+<Steps>
+  <Step title="Frontend with Monaco">
+    The frontend is built with **Next.js** and integrates the **Monaco Editor** for the coding experience. Monaco provides the professional editing environment with features like syntax highlighting, error markers, and intelligent autocomplete.
+  </Step>
+  <Step title="Backend for execution">
+    A **FastAPI** backend running on a **Digital Ocean** instance handles code execution. Code is received, executed in a controlled environment, and output is streamed back to the frontend.
+  </Step>
+  <Step title="API routing">
+    **Cloudflare tunnels** provide clean API routing between the frontend and backend. This enables secure communication without exposing the backend server directly to the internet.
+  </Step>
+  <Step title="Persistent storage">
+    **NeonDB** (a serverless Postgres) stores user files persistently. Each user's files are isolated and available whenever they return to the application.
+  </Step>
+</Steps>
+
+## Technical stack
+
+<CardGroup cols={2}>
+  <Card title="Frontend" icon="desktop">
+    - **Monaco Editor** for professional code editing
+    - **Next.js** for the application framework
+    - **React** for UI components
+  </Card>
+  <Card title="Backend" icon="server">
+    - **FastAPI** for the API layer
+    - **Digital Ocean** droplet for hosting
+    - **Cloudflare tunnels** for routing
+  </Card>
+  <Card title="Storage" icon="database">
+    - **NeonDB** for persistent file storage
+    - Serverless Postgres for scalability
+  </Card>
+</CardGroup>
+
+## Why server-side execution?
+
+There are browser-based Python options that use WebAssembly (like Pyodide), but LSClear uses server-side execution for several reasons:
+
+<Accordion title="Full Python ecosystem">
+  Server-side execution provides access to the complete Python ecosystem. Install packages with pip, use system operations, access external APIs - everything works as expected.
+</Accordion>
+
+<Accordion title="Better performance for compute-heavy tasks">
+  For anything computationally intensive, running on a server is significantly faster than running in a browser sandbox. This matters for data processing, ML experiments, or any serious computation.
+</Accordion>
+
+<Accordion title="Consistent environment">
+  Users don't need to worry about browser compatibility or client-side resources. The server provides a consistent, controlled environment where Python version and packages are known quantities.
+</Accordion>
+
+<Accordion title="Easier debugging">
+  Server-side execution provides better error messages and debugging capabilities compared to WASM-based solutions, which often have limitations in how they can report errors.
+</Accordion>
+
+## Use cases
+
+LSClear is useful in various scenarios:
+
+<CardGroup cols={2}>
+  <Card title="Quick prototyping" icon="bolt">
+    When you want to test an idea without setting up a project. Just open LSClear, write some code, and run it.
+  </Card>
+  <Card title="Shared computers" icon="users">
+    On a computer where you can't install software. LSClear runs entirely in the browser with no local installation required.
+  </Card>
+  <Card title="Teaching" icon="graduation-cap">
+    For instructors who want students to have immediate access to a Python environment without installation complexity.
+  </Card>
+  <Card title="Code sharing" icon="share">
+    Quick way to share and run code snippets with colleagues without them needing any setup.
+  </Card>
+</CardGroup>
+
+## Security considerations
+
+Running user-submitted code on a server requires careful security measures:
+
+- **Sandboxed execution**: Code runs in an isolated environment that prevents access to the broader system
+- **Resource limits**: Execution time and memory are limited to prevent resource exhaustion
+- **Network isolation**: User code can't make arbitrary network connections from the server
+- **User isolation**: Each user's files and execution environment are completely separate
+
+## Reflection
+
+<Note>
+Sometimes you just want to code Python without setting up a whole environment. LSClear makes that possible - open a browser, write code, run it, and your files are there next time you come back.
+</Note>
+
+Building LSClear taught me about the challenges of remote code execution, the importance of security in user-facing applications, and how to create development tools that just work without requiring setup or configuration from users.
+
+---
+
+*Explore more projects: [Pointer](/portfolio/projects/pointer) | [Toph Bot](/portfolio/projects/toph-bot) | [Shelly](/portfolio/projects/shelly) | [Documix](/portfolio/projects/documix)*

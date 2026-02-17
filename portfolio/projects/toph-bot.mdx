@@ -1,0 +1,130 @@
+---
+title: "Toph Bot"
+description: "An integrated GitHub PR review bot with persistent memory that actually remembers what it's looking at"
+---
+
+## Overview
+
+<Info>
+**Project**: Toph Bot  
+**Status**: In Development  
+**Repository**: [github.com/ehcaw/toph-bot](https://github.com/ehcaw/toph-bot)
+</Info>
+
+Toph Bot is an integrated GitHub pull request review bot that actually remembers what it's looking at. Unlike other code review bots that start fresh with every review, Toph Bot uses persistent memory to maintain context across reviews, learning about your codebase and your team's preferences over time.
+
+## The problem with existing PR bots
+
+Most AI-powered code review tools have a fundamental limitation: they treat each pull request (or even each comment) as an isolated event. This means they:
+
+- Can't remember context from previous reviews
+- Don't learn your team's coding standards over time
+- Repeatedly make the same irrelevant suggestions
+- Can't track the evolution of discussions
+- Miss patterns that emerge across multiple PRs
+
+Toph Bot addresses these issues by maintaining persistent memory, making it a more useful and intelligent code review assistant.
+
+## What I'm building
+
+<Steps>
+  <Step title="Persistent memory with Letta">
+    The core innovation of Toph Bot is using **Letta** for memory management. Letta provides a framework for building AI agents with persistent memory, allowing the bot to remember previous conversations, learn from feedback, and build up knowledge about your codebase over time.
+  </Step>
+  <Step title="GitHub webhook integration">
+    **FastAPI** webhooks handle GitHub events - new PRs, comments, pushes, and reviews. When events occur, the bot receives them in real-time and can respond appropriately with context from previous interactions.
+  </Step>
+  <Step title="Codebase understanding">
+    Plans include integrating **HelixDB** for storing and searching through codebase information. Combined with RAG (Retrieval Augmented Generation), this will enable the bot to understand the broader context of your code when reviewing changes.
+  </Step>
+</Steps>
+
+## Technical architecture
+
+The architecture of Toph Bot is designed around the principle of maintaining and leveraging context:
+
+<CardGroup cols={2}>
+  <Card title="Memory layer" icon="brain">
+    **Letta** provides the memory management layer, storing conversation history, learned preferences, and codebase knowledge in a way that's accessible to the AI during reviews.
+  </Card>
+  <Card title="Event handling" icon="webhook">
+    **FastAPI** webhooks receive GitHub events and route them to the appropriate handlers. This includes PR opened/updated, comments, reviews, and mentions.
+  </Card>
+  <Card title="Code analysis" icon="magnifying-glass">
+    RAG pipelines analyze the codebase and retrieve relevant context when reviewing changes. This helps the bot understand how the current PR fits into the broader system.
+  </Card>
+  <Card title="Knowledge storage" icon="database">
+    **HelixDB** (planned) will store structured information about the codebase, enabling efficient retrieval of relevant context during reviews.
+  </Card>
+</CardGroup>
+
+## How the memory works
+
+The persistent memory capability is what sets Toph Bot apart from other review tools:
+
+<Accordion title="Conversation memory">
+  The bot remembers previous conversations within a PR. If you explain why a certain approach was taken, it won't ask again. If feedback is given about a suggestion, it learns from that feedback.
+</Accordion>
+
+<Accordion title="Cross-PR learning">
+  Patterns that emerge across multiple PRs are captured. If the team consistently makes certain types of changes or follows specific conventions, the bot learns these patterns and can provide more relevant feedback.
+</Accordion>
+
+<Accordion title="Preference adaptation">
+  Over time, the bot learns what kinds of suggestions are helpful and which are ignored or dismissed. This allows it to focus on the feedback that's actually valuable to your team.
+</Accordion>
+
+<Accordion title="Codebase knowledge">
+  Information about the codebase architecture, common patterns, and important invariants can be stored and referenced during reviews. This context helps the bot make more informed suggestions.
+</Accordion>
+
+## Use cases
+
+<CardGroup cols={2}>
+  <Card title="Code review assistance" icon="code">
+    Automatically review PRs with context-aware suggestions that improve over time as the bot learns your team's preferences and codebase patterns.
+  </Card>
+  <Card title="Documentation checks" icon="file-lines">
+    Verify that documentation is updated when relevant code changes, with understanding of which documentation relates to which code.
+  </Card>
+  <Card title="Pattern enforcement" icon="shield-check">
+    Enforce team-specific patterns and conventions that may not be captured by linters, learned through observation and explicit feedback.
+  </Card>
+  <Card title="Knowledge sharing" icon="users">
+    Help new team members by providing context and explanations about why code is structured certain ways, drawing on accumulated knowledge.
+  </Card>
+</CardGroup>
+
+## Technical stack
+
+<CardGroup cols={2}>
+  <Card title="Core technologies" icon="layer-group">
+    - **Letta** for persistent memory and agent framework
+    - **FastAPI** for webhook handling and API endpoints
+    - **GitHub API** for interacting with PRs and repositories
+  </Card>
+  <Card title="Planned additions" icon="plus">
+    - **HelixDB** for codebase information storage
+    - **RAG pipelines** for context retrieval
+    - **Vector embeddings** for semantic code search
+  </Card>
+</CardGroup>
+
+## Origin story
+
+<Note>
+Tried making a code review bot for club repos and this one actually learns. The motivation came from frustration with existing tools that couldn't remember anything between reviews.
+</Note>
+
+The idea for Toph Bot came from running code reviews for university club projects. Existing bot solutions would:
+
+- Make the same unhelpful suggestions repeatedly
+- Miss context about why certain decisions were made
+- Require constant configuration to avoid noise
+- Never improve over time
+
+Building a bot with persistent memory seemed like the obvious solution - let the AI learn from each interaction and build up useful knowledge over time.
+
+---
+
+*Explore more projects: [Pointer](/portfolio/projects/pointer) | [LSClear](/portfolio/projects/lsclear) | [Shelly](/portfolio/projects/shelly) | [Documix](/portfolio/projects/documix)*

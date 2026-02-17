@@ -1,0 +1,181 @@
+---
+title: "Splat"
+description: "A Python CLI for agentic debugging that actually suggests code fixes instead of just finding problems"
+---
+
+## Overview
+
+<Info>
+**Project**: Splat  
+**Status**: Completed  
+**Repository**: [github.com/ehcaw/splat](https://github.com/ehcaw/splat)
+</Info>
+
+Splat is a Python CLI for agentic debugging that actually suggests fixes instead of just finding problems. It reads your trace logs, runs your files, and provides code edit suggestions based on its analysis. Rather than just pointing out that something is broken, Splat tries to tell you how to fix it.
+
+## The problem
+
+Debugging is tedious. Traditional debugging workflows involve:
+
+1. See an error
+2. Read the traceback
+3. Navigate to the relevant code
+4. Understand the context
+5. Figure out what's wrong
+6. Devise a fix
+7. Implement the fix
+8. Test again
+
+Splat aims to automate steps 2-6, letting you focus on validation and implementation.
+
+## What I built
+
+<CardGroup cols={2}>
+  <Card title="Trace analysis" icon="file-lines">
+    Splat reads Python application trace logs, understanding the error context and execution flow that led to the failure.
+  </Card>
+  <Card title="File execution" icon="play">
+    The tool can run your Python files to reproduce errors and gather additional context about the problem.
+  </Card>
+  <Card title="Fix suggestions" icon="lightbulb">
+    Based on the analysis, Splat suggests specific code edits that could fix the issue, not just vague advice.
+  </Card>
+  <Card title="Agentic iteration" icon="rotate">
+    Splat operates as an agent that can iterate on fixes, trying different approaches until the problem is resolved.
+  </Card>
+</CardGroup>
+
+## Technical architecture
+
+Splat combines log analysis with AI-powered code understanding:
+
+<Steps>
+  <Step title="Trace log parsing">
+    When an error occurs, Python generates trace logs showing the execution path. Splat parses these logs to understand what happened and where.
+  </Step>
+  <Step title="Context gathering">
+    The tool reads the relevant source files, understanding the code structure around the error location. This provides the context needed for intelligent suggestions.
+  </Step>
+  <Step title="Bug analysis with Groq">
+    **Groq** powers the bug analysis, quickly processing the trace information and code context to understand the root cause of errors.
+  </Step>
+  <Step title="Fix generation with FetchAI">
+    **FetchAI** generates specific code edit suggestions based on the analysis. These are concrete changes, not just explanations of what's wrong.
+  </Step>
+  <Step title="Iterative refinement">
+    As an agent, Splat can iterate - if a suggested fix doesn't resolve the issue, it analyzes the new error and tries again.
+  </Step>
+</Steps>
+
+## Technical stack
+
+<CardGroup cols={2}>
+  <Card title="CLI framework" icon="terminal">
+    - Python CLI frameworks for interface
+    - Trace log parsing utilities
+    - File system operations
+  </Card>
+  <Card title="AI integration" icon="brain">
+    - **Groq** for fast bug analysis
+    - **FetchAI** for edit suggestions
+    - Agentic workflows for iteration
+  </Card>
+</CardGroup>
+
+## How it works
+
+### Trace log analysis
+
+Python tracebacks contain valuable information:
+
+<Accordion title="Error context">
+  The traceback shows the call stack at the time of error. Splat extracts:
+  
+  - The exception type and message
+  - The file and line where the error occurred
+  - The chain of function calls that led there
+  - Variable states where available
+</Accordion>
+
+<Accordion title="Execution flow">
+  Beyond just the error point, understanding how the code got there helps diagnose the root cause. Sometimes the error location isn't where the bug actually is.
+</Accordion>
+
+### Code analysis
+
+Understanding the code context is essential for useful suggestions:
+
+<Accordion title="Relevant code extraction">
+  Splat reads the source files involved in the error, extracting relevant functions and classes. This provides the context needed to understand what the code is trying to do.
+</Accordion>
+
+<Accordion title="Structural understanding">
+  The tool analyzes code structure - function signatures, class hierarchies, import relationships - to understand how components interact.
+</Accordion>
+
+### Fix generation
+
+The fix suggestions are concrete and actionable:
+
+<Accordion title="Specific edits">
+  Rather than "you should handle the null case," Splat suggests specific code changes: "Add `if value is None: return default` at line 42."
+</Accordion>
+
+<Accordion title="Multiple approaches">
+  When appropriate, Splat may suggest multiple ways to fix an issue, letting you choose the approach that best fits your codebase.
+</Accordion>
+
+## Screenshots
+
+<Frame>
+  <img src="/splat/splat1.png" alt="Splat analyzing a trace log" />
+</Frame>
+
+<Frame>
+  <img src="/splat/splat2.png" alt="Splat suggesting a fix" />
+</Frame>
+
+<Frame>
+  <img src="/splat/splat3.png" alt="Splat iterating on a solution" />
+</Frame>
+
+## Use cases
+
+<CardGroup cols={2}>
+  <Card title="Quick debugging" icon="bolt">
+    When you hit an error and want a quick fix suggestion without deep investigation.
+  </Card>
+  <Card title="Unfamiliar codebases" icon="code">
+    When debugging code you didn't write, Splat's analysis provides context you might not have.
+  </Card>
+  <Card title="Common patterns" icon="pattern">
+    Many bugs follow common patterns (null checks, type errors, off-by-one). Splat recognizes these and suggests standard fixes.
+  </Card>
+  <Card title="Learning tool" icon="graduation-cap">
+    For beginners, seeing suggested fixes helps learn debugging patterns and common solutions.
+  </Card>
+</CardGroup>
+
+## Agentic debugging
+
+The "agentic" aspect of Splat is important:
+
+<Accordion title="Iteration capability">
+  Splat doesn't just make one suggestion and stop. If you apply a fix and it doesn't work, run Splat again and it will analyze the new error state, potentially catching cascading issues or refining its approach.
+</Accordion>
+
+<Accordion title="Context accumulation">
+  As the agent iterates, it accumulates context about what's been tried and what hasn't worked. This helps avoid suggesting the same fix twice and guides toward more effective solutions.
+</Accordion>
+
+## Reflection
+
+<Note>
+Debugging is tedious - wanted something that could suggest actual fixes instead of just finding problems. Splat takes trace analysis from "here's what's broken" to "here's how to fix it."
+</Note>
+
+Building Splat was an exploration of how AI can make debugging more productive. Rather than just better error messages or smarter logging, the goal was to close the loop from error detection to fix suggestion.
+
+---
+
+*Explore more projects: [Pointer](/portfolio/projects/pointer) | [Dashi](/portfolio/projects/dashi) | [CatDoc](/portfolio/projects/catdoc) | [EliteCode](/portfolio/projects/elitecode)*

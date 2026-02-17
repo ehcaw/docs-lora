@@ -1,0 +1,173 @@
+---
+title: "Documix"
+description: "A webapp that lets you chat with any documentation instead of endlessly scrolling through docs"
+---
+
+## Overview
+
+<Info>
+**Project**: Documix  
+**Status**: Completed  
+**Repository**: [github.com/ehcaw/documix](https://github.com/ehcaw/documix)
+</Info>
+
+Documix is a web application that lets you chat with any documentation instead of endlessly scrolling through docs pages. Index documentation from URLs or local files, then have a conversation to find exactly what you need. It's like having a knowledgeable assistant who's read all the docs and can answer your specific questions.
+
+## The problem
+
+Documentation is essential, but searching through it is often painful:
+
+- **Linear search is slow**: Searching for keywords often returns too many results or misses what you're looking for
+- **Structure doesn't match questions**: Docs are organized by topic, but your questions span multiple topics
+- **Context is lost**: Each search is independent, so you can't build on previous questions
+- **Examples are scattered**: Finding relevant code examples requires browsing multiple pages
+
+Documix addresses these issues by enabling conversational interaction with documentation.
+
+## What I built
+
+<CardGroup cols={2}>
+  <Card title="Document indexing" icon="database">
+    Index documentation from URLs or local files. The system processes and stores document content in a way that enables semantic search.
+  </Card>
+  <Card title="Conversational interface" icon="comments">
+    Chat with the indexed documentation using natural language. Ask questions like you would ask a colleague who's familiar with the docs.
+  </Card>
+  <Card title="Semantic search" icon="magnifying-glass">
+    Find relevant information based on meaning, not just keyword matching. Ask about concepts and get answers from the right parts of the docs.
+  </Card>
+  <Card title="Multiple LLM options" icon="microchip">
+    Choose between different LLM providers (OpenAI, Groq, Ollama) based on your preferences for speed, cost, or privacy.
+  </Card>
+</CardGroup>
+
+## Technical architecture
+
+Documix uses a RAG (Retrieval Augmented Generation) architecture to combine semantic search with LLM capabilities:
+
+<Steps>
+  <Step title="Document ingestion">
+    Documentation is fetched from URLs or uploaded as files. The content is processed, chunked into manageable segments, and prepared for embedding.
+  </Step>
+  <Step title="Embedding generation">
+    **Nomic embedding models** convert document chunks into vector representations that capture semantic meaning. These embeddings enable similarity search based on meaning rather than exact matches.
+  </Step>
+  <Step title="Vector storage">
+    **Upstash Vector** stores the embeddings along with the original text. This serverless vector database enables efficient similarity search at scale.
+  </Step>
+  <Step title="Query processing">
+    When you ask a question, it's converted to an embedding and compared against stored documents. The most relevant chunks are retrieved and provided to the LLM as context.
+  </Step>
+  <Step title="Response generation">
+    An LLM (OpenAI, Groq, or Ollama) generates a response based on the retrieved context and your question. The response draws from the actual documentation content.
+  </Step>
+</Steps>
+
+## Technical stack
+
+<CardGroup cols={2}>
+  <Card title="Frontend" icon="desktop">
+    - **Next.js** for the application framework
+    - **React** for the chat interface
+    - Clean, conversational UI design
+  </Card>
+  <Card title="Vector search" icon="database">
+    - **Upstash Vector** for vector storage and search
+    - **Nomic embedding models** for semantic embeddings
+    - Efficient similarity search at scale
+  </Card>
+  <Card title="LLM providers" icon="brain">
+    - **OpenAI** for high-quality responses
+    - **Groq** for fast inference
+    - **Ollama** for local/private deployment
+  </Card>
+  <Card title="Infrastructure" icon="server">
+    - **Redis** for rate limiting
+    - Serverless architecture for scalability
+  </Card>
+</CardGroup>
+
+## How RAG works
+
+The Retrieval Augmented Generation pattern is central to Documix:
+
+<Accordion title="Why RAG?">
+  LLMs have knowledge cutoff dates and can't access private documentation. RAG solves this by retrieving relevant information at query time and providing it as context. This means:
+  
+  - Always up-to-date with your documentation
+  - Works with any documentation, not just publicly known content
+  - Answers are grounded in actual document content
+  - Can cite sources for verification
+</Accordion>
+
+<Accordion title="Embedding and similarity">
+  Text embeddings are numerical representations that capture semantic meaning. Similar concepts have similar embeddings, enabling semantic search. For example:
+  
+  - "How do I authenticate?" and "What's the login process?" would retrieve similar results
+  - Questions about specific features find documentation about those features
+  - Related concepts are grouped together in embedding space
+</Accordion>
+
+<Accordion title="Context window management">
+  LLMs have limited context windows. Documix intelligently selects and orders retrieved chunks to maximize relevant context while staying within limits. More relevant chunks get more context space.
+</Accordion>
+
+## Features
+
+### Document sources
+
+<CardGroup cols={2}>
+  <Card title="URL indexing" icon="link">
+    Point Documix at a documentation site URL and it will crawl and index the content. Great for public documentation sites.
+  </Card>
+  <Card title="File upload" icon="upload">
+    Upload local documentation files directly. Useful for internal documentation or offline access.
+  </Card>
+</CardGroup>
+
+### Chat capabilities
+
+The chat interface supports natural conversation about documentation:
+
+- Ask specific questions and get direct answers
+- Follow up with clarifying questions
+- Request code examples from the docs
+- Ask for comparisons between different approaches
+- Get summaries of long sections
+
+### LLM flexibility
+
+Choose the right model for your needs:
+
+- **OpenAI**: Best quality responses, moderate speed
+- **Groq**: Very fast responses, good quality
+- **Ollama**: Local execution, complete privacy
+
+## Use cases
+
+<CardGroup cols={2}>
+  <Card title="Learning new frameworks" icon="graduation-cap">
+    Index the framework documentation and ask questions as you learn. Get answers tailored to your specific questions.
+  </Card>
+  <Card title="API exploration" icon="code">
+    When working with a new API, index its docs and ask about specific endpoints, parameters, or patterns.
+  </Card>
+  <Card title="Troubleshooting" icon="wrench">
+    Describe your problem and find relevant documentation sections that might help solve it.
+  </Card>
+  <Card title="Team documentation" icon="users">
+    Index internal documentation and give team members an easy way to find information.
+  </Card>
+</CardGroup>
+
+## Reflection
+
+<Note>
+Searching through documentation is painful - this makes it actually useful. Instead of scanning through pages hoping to find what you need, just ask and get an answer.
+</Note>
+
+Documix demonstrates how AI can transform the way we interact with documentation. Rather than adapting our questions to how docs are structured, we can ask natural questions and get relevant answers.
+
+---
+
+*Explore more projects: [Pointer](/portfolio/projects/pointer) | [Toph Bot](/portfolio/projects/toph-bot) | [LSClear](/portfolio/projects/lsclear) | [Shelly](/portfolio/projects/shelly)*

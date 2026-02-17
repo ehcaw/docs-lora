@@ -1,0 +1,173 @@
+---
+title: "Delta"
+description: "A personal finance tracker that scans screenshots from your bank accounts and automatically logs transactions"
+---
+
+## Overview
+
+<Info>
+**Project**: Delta  
+**Status**: In Development  
+**Repository**: [github.com/ehcaw/delta](https://github.com/ehcaw/delta)
+</Info>
+
+Delta is a personal finance tracker that uses AI vision to parse screenshots of bank statements, credit card apps, and investment accounts. Instead of manually entering transactions or connecting your accounts to third-party services, just screenshot your accounts and let AI do the data entry.
+
+## The problem with finance tracking
+
+Keeping track of personal finances is important but tedious:
+
+- **Manual entry is slow**: Typing in every transaction takes time and motivation
+- **Bank connections are risky**: Giving third-party apps your bank credentials is a security concern
+- **Apps don't cover everything**: Some accounts (international, investment, crypto) don't connect to aggregators
+- **Data entry falls behind**: Even with the best intentions, manual tracking becomes outdated
+
+Delta offers a middle ground: easy data capture without connecting your accounts.
+
+## What I'm building
+
+<CardGroup cols={2}>
+  <Card title="Screenshot parsing" icon="image">
+    Take screenshots of your bank app, credit card statement, or investment account. Delta's AI extracts the transaction data automatically.
+  </Card>
+  <Card title="Auto-categorization" icon="tags">
+    Transactions are automatically categorized based on merchant names. Over time, the system learns your categorization preferences.
+  </Card>
+  <Card title="Spending dashboard" icon="chart-line">
+    View your spending trends and account balances in a clean dashboard with charts and breakdowns.
+  </Card>
+  <Card title="Multi-account tracking" icon="building-columns">
+    Track all your accounts in one place - checking, savings, credit cards, investments - without connecting any of them.
+  </Card>
+</CardGroup>
+
+## Technical architecture
+
+Delta combines computer vision with traditional finance tracking:
+
+<Steps>
+  <Step title="Screenshot upload">
+    Upload or paste screenshots from your banking apps, statements, or account pages. The system accepts various formats and layouts.
+  </Step>
+  <Step title="Vision model processing">
+    **Llama Vision Models** analyze the screenshot, extracting:
+    - Transaction dates
+    - Merchant/payee names
+    - Amounts (debits and credits)
+    - Account balances
+    - Any other visible financial data
+  </Step>
+  <Step title="Data extraction and structuring">
+    The raw extracted text is parsed into structured transaction data. Amounts are normalized, dates are standardized, and merchants are identified.
+  </Step>
+  <Step title="Categorization">
+    Transactions are auto-categorized based on merchant names. Categories include food, transportation, entertainment, utilities, and custom categories you define.
+  </Step>
+  <Step title="Dashboard visualization">
+    **Recharts** powers the visualization layer, showing spending trends, category breakdowns, and balance history over time.
+  </Step>
+</Steps>
+
+## Technical stack
+
+<CardGroup cols={2}>
+  <Card title="Frontend" icon="desktop">
+    - **Next.js** for the application framework
+    - **React** for UI components
+    - **TypeScript** for type safety
+    - **Tailwind CSS** for styling
+  </Card>
+  <Card title="AI/Vision" icon="eye">
+    - **Llama Vision Models** for screenshot parsing
+    - OCR-like extraction from images
+    - Multi-format support
+  </Card>
+  <Card title="Visualization" icon="chart-pie">
+    - **Recharts** for data visualization
+    - Charts, graphs, and breakdowns
+    - Interactive dashboard components
+  </Card>
+</CardGroup>
+
+## Why screenshots?
+
+The screenshot approach has several advantages:
+
+<Accordion title="No credentials shared">
+  You never give Delta access to your bank account. No usernames, passwords, or API connections. The only thing you share is images of your transactions.
+</Accordion>
+
+<Accordion title="Works with any account">
+  If you can see it on a screen, Delta can track it. International banks, investment platforms, crypto exchanges, even paper statements you photograph.
+</Accordion>
+
+<Accordion title="You control the data">
+  You decide what to share. Want to track only certain accounts? Only upload screenshots from those accounts. Privacy is built in.
+</Accordion>
+
+<Accordion title="Robust to changes">
+  When banks update their APIs or aggregators lose access, screenshot parsing still works. The visual interface changes less frequently than underlying APIs.
+</Accordion>
+
+## Features
+
+### Screenshot processing
+
+The vision model handles various screenshot formats:
+
+<Accordion title="Mobile banking apps">
+  Screenshots from iOS or Android banking apps. The AI understands common layouts used by major banks.
+</Accordion>
+
+<Accordion title="Web banking portals">
+  Screenshots from desktop banking websites, including transaction lists and account summaries.
+</Accordion>
+
+<Accordion title="Statements and documents">
+  PDF statements or even photos of paper statements can be processed for transaction data.
+</Accordion>
+
+### Spending insights
+
+Once data is in the system, Delta provides useful analysis:
+
+<Accordion title="Category spending">
+  See how much you're spending in each category over time. Identify areas where spending is higher than expected.
+</Accordion>
+
+<Accordion title="Trend analysis">
+  Track spending patterns over weeks and months. See if you're spending more or less than usual.
+</Accordion>
+
+<Accordion title="Account balances">
+  Keep track of balances across all your accounts in one view, without logging into each one separately.
+</Accordion>
+
+## Use cases
+
+<CardGroup cols={2}>
+  <Card title="Privacy-conscious tracking" icon="lock">
+    Track finances without connecting accounts or sharing credentials with third-party services.
+  </Card>
+  <Card title="Multi-platform accounts" icon="globe">
+    Track accounts that don't integrate with standard aggregators - international banks, investment platforms, etc.
+  </Card>
+  <Card title="Occasional tracking" icon="calendar">
+    Don't need real-time sync? Screenshot your accounts periodically for financial awareness without constant monitoring.
+  </Card>
+  <Card title="Expense reports" icon="receipt">
+    Screenshot receipts and statements for expense tracking and reporting purposes.
+  </Card>
+</CardGroup>
+
+## Reflection
+
+<Note>
+Manually logging expenses is tedious - just screenshot your accounts and let AI do the rest. Delta makes finance tracking as easy as taking a screenshot.
+</Note>
+
+Delta explores a different approach to personal finance software. Rather than competing to connect to more banks or provide more real-time data, it focuses on making data entry effortless while maintaining user privacy and control.
+
+---
+
+*Explore more projects: [Pointer](/portfolio/projects/pointer) | [Dashi](/portfolio/projects/dashi) | [EliteCode](/portfolio/projects/elitecode) | [CatDoc](/portfolio/projects/catdoc)*
