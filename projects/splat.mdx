@@ -1,0 +1,303 @@
+---
+title: Splat
+description: A Python CLI for agentic debugging that analyzes trace logs and suggests actual code fixes for your applications
+---
+
+## Overview
+
+Splat is a command-line debugging tool that goes beyond simply identifying problems in your code. While traditional debuggers help you find where errors occur, Splat takes an agentic approach: it analyzes your trace logs, runs your files to understand the problem in context, and then suggests specific code edits to fix the issues it discovers.
+
+Built for Python developers who want more than just error messages, Splat acts as an AI-powered debugging assistant that can reason about your code and propose actionable solutions rather than just pointing out that something is wrong.
+
+## The debugging experience problem
+
+Traditional debugging workflows have friction points:
+
+1. **Error messages are cryptic**: Stack traces tell you where, not why
+2. **Context is missing**: You see the failure, not the conditions that caused it
+3. **Fixes require research**: You have to figure out the solution yourself
+4. **Iteration is slow**: Test, fail, research, fix, repeat
+5. **Patterns repeat**: You fix the same types of bugs repeatedly
+
+Splat addresses these issues by providing an intelligent debugging assistant that can analyze, understand, and suggest fixes.
+
+## Architecture
+
+Splat uses an agentic architecture that combines code analysis with AI reasoning:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        CLI Interface                             │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                   Python CLI                              │   │
+│  │  ┌──────────────────────┬──────────────────────────┐    │   │
+│  │  │    Command Parser    │    Output Formatter      │    │   │
+│  │  └──────────────────────┴──────────────────────────┘    │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└────────────────────────────────┬────────────────────────────────┘
+                                 │
+┌────────────────────────────────┴────────────────────────────────┐
+│                      Analysis Layer                              │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                 Trace Log Parser                          │   │
+│  │  ┌──────────────────────┬──────────────────────────┐    │   │
+│  │  │   Stack Trace        │    Variable State        │    │   │
+│  │  │   Extraction         │    Analysis              │    │   │
+│  │  └──────────────────────┴──────────────────────────┘    │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└────────────────────────────────┬────────────────────────────────┘
+                                 │
+┌────────────────────────────────┴────────────────────────────────┐
+│                     Execution Layer                              │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │               File Execution Engine                       │   │
+│  │  ┌──────────────────────┬──────────────────────────┐    │   │
+│  │  │   Sandboxed Run      │    Output Capture        │    │   │
+│  │  └──────────────────────┴──────────────────────────┘    │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└────────────────────────────────┬────────────────────────────────┘
+                                 │
+┌────────────────────────────────┴────────────────────────────────┐
+│                       AI Agent Layer                             │
+│  ┌───────────────────────────────┬─────────────────────────┐   │
+│  │        Groq (Analysis)        │  FetchAI (Edit Suggest) │   │
+│  │  ┌─────────────────────────┐  │  ┌─────────────────────┐│   │
+│  │  │  Bug Pattern           │  │  │  Code Generation   ││   │
+│  │  │  Recognition           │  │  │  & Formatting      ││   │
+│  │  └─────────────────────────┘  │  └─────────────────────┘│   │
+│  └───────────────────────────────┴─────────────────────────┘   │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+### CLI interface
+
+A clean command-line interface for:
+
+- **Log input**: Accept trace logs from files or stdin
+- **File targeting**: Specify which files to analyze
+- **Output formatting**: Present suggestions clearly
+- **Interactive mode**: Iterate on fixes interactively
+
+### Analysis layer
+
+Trace log processing includes:
+
+- **Stack trace parsing**: Extract call hierarchy and error locations
+- **Variable extraction**: Identify relevant variable states
+- **Pattern matching**: Recognize common bug patterns
+- **Context building**: Assemble information for AI analysis
+
+### Execution layer
+
+For deeper understanding, Splat can:
+
+- **Run files safely**: Execute code in sandboxed environments
+- **Capture output**: Record all output and side effects
+- **Track state**: Monitor variable changes during execution
+- **Reproduce errors**: Trigger the same failures for analysis
+
+### AI agent layer
+
+Two AI systems work together:
+
+- **Groq**: Fast analysis of bugs and patterns
+- **FetchAI**: Generating specific code edit suggestions
+
+## Technology stack
+
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| **CLI** | Python | Command-line interface |
+| **Analysis** | Groq | Bug pattern recognition |
+| **Code Generation** | FetchAI | Edit suggestions |
+| **Execution** | Python subprocess | Sandboxed file running |
+
+## Key features
+
+### Trace log analysis
+
+Splat parses and understands trace logs:
+
+```python
+# Input: A cryptic stack trace
+Traceback (most recent call last):
+  File "app.py", line 45, in process_data
+    result = transform(data['items'])
+  File "utils.py", line 23, in transform
+    return [item.upper() for item in items]
+TypeError: 'NoneType' object is not iterable
+
+# Splat's analysis:
+The error occurs because `data['items']` is None when passed
+to transform(). This happens when the API response doesn't
+include an 'items' key or explicitly returns null.
+```
+
+### File execution
+
+Splat can run your code to understand it better:
+
+```bash
+$ splat analyze app.py --run
+
+Running app.py with test inputs...
+Execution captured:
+  - Line 12: data loaded from cache
+  - Line 23: API call returned empty response
+  - Line 45: Error triggered
+
+Root cause: API endpoint returns empty dict on error
+instead of raising an exception
+```
+
+### Code edit suggestions
+
+Instead of just identifying problems, Splat suggests fixes:
+
+```bash
+$ splat fix app.py
+
+Suggested edit for utils.py line 23:
+
+- return [item.upper() for item in items]
++ if items is None:
++     return []
++ return [item.upper() for item in items]
+
+Apply this fix? [y/n/explain]
+```
+
+### Agentic iteration
+
+Splat can iterate on fixes:
+
+```bash
+$ splat fix app.py --iterate
+
+Attempt 1: Added None check
+Running tests... 1 failure remaining
+
+Attempt 2: Fixed return type consistency  
+Running tests... All passing!
+
+Applied 2 fixes:
+  - utils.py: Added None check in transform()
+  - app.py: Updated type hint for return value
+```
+
+## Use cases
+
+### Debugging production errors
+
+When you get error reports from production:
+
+```bash
+$ splat analyze --from-log production.log
+
+Found 3 unique errors:
+1. TypeError in data processing (15 occurrences)
+2. ConnectionError in API calls (8 occurrences)  
+3. KeyError in config loading (2 occurrences)
+
+Analyze which? [1/2/3/all]
+```
+
+### Understanding unfamiliar code
+
+When debugging code you didn't write:
+
+```bash
+$ splat explain app.py:45
+
+Line 45: result = transform(data['items'])
+
+This line:
+- Accesses the 'items' key from the data dict
+- Passes it to the transform() function in utils.py
+- Expects a list of strings in return
+
+Potential issues:
+- No check for missing 'items' key
+- No validation of data type before passing
+- transform() doesn't handle None input
+```
+
+### Learning from bugs
+
+Build understanding of common patterns:
+
+```bash
+$ splat patterns --recent
+
+Common bug patterns in your codebase:
+1. Missing None checks (12 instances)
+2. Uncaught API exceptions (8 instances)
+3. Type coercion errors (5 instances)
+
+Run 'splat suggest --pattern 1' for automated fixes
+```
+
+## Example workflow
+
+A typical debugging session with Splat:
+
+```bash
+# 1. See the error
+$ python app.py
+TypeError: unsupported operand type(s) for +: 'int' and 'str'
+
+# 2. Get Splat's analysis
+$ splat analyze app.py
+
+Analysis:
+The error on line 34 attempts to concatenate an integer
+with a string. The variable `count` is an int, but you're
+trying to add it to the string `prefix`.
+
+# 3. Get a fix suggestion
+$ splat fix app.py
+
+Suggested fix for line 34:
+- message = prefix + count + suffix
++ message = prefix + str(count) + suffix
+
+Or alternatively (f-string):
+- message = prefix + count + suffix  
++ message = f"{prefix}{count}{suffix}"
+
+# 4. Apply the fix
+$ splat apply app.py --fix 2
+
+Applied f-string fix to line 34
+Running tests... All passing!
+```
+
+## Benefits over traditional debugging
+
+| Traditional Debugging | Splat |
+|-----------------------|-------|
+| Find the error | Find and explain the error |
+| Research the fix | Suggest specific fixes |
+| Manual editing | Automated code changes |
+| Single iteration | Iterative improvement |
+| Local knowledge | Pattern recognition across bugs |
+
+## Repository
+
+<Card title="View on GitHub" icon="github" href="https://github.com/ehcaw/splat">
+  Explore the source code, contribute to development, or report issues on GitHub.
+</Card>
+
+## Screenshots
+
+<CardGroup cols={3}>
+  <Card title="Error analysis">
+    Splat analyzing a TypeError and explaining the root cause
+  </Card>
+  <Card title="Fix suggestion">
+    Proposed code changes with before/after comparison
+  </Card>
+  <Card title="Iteration mode">
+    Splat applying fixes iteratively until tests pass
+  </Card>
+</CardGroup>

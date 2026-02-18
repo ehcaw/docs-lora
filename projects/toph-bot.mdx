@@ -1,0 +1,143 @@
+---
+title: Toph Bot
+description: An integrated GitHub pull request review bot with persistent memory that actually remembers what it's looking at across reviews
+---
+
+## Overview
+
+Toph Bot is an intelligent GitHub pull request review bot designed to solve a fundamental problem with existing code review automation: the complete lack of context between reviews. Unlike traditional bots that start fresh every time they encounter a pull request, Toph Bot maintains persistent memory across all interactions, enabling it to provide increasingly relevant and context-aware feedback as it learns more about your codebase and team conventions.
+
+The bot was developed to address the frustration of receiving repetitive, context-less feedback from automated code review tools. By implementing persistent memory through the Letta framework, Toph Bot can remember previous conversations, understand recurring patterns in your code, and provide feedback that actually improves over time.
+
+## The problem it solves
+
+Traditional code review bots suffer from several significant limitations:
+
+1. **No memory between sessions**: Every pull request is treated as if it's the first one ever reviewed
+2. **Repetitive feedback**: The same suggestions are made repeatedly, even after being addressed
+3. **Lack of codebase understanding**: No awareness of project-specific conventions or architectural decisions
+4. **Context-free analysis**: Each file is analyzed in isolation without understanding the broader system
+
+Toph Bot addresses all of these issues by maintaining a persistent memory layer that accumulates knowledge about your codebase over time.
+
+## Architecture
+
+The system is built around several key components that work together to provide intelligent, context-aware code reviews:
+
+### Memory management with Letta
+
+At the core of Toph Bot is the Letta agent framework, which provides sophisticated memory management capabilities. Letta enables the bot to:
+
+- Store and retrieve information about previous code reviews
+- Maintain context about codebase patterns and conventions
+- Remember specific feedback given to individual contributors
+- Build an understanding of the project's architecture over time
+
+### Webhook integration
+
+FastAPI webhooks handle all GitHub events, providing a robust and scalable way to receive notifications about:
+
+- New pull requests being opened
+- Comments being added to existing reviews
+- Code changes being pushed to open pull requests
+- Review requests and assignments
+
+### Code understanding with HelixDB
+
+The planned HelixDB integration will enable semantic search through the codebase, allowing Toph Bot to:
+
+- Find related code when reviewing changes
+- Understand the impact of modifications on other parts of the system
+- Provide suggestions based on similar code elsewhere in the project
+- Identify potential conflicts or duplication
+
+### RAG pipeline
+
+A Retrieval-Augmented Generation pipeline is being implemented to enhance the bot's understanding of the codebase:
+
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│   Codebase      │────▶│   Embeddings    │────▶│   Vector DB     │
+│   Indexing      │     │   Generation    │     │   Storage       │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+                                                         │
+                                                         ▼
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│   Review        │◀────│   LLM with      │◀────│   Context       │
+│   Generation    │     │   Memory        │     │   Retrieval     │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+```
+
+## Technology stack
+
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| **Memory** | Letta | Persistent conversation memory and context management |
+| **API** | FastAPI | GitHub webhook handling and HTTP endpoints |
+| **Database** | HelixDB (planned) | Codebase indexing and semantic search |
+| **Integration** | GitHub Webhooks | Event notification for PR activities |
+| **RAG** | Custom pipeline | Enhanced code understanding through retrieval |
+
+## Key features
+
+### Persistent memory
+
+The most distinctive feature of Toph Bot is its ability to remember:
+
+- **Previous review comments**: Knows what feedback has been given before
+- **Developer preferences**: Learns individual coding styles and preferences
+- **Project conventions**: Understands and enforces project-specific patterns
+- **Resolution patterns**: Remembers how issues were resolved in the past
+
+### Context-aware reviews
+
+Because Toph Bot maintains state across reviews, it can:
+
+- Reference previous discussions when making suggestions
+- Avoid repeating feedback that has already been addressed
+- Understand the evolution of code over multiple pull requests
+- Provide increasingly relevant suggestions as it learns more
+
+### Intelligent feedback
+
+Reviews generated by Toph Bot are designed to be:
+
+- **Actionable**: Specific suggestions that can be directly implemented
+- **Contextual**: Takes into account the broader codebase and project history
+- **Learning-based**: Improves over time based on feedback and corrections
+
+## Use cases
+
+### Club repository management
+
+Toph Bot was originally developed to help manage code reviews for club repositories where:
+
+- Many contributors have varying levels of experience
+- Consistent code quality standards need to be maintained
+- Manual code review is time-consuming and inconsistent
+- New members need guidance on project conventions
+
+### Open source projects
+
+The bot is well-suited for open source projects that receive many contributions:
+
+- Maintains consistent review quality across all contributors
+- Remembers context about long-running feature branches
+- Helps onboard new contributors by providing educational feedback
+- Reduces maintainer burden while improving code quality
+
+## Future development
+
+Planned enhancements include:
+
+1. **Full HelixDB integration**: Complete implementation of codebase indexing and semantic search
+2. **Advanced RAG capabilities**: More sophisticated retrieval for better code understanding
+3. **Custom rule definition**: Allow projects to define specific rules and conventions
+4. **Integration with CI/CD**: Automatic triggers based on test results and coverage
+5. **Multi-repository awareness**: Understanding relationships between related repositories
+
+## Repository
+
+<Card title="View on GitHub" icon="github" href="https://github.com/ehcaw/toph-bot">
+  Explore the source code, contribute to development, or report issues on GitHub.
+</Card>

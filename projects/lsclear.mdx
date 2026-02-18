@@ -1,0 +1,203 @@
+---
+title: LSClear
+description: A web-based Python IDE that runs entirely in your browser with persistent file storage across sessions
+---
+
+## Overview
+
+LSClear is a fully-featured web-based Python Integrated Development Environment (IDE) designed for situations where you need to write and execute Python code quickly without the overhead of setting up a local development environment. Whether you're on a borrowed computer, working from a tablet, or simply want to test a quick idea, LSClear provides a professional coding experience entirely within your browser.
+
+The project was born from a simple observation: sometimes you just want to write Python code without installing anything, configuring virtual environments, or dealing with dependency management. LSClear makes that possible while still providing the features you'd expect from a proper development environment.
+
+## The problem it solves
+
+Setting up a Python development environment, while straightforward for experienced developers, involves several steps:
+
+1. Installing Python with the correct version
+2. Setting up a virtual environment
+3. Installing required packages
+4. Configuring an editor or IDE
+5. Managing file organization and project structure
+
+LSClear eliminates all of these steps by providing:
+
+- **Zero installation**: Works in any modern browser
+- **Persistent storage**: Your files survive browser restarts
+- **Professional editor**: Monaco Editor provides VS Code-like editing
+- **Remote execution**: Python runs on a dedicated server, not in your browser
+- **Session continuity**: Pick up exactly where you left off
+
+## Architecture
+
+LSClear uses a distributed architecture that separates the user interface from code execution:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         User Browser                             │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                    Next.js Frontend                       │   │
+│  │  ┌────────────────┐  ┌────────────────────────────────┐  │   │
+│  │  │  File Manager  │  │       Monaco Editor            │  │   │
+│  │  └────────────────┘  └────────────────────────────────┘  │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└────────────────────────────────┬────────────────────────────────┘
+                                 │
+                    Cloudflare Tunnels
+                                 │
+┌────────────────────────────────┴────────────────────────────────┐
+│                      Digital Ocean Instance                      │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                     FastAPI Backend                       │   │
+│  │  ┌────────────────┐  ┌────────────────────────────────┐  │   │
+│  │  │ Code Execution │  │      API Endpoints             │  │   │
+│  │  │    Sandbox     │  │                                │  │   │
+│  │  └────────────────┘  └────────────────────────────────┘  │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+                                 │
+┌────────────────────────────────┴────────────────────────────────┐
+│                          NeonDB                                  │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │              User Files & Session Storage                 │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Frontend layer
+
+The user interface is built with Next.js, providing:
+
+- **Monaco Editor**: The same editor that powers VS Code, with full syntax highlighting, autocomplete, and error detection
+- **File manager**: Create, organize, rename, and delete files within your workspace
+- **Output panel**: View execution results, errors, and print statements
+- **Responsive design**: Works on desktops, tablets, and even phones
+
+### Backend layer
+
+A FastAPI server running on Digital Ocean handles all code execution:
+
+- **Secure sandboxing**: Code runs in isolated environments to prevent malicious operations
+- **Resource limits**: CPU and memory constraints prevent runaway processes
+- **Session management**: Tracks which code belongs to which user
+- **API routing**: Clean RESTful endpoints for all operations
+
+### Storage layer
+
+NeonDB provides persistent storage for:
+
+- **User files**: All code files are stored in the database
+- **Session data**: Workspace state, open files, and cursor positions
+- **Execution history**: Previous runs and their outputs
+
+### Network layer
+
+Cloudflare tunnels provide:
+
+- **Secure connections**: All traffic is encrypted
+- **Clean URLs**: No port numbers or IP addresses in URLs
+- **DDoS protection**: Cloudflare's security infrastructure
+
+## Technology stack
+
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| **Editor** | Monaco Editor | Professional code editing experience |
+| **Frontend** | Next.js | Server-side rendering and React components |
+| **Backend** | FastAPI | High-performance Python API server |
+| **Infrastructure** | Digital Ocean | Cloud compute for code execution |
+| **Networking** | Cloudflare Tunnels | Secure routing and CDN |
+| **Database** | NeonDB | Serverless Postgres for file storage |
+
+## Key features
+
+### Professional code editing
+
+Monaco Editor provides all the features you'd expect from a modern IDE:
+
+- **Syntax highlighting**: Full Python syntax support with accurate coloring
+- **IntelliSense**: Autocomplete suggestions based on context
+- **Error detection**: Real-time feedback on syntax errors
+- **Multiple themes**: Light and dark themes to match your preference
+- **Keyboard shortcuts**: All the shortcuts you know from VS Code
+
+### Persistent file storage
+
+Unlike many online coding environments, LSClear saves your work:
+
+- Files persist across browser sessions
+- Automatic saving as you type
+- File organization with folders
+- Download files to your local machine
+
+### Secure code execution
+
+Python code runs on a secure backend:
+
+- Isolated execution environment
+- Resource limits to prevent abuse
+- Timeout protection for infinite loops
+- Standard library access
+
+### Clean user experience
+
+The interface is designed for productivity:
+
+- Distraction-free coding environment
+- Clear separation between editor and output
+- Quick file switching
+- Mobile-friendly layout
+
+## Use cases
+
+### Quick prototyping
+
+When you have an idea and want to test it quickly:
+
+```python
+# Test a quick algorithm idea
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+
+print([fibonacci(i) for i in range(10)])
+```
+
+### Learning Python
+
+Perfect for beginners who don't want to set up a development environment:
+
+- Focus on learning Python, not tooling
+- Experiment safely without affecting your computer
+- Access from any device with a browser
+
+### Code interviews
+
+For technical interviews conducted remotely:
+
+- No "let me share my screen while I set up" delays
+- Clean, professional coding environment
+- Works on any computer you're given access to
+
+### Teaching and demonstrations
+
+Instructors can use LSClear to:
+
+- Demonstrate Python concepts live
+- Share code that students can immediately run
+- Avoid classroom setup time
+
+## Security considerations
+
+LSClear implements several security measures:
+
+1. **Sandboxed execution**: Code cannot access the host system
+2. **Resource limits**: CPU time and memory are constrained
+3. **Network isolation**: Executed code cannot make network requests
+4. **Input validation**: All user input is sanitized
+
+## Repository
+
+<Card title="View on GitHub" icon="github" href="https://github.com/ehcaw/lsclear">
+  Explore the source code, contribute to development, or report issues on GitHub.
+</Card>

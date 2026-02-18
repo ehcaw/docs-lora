@@ -1,0 +1,294 @@
+---
+title: CatDoc
+description: A CLI application that automatically generates comprehensive documentation for your codebase using AI, with smart regeneration that only updates when files change
+---
+
+## Overview
+
+CatDoc is a command-line tool that solves one of the most persistent problems in software development: keeping documentation up to date. By leveraging the massive context window of Gemini 2.5, CatDoc can read and understand your entire codebase, then automatically generate comprehensive documentation that accurately reflects the current state of your code.
+
+Built during HackDavis 2025 for team vibecoders, CatDoc goes beyond simple docstring generation. It creates project-level documentation, API references, architecture explanations, and usage guides—all automatically regenerated when your code changes.
+
+## The documentation problem
+
+Documentation is simultaneously essential and neglected:
+
+1. **Time-consuming**: Writing good documentation takes significant effort
+2. **Quickly outdated**: Code changes faster than documentation gets updated
+3. **Inconsistent**: Different contributors document in different styles
+4. **Incomplete**: Some code is documented thoroughly while other parts are ignored
+5. **Disconnected**: Documentation often lives separately from code
+
+CatDoc addresses these issues through automation and intelligent change detection.
+
+## Architecture
+
+CatDoc uses a pipeline architecture that processes codebases intelligently:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        CLI Interface                             │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                    Ink React TUI                          │   │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │   │
+│  │  │  Command    │  │  Progress   │  │    Output       │  │   │
+│  │  │  Parser     │  │  Display    │  │    Formatting   │  │   │
+│  │  └─────────────┘  └─────────────┘  └─────────────────┘  │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└────────────────────────────────┬────────────────────────────────┘
+                                 │
+┌────────────────────────────────┴────────────────────────────────┐
+│                    Change Detection Layer                        │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                  File Hash Manager                        │   │
+│  │  ┌──────────────────┐  ┌──────────────────────────────┐  │   │
+│  │  │  Hash Calculation │  │  Change Comparison           │  │   │
+│  │  │  (per file)       │  │  (vs previous run)           │  │   │
+│  │  └──────────────────┘  └──────────────────────────────┘  │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└────────────────────────────────┬────────────────────────────────┘
+                                 │
+┌────────────────────────────────┴────────────────────────────────┐
+│                    Documentation Generator                       │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │              Gemini 2.5 Pro Integration                   │   │
+│  │  ┌──────────────────┐  ┌──────────────────────────────┐  │   │
+│  │  │  Context Assembly │  │  Documentation Generation    │  │   │
+│  │  │  (full codebase)  │  │  (structured output)         │  │   │
+│  │  └──────────────────┘  └──────────────────────────────┘  │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└────────────────────────────────┬────────────────────────────────┘
+                                 │
+┌────────────────────────────────┴────────────────────────────────┐
+│                      Interactive Chatbot                         │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │          Ask Questions About Your Code                    │   │
+│  │  ┌──────────────────┐  ┌──────────────────────────────┐  │   │
+│  │  │  Query Processing │  │  Context-Aware Responses     │  │   │
+│  │  └──────────────────┘  └──────────────────────────────┘  │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+### CLI interface
+
+Built with Ink React for a polished terminal experience:
+
+- **Interactive prompts**: Guided setup and configuration
+- **Progress indicators**: Real-time feedback during generation
+- **Formatted output**: Clean, readable documentation preview
+- **Error handling**: Clear messages when something goes wrong
+
+### Change detection
+
+The smart regeneration system:
+
+1. **Hash calculation**: Computes content hash for each file
+2. **Cache comparison**: Compares against previous run
+3. **Selective regeneration**: Only processes changed files
+4. **Dependency tracking**: Understands which docs depend on which files
+
+### Documentation generation
+
+Leverages Gemini 2.5 Pro's capabilities:
+
+- **Large context window**: Can process entire codebases at once
+- **Structured output**: Generates organized, consistent documentation
+- **Multiple formats**: Produces README files, API docs, and guides
+- **Code understanding**: Comprehends relationships between components
+
+### Interactive chatbot
+
+After indexing, you can ask questions:
+
+- **Architecture queries**: "How does the authentication system work?"
+- **Implementation details**: "What does the processOrder function do?"
+- **Best practices**: "How should I add a new endpoint?"
+
+## Technology stack
+
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| **CLI Framework** | Ink React | Terminal user interface |
+| **AI Model** | Gemini 2.5 Pro | Documentation generation |
+| **Change Detection** | File hashing | Efficient regeneration |
+| **Language** | TypeScript/JavaScript | Application logic |
+
+## Key features
+
+### Full codebase understanding
+
+Unlike tools that document individual files, CatDoc:
+
+- Reads all files in the specified directory
+- Understands relationships between modules
+- Generates documentation that reflects the whole system
+- Creates consistent cross-references
+
+### Smart regeneration
+
+CatDoc doesn't regenerate everything on every run:
+
+```
+$ catdoc generate
+
+Scanning codebase...
+Found 47 files
+Checking for changes...
+  ✓ 42 files unchanged
+  → 5 files modified
+  
+Regenerating documentation for changed files...
+  ✓ src/api/users.ts
+  ✓ src/api/orders.ts
+  ✓ src/services/email.ts
+  ✓ src/utils/validation.ts
+  ✓ src/types/index.ts
+  
+Documentation updated in 12.3s
+```
+
+### Multiple documentation types
+
+CatDoc generates various documentation formats:
+
+- **README files**: Project overview and getting started guides
+- **API documentation**: Endpoint descriptions and request/response formats
+- **Module documentation**: Detailed explanations of each module's purpose
+- **Architecture docs**: System design and component relationships
+
+### Interactive code Q&A
+
+After generating documentation, you can ask questions:
+
+```
+$ catdoc chat
+
+Welcome to CatDoc chat! Ask questions about your codebase.
+
+You: How does error handling work in the API layer?
+
+CatDoc: The API layer uses a centralized error handling approach:
+
+1. Each route handler is wrapped with `asyncHandler` which 
+   catches thrown errors
+2. Errors are transformed into APIError instances with 
+   standardized codes
+3. The global error middleware formats responses consistently
+
+Key files involved:
+- src/middleware/errorHandler.ts (main handler)
+- src/utils/apiError.ts (error class definition)
+- src/middleware/asyncHandler.ts (wrapper utility)
+```
+
+## Use cases
+
+### New project setup
+
+When starting a new project, establish documentation from the beginning:
+
+```bash
+# Initialize documentation
+catdoc init
+
+# Generate initial docs
+catdoc generate
+
+# Set up pre-commit hook for continuous updates
+catdoc install-hook
+```
+
+### Onboarding new team members
+
+Help new developers understand the codebase:
+
+```bash
+# Generate comprehensive documentation
+catdoc generate --full
+
+# Let them explore interactively
+catdoc chat
+```
+
+### Documentation debt reduction
+
+For projects with minimal documentation:
+
+```bash
+# Analyze what needs documentation
+catdoc analyze
+
+# Generate missing documentation
+catdoc generate --missing-only
+
+# Review and adjust as needed
+```
+
+### Pre-release documentation
+
+Ensure documentation is current before releases:
+
+```bash
+# Check documentation currency
+catdoc status
+
+# Regenerate all changed docs
+catdoc generate
+
+# Verify completeness
+catdoc verify
+```
+
+## Configuration
+
+CatDoc can be configured via `catdoc.config.js`:
+
+```javascript
+module.exports = {
+  // Directories to include
+  include: ['src', 'lib'],
+  
+  // Patterns to exclude
+  exclude: ['**/*.test.ts', '**/node_modules/**'],
+  
+  // Output directory for generated docs
+  output: 'docs',
+  
+  // Documentation formats to generate
+  formats: ['readme', 'api', 'modules'],
+  
+  // Model configuration
+  model: {
+    name: 'gemini-2.5-pro',
+    temperature: 0.3
+  }
+};
+```
+
+## Benefits
+
+| Manual Documentation | CatDoc |
+|---------------------|--------|
+| Time-consuming to write | Generated automatically |
+| Quickly becomes outdated | Updates with code changes |
+| Inconsistent style | Consistent formatting |
+| Incomplete coverage | Comprehensive generation |
+| Requires documentation expertise | Just run a command |
+
+## Repository
+
+<Card title="View on GitHub" icon="github" href="https://github.com/ehcaw/catdoc">
+  Explore the source code, contribute to development, or report issues on GitHub.
+</Card>
+
+## Screenshots
+
+<CardGroup cols={2}>
+  <Card title="Generation progress">
+    The CLI showing real-time progress during documentation generation
+  </Card>
+  <Card title="Interactive chat">
+    Asking questions about the codebase after documentation is generated
+  </Card>
+</CardGroup>

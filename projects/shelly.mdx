@@ -1,0 +1,226 @@
+---
+title: Shelly
+description: A terminal-based chatbot and code editor with AI agent capabilities, demonstrating the power of text user interfaces
+---
+
+## Overview
+
+Shelly is a Terminal User Interface (TUI) application that combines a conversational AI chatbot with a functional code editor, all running within your terminal. The project was an exploration of how much functionality could be packed into a text-based interface while maintaining usability and providing genuine value for developers who prefer working in the terminal.
+
+Built using Python's Textual framework, Shelly demonstrates that modern, feature-rich applications don't necessarily require graphical interfaces. For developers who live in the terminal, Shelly provides AI assistance and code editing without ever leaving the command line.
+
+## The motivation behind Shelly
+
+Many developers spend the majority of their working hours in the terminal. Between running commands, managing git repositories, editing configuration files, and monitoring logs, switching to a graphical application for AI assistance creates unnecessary context switches. Shelly was built to answer the question: "What if AI assistance was just another terminal application?"
+
+The project also served as an exploration of:
+
+- The capabilities and limitations of TUI frameworks
+- How to design intuitive interfaces with only text and keyboard input
+- Integrating AI capabilities into command-line workflows
+- Building genuinely useful development tools
+
+## Architecture
+
+Shelly is built as a modular TUI application with several interconnected components:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        Terminal Emulator                         │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                    Textual Application                    │   │
+│  │  ┌────────────────────────┬─────────────────────────┐   │   │
+│  │  │                        │                          │   │   │
+│  │  │     Chat Interface     │      Code Editor        │   │   │
+│  │  │                        │                          │   │   │
+│  │  │  ┌──────────────────┐ │  ┌──────────────────┐   │   │   │
+│  │  │  │ Message History  │ │  │  File Contents   │   │   │   │
+│  │  │  │                  │ │  │                  │   │   │   │
+│  │  │  │                  │ │  │                  │   │   │   │
+│  │  │  └──────────────────┘ │  └──────────────────┘   │   │   │
+│  │  │  ┌──────────────────┐ │  ┌──────────────────┐   │   │   │
+│  │  │  │   Input Field    │ │  │  Status Bar      │   │   │   │
+│  │  │  └──────────────────┘ │  └──────────────────┘   │   │   │
+│  │  └────────────────────────┴─────────────────────────┘   │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+            ┌─────────────────┴─────────────────┐
+            │         AI Agent Backend          │
+            │  ┌────────────┐  ┌────────────┐  │
+            │  │  Context   │  │    LLM     │  │
+            │  │  Manager   │  │  Interface │  │
+            │  └────────────┘  └────────────┘  │
+            └───────────────────────────────────┘
+```
+
+### TUI layer
+
+The Textual framework provides the foundation for the user interface:
+
+- **Layout management**: Flexible arrangement of panes and widgets
+- **Keyboard navigation**: Full keyboard-driven interaction
+- **Rich text rendering**: Syntax highlighting and formatted output
+- **Event handling**: Responsive input processing
+
+### Chat interface
+
+The conversational component includes:
+
+- **Message history**: Scrollable view of the conversation
+- **Input field**: Multi-line input with keyboard shortcuts
+- **Response streaming**: Real-time display of AI responses
+- **Context awareness**: Maintains conversation history
+
+### Code editor
+
+The integrated editor provides:
+
+- **File loading**: Open and edit local files
+- **Syntax highlighting**: Language-aware code coloring
+- **Basic editing**: Standard text manipulation operations
+- **Integration with chat**: Ask questions about the code you're editing
+
+### AI agent
+
+The AI backend handles:
+
+- **Natural language processing**: Understanding user queries
+- **Code understanding**: Analyzing and explaining code
+- **Suggestion generation**: Providing coding assistance
+- **Tool usage**: Executing actions based on conversation
+
+## Technology stack
+
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| **TUI Framework** | Textual | Terminal user interface components |
+| **Language** | Python | Application logic and AI integration |
+| **AI APIs** | Various | Natural language processing and generation |
+| **File I/O** | Standard Library | Reading and writing files |
+
+## Key features
+
+### Split-pane interface
+
+Shelly presents two main panels side by side:
+
+- **Left pane**: Chat interface for AI interaction
+- **Right pane**: Code editor for viewing and editing files
+- **Keyboard switching**: Quickly move focus between panes
+
+### AI-powered assistance
+
+The chatbot can help with various tasks:
+
+- **Code explanation**: "What does this function do?"
+- **Bug finding**: "Is there a bug in this code?"
+- **Suggestions**: "How can I improve this?"
+- **Documentation**: "Write a docstring for this function"
+
+### Keyboard-driven workflow
+
+Everything can be accomplished with the keyboard:
+
+- `Tab`: Switch between panes
+- `Ctrl+O`: Open a file
+- `Ctrl+S`: Save current file
+- `Ctrl+Q`: Quit application
+- `Enter`: Send message in chat
+
+### Code context awareness
+
+When asking questions, Shelly can reference:
+
+- The currently open file
+- Selected text in the editor
+- Previous conversation context
+
+## Use cases
+
+### Quick code reviews
+
+When working on code and wanting a second opinion:
+
+```
+You: Can you review this function for potential issues?
+
+Shelly: Looking at your function, I notice a few things:
+1. The variable 'temp' is never used after assignment
+2. The loop could be replaced with a list comprehension
+3. Consider adding input validation for edge cases
+```
+
+### Learning new concepts
+
+When encountering unfamiliar code:
+
+```
+You: What does this decorator do?
+
+Shelly: This decorator is implementing the singleton pattern.
+When applied to a class, it ensures only one instance of that
+class can ever be created...
+```
+
+### Terminal-native development
+
+For developers who prefer staying in the terminal:
+
+- No context switching to browser-based AI tools
+- Consistent with terminal-based workflow
+- Fast startup and low resource usage
+
+## Design philosophy
+
+Shelly was built with several guiding principles:
+
+### Minimalism
+
+The interface shows only what's necessary:
+
+- No distracting visual elements
+- Clear separation between input and output
+- Focused functionality without feature bloat
+
+### Keyboard efficiency
+
+Every action is accessible via keyboard:
+
+- No mouse required (though mouse is supported)
+- Consistent keybindings across the application
+- Quick access to common operations
+
+### Integration
+
+Shelly works within the existing terminal ecosystem:
+
+- Respects terminal color schemes
+- Works in any terminal emulator
+- Can be used alongside other terminal tools
+
+## Limitations
+
+As a TUI application, Shelly has some inherent limitations:
+
+- **No images**: Cannot display or process images
+- **Text only**: Rich media content isn't supported
+- **Terminal size**: UI adapts to terminal dimensions
+- **Color support**: Depends on terminal capabilities
+
+## Repository
+
+<Card title="View on GitHub" icon="github" href="https://github.com/ehcaw/shelly">
+  Explore the source code, contribute to development, or report issues on GitHub.
+</Card>
+
+## Screenshots
+
+<CardGroup cols={2}>
+  <Card title="Main interface">
+    The split-pane layout showing chat on the left and code editor on the right
+  </Card>
+  <Card title="AI conversation">
+    An example conversation with the AI assistant providing code suggestions
+  </Card>
+</CardGroup>

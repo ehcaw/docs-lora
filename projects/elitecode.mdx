@@ -1,0 +1,270 @@
+---
+title: EliteCode
+description: A Next.js application for practicing coding interview explanations with voice input and AI-powered feedback
+---
+
+## Overview
+
+EliteCode is a web application designed to help developers practice one of the most challenging aspects of technical interviews: explaining your thought process while solving coding problems. While platforms like LeetCode help you practice solving problems, EliteCode focuses on the verbal communication skills that often make the difference between a good solution and a successful interview.
+
+Built at SFHacks 2023, EliteCode provides a speech-to-text interface where you practice explaining coding concepts out loud, with AI-powered feedback on clarity, completeness, and technical accuracy of your explanations.
+
+## The interview communication gap
+
+Technical interviews are about more than just writing correct code:
+
+1. **Explanation matters**: Interviewers want to understand your thinking
+2. **Practice is awkward**: Talking to yourself while coding feels strange
+3. **Feedback is rare**: Friends aren't always available to practice with
+4. **Patterns exist**: Good explanations follow recognizable structures
+5. **Confidence builds**: Practice makes verbal explanation more natural
+
+EliteCode addresses these challenges by providing a structured practice environment with intelligent feedback.
+
+## Architecture
+
+EliteCode uses a streaming architecture for real-time voice processing and feedback:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                       Web Application                            │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                   Next.js Frontend                        │   │
+│  │  ┌──────────────┬───────────────┬────────────────────┐  │   │
+│  │  │   Problem    │    Voice      │     Feedback       │  │   │
+│  │  │   Display    │    Input      │     Panel          │  │   │
+│  │  └──────────────┴───────────────┴────────────────────┘  │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└────────────────────────────────┬────────────────────────────────┘
+                                 │
+┌────────────────────────────────┴────────────────────────────────┐
+│                    Speech Processing                             │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                     Whisper                               │   │
+│  │  ┌──────────────────────────────────────────────────┐   │   │
+│  │  │              Audio → Text Transcription           │   │   │
+│  │  └──────────────────────────────────────────────────┘   │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└────────────────────────────────┬────────────────────────────────┘
+                                 │
+┌────────────────────────────────┴────────────────────────────────┐
+│                     Analysis Layer                               │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                OpenAI 3.5 Turbo                           │   │
+│  │  ┌──────────────────────────────────────────────────┐   │   │
+│  │  │         Explanation Quality Analysis              │   │   │
+│  │  │  • Technical accuracy check                       │   │   │
+│  │  │  • Clarity assessment                             │   │   │
+│  │  │  • Completeness evaluation                        │   │   │
+│  │  │  • Improvement suggestions                        │   │   │
+│  │  └──────────────────────────────────────────────────┘   │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└────────────────────────────────┬────────────────────────────────┘
+                                 │
+┌────────────────────────────────┴────────────────────────────────┐
+│                      Response Layer                              │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                    ElevenLabs                             │   │
+│  │  ┌──────────────────────────────────────────────────┐   │   │
+│  │  │            Text → Speech Feedback                 │   │   │
+│  │  └──────────────────────────────────────────────────┘   │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+### Frontend (Next.js)
+
+The web interface provides:
+
+- **Problem display**: Shows the coding problem to discuss
+- **Voice input**: Real-time audio capture and visualization
+- **Transcription display**: Shows what you said
+- **Feedback panel**: Displays AI analysis and suggestions
+
+### Speech-to-Text (Whisper)
+
+Whisper handles voice transcription:
+
+- **High accuracy**: Correctly captures technical terminology
+- **Real-time processing**: Low latency for natural conversation
+- **Noise tolerance**: Works well in various environments
+
+### Analysis (OpenAI 3.5 Turbo)
+
+The AI evaluates your explanation on:
+
+- **Technical accuracy**: Is what you said correct?
+- **Clarity**: Would an interviewer understand you?
+- **Completeness**: Did you cover the important points?
+- **Structure**: Did you organize your thoughts well?
+
+### Text-to-Speech (ElevenLabs)
+
+For audio feedback:
+
+- **Natural voice**: Sounds like a real interviewer
+- **Clear articulation**: Easy to understand
+- **Appropriate pacing**: Matches conversational speed
+
+## Technology stack
+
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| **Frontend** | Next.js | Web application |
+| **Speech-to-Text** | Whisper | Voice transcription |
+| **Analysis** | OpenAI 3.5 Turbo | Explanation evaluation |
+| **Text-to-Speech** | ElevenLabs | Audio feedback |
+
+## Key features
+
+### Problem library
+
+Practice with various problem types:
+
+- **Data structures**: Arrays, linked lists, trees, graphs
+- **Algorithms**: Sorting, searching, dynamic programming
+- **System design**: Architecture and scaling discussions
+- **Behavioral**: Explaining past projects and decisions
+
+### Voice-based practice
+
+Speak your explanations naturally:
+
+```
+Problem: Implement a function to reverse a linked list
+
+[Recording...]
+
+You: "So for this problem, I'm going to use an iterative 
+approach with three pointers. I'll need a previous pointer, 
+a current pointer, and a next pointer. The idea is to walk 
+through the list and reverse each link as I go..."
+```
+
+### Detailed feedback
+
+Get specific, actionable feedback:
+
+```
+Feedback on your explanation:
+
+✓ Technical Accuracy (9/10)
+  Your approach is correct. Minor note: you could mention 
+  the O(n) time and O(1) space complexity.
+
+✓ Clarity (8/10)
+  Good use of "previous, current, next" terminology. Consider 
+  explaining why you chose iterative over recursive.
+
+△ Completeness (7/10)
+  You explained the algorithm but didn't mention:
+  - Edge cases (empty list, single node)
+  - How you'd test the solution
+
+Suggestions:
+1. Start with a brief problem restatement
+2. Mention time/space complexity upfront
+3. Discuss edge cases before implementation
+```
+
+### Progress tracking
+
+Monitor improvement over time:
+
+- Track explanations per topic
+- See clarity scores trending
+- Identify weak areas
+- Review past attempts
+
+## Practice workflow
+
+A typical EliteCode practice session:
+
+```
+1. Select a problem category
+   → You choose: "Arrays"
+
+2. Get a problem
+   → "Two Sum: Find two numbers that add to target"
+
+3. Think briefly, then start explaining
+   [Click to record]
+   
+4. Speak your approach
+   "I'd use a hash map to store values I've seen..."
+
+5. Receive feedback
+   Accuracy: 9/10
+   Clarity: 8/10
+   "Good approach! Consider mentioning..."
+
+6. Try again or move to next problem
+```
+
+## Use cases
+
+### Interview preparation
+
+Before technical interviews:
+
+- Practice explaining common algorithms
+- Get comfortable talking while thinking
+- Build confidence in verbal communication
+- Learn what interviewers expect to hear
+
+### Teaching and learning
+
+For students learning algorithms:
+
+- Articulate understanding out loud
+- Identify gaps in knowledge
+- Practice technical vocabulary
+- Build communication skills early
+
+### Mock interview practice
+
+When practice partners aren't available:
+
+- Get immediate feedback anytime
+- Practice at your own pace
+- Focus on specific weak areas
+- No scheduling required
+
+## Interview explanation tips
+
+EliteCode helps you learn patterns like:
+
+### The STAR method for algorithms
+
+1. **Situation**: Restate the problem
+2. **Task**: Explain what you need to accomplish
+3. **Action**: Describe your approach
+4. **Result**: Discuss complexity and tradeoffs
+
+### Good explanation structure
+
+```
+1. Problem restatement (shows understanding)
+2. Clarifying questions (shows thoroughness)
+3. High-level approach (shows planning)
+4. Walk through solution (shows execution)
+5. Complexity analysis (shows depth)
+6. Edge cases (shows completeness)
+7. Testing approach (shows quality mindset)
+```
+
+## Benefits
+
+| Self-practice | EliteCode |
+|---------------|-----------|
+| No feedback | Immediate AI analysis |
+| Feels awkward | Structured environment |
+| No progress tracking | Detailed metrics |
+| Generic practice | Targeted improvement |
+| Availability limited | Practice anytime |
+
+## Repository
+
+<Card title="View on GitHub" icon="github" href="https://github.com/ehcaw/sfhacks">
+  Explore the source code, contribute to development, or report issues on GitHub.
+</Card>

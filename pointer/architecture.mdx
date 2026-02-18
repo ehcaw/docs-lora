@@ -1,0 +1,288 @@
+---
+title: Architecture
+description: A deep dive into the technical architecture of Pointer, including the data layer, real-time sync, editor framework, and desktop integration
+---
+
+## System overview
+
+Pointer is built as a modern web application that can be deployed both as a web app and as a native desktop application. The architecture emphasizes real-time capabilities, offline support, and a clean separation between the various layers of the application.
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                          Desktop Application                             │
+│  ┌───────────────────────────────────────────────────────────────────┐ │
+│  │                        Tauri Shell                                 │ │
+│  │  ┌─────────────────────────────────────────────────────────────┐ │ │
+│  │  │                    Next.js Application                       │ │ │
+│  │  │                                                              │ │ │
+│  │  │   ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐│ │ │
+│  │  │   │   Editor    │  │   Views     │  │     Navigation      ││ │ │
+│  │  │   │  (Tiptap)   │  │  (Graph/WB) │  │     (Sidebar)       ││ │ │
+│  │  │   └─────────────┘  └─────────────┘  └─────────────────────┘│ │ │
+│  │  │                                                              │ │ │
+│  │  │   ┌───────────────────────────────────────────────────────┐│ │ │
+│  │  │   │                    State Management                    ││ │ │
+│  │  │   │          (Zustand + React Query + Convex)              ││ │ │
+│  │  │   └───────────────────────────────────────────────────────┘│ │ │
+│  │  └─────────────────────────────────────────────────────────────┘ │ │
+│  └───────────────────────────────────────────────────────────────────┘ │
+└────────────────────────────────────┬────────────────────────────────────┘
+                                     │
+┌────────────────────────────────────┴────────────────────────────────────┐
+│                         Backend Services                                 │
+│  ┌───────────────────────────────┐  ┌─────────────────────────────────┐│
+│  │           Convex              │  │           PartyKit              ││
+│  │  ┌─────────────────────────┐  │  │  ┌───────────────────────────┐ ││
+│  │  │    Real-time Database   │  │  │  │   Y.js Sync Server        │ ││
+│  │  │    + Server Functions   │  │  │  │   (Collaboration)         │ ││
+│  │  └─────────────────────────┘  │  │  └───────────────────────────┘ ││
+│  └───────────────────────────────┘  └─────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+## Data layer (Convex)
+
+Convex serves as the primary data layer for Pointer, providing real-time synchronization, server functions, and automatic caching. The schema is designed to support the hierarchical nature of notes while enabling efficient queries and updates.
+
+### Database schema
+
+The Convex schema defines the core data structures:
+
+```typescript
+// Notes table - the primary content storage
+notes: defineTable({
+  content: v.optional(v.object({
+    text: v.string(),           // Plain text for search
+    tiptap: v.optional(v.string()), // Serialized editor state
+  })),
+  createdAt: v.string(),
+  lastAccessed: v.string(),
+  lastEdited: v.string(),
+  name: v.string(),
+  pointer_id: v.string(),       // Unique identifier
+  tenantId: v.string(),         // User/organization ID
+  type: v.optional(v.union(v.literal("file"), v.literal("folder"))),
+  collaborative: v.boolean(),
+  parent_id: v.optional(v.id("notes")), // Hierarchical structure
+  last_backed_up_at: v.optional(v.number()),
+})
+```
+
+### Key tables
+
+| Table | Purpose |
+|-------|---------|
+| `notes` | Primary note and folder storage |
+| `notesContent` | Separate content storage for large notes |
+| `whiteboards` | Whiteboard serialized data |
+| `imageReferences` | Image storage tracking |
+| `documentShares` | Sharing permissions |
+| `userTasks` | Task management |
+| `notesHistoryMetadata` | Version history metadata |
+| `notesHistoryContent` | Version history content |
+
+### Indexing strategy
+
+Efficient queries are enabled through strategic indexes:
+
+```typescript
+.index("by_pointer_id", ["pointer_id"])   // Fast lookup by ID
+.index("by_tenant", ["tenantId"])         // All user's notes
+.index("by_parent", ["parent_id"])        // Child notes
+.index("by_type_parent", ["type", "parent_id"]) // Folders vs files
+```
+
+## Editor layer (Tiptap)
+
+The rich text editor is built on Tiptap, a headless editor framework based on ProseMirror. This provides a highly extensible foundation for building a Notion-like editing experience.
+
+### Extension architecture
+
+Tiptap's extension system allows modular addition of features:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      Tiptap Editor                               │
+│  ┌───────────────────────────────────────────────────────────┐ │
+│  │                    Core Extensions                         │ │
+│  │  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────────────┐ │ │
+│  │  │Document │ │Paragraph│ │  Text   │ │  History        │ │ │
+│  │  └─────────┘ └─────────┘ └─────────┘ └─────────────────┘ │ │
+│  └───────────────────────────────────────────────────────────┘ │
+│  ┌───────────────────────────────────────────────────────────┐ │
+│  │                  Formatting Extensions                     │ │
+│  │  ┌───────┐ ┌──────┐ ┌──────────┐ ┌──────┐ ┌───────────┐ │ │
+│  │  │ Bold  │ │Italic│ │Underline │ │Strike│ │ Highlight │ │ │
+│  │  └───────┘ └──────┘ └──────────┘ └──────┘ └───────────┘ │ │
+│  │  ┌──────────────┐ ┌─────────────┐ ┌──────────────────┐  │ │
+│  │  │  Subscript   │ │ Superscript │ │    TextAlign     │  │ │
+│  │  └──────────────┘ └─────────────┘ └──────────────────┘  │ │
+│  └───────────────────────────────────────────────────────────┘ │
+│  ┌───────────────────────────────────────────────────────────┐ │
+│  │                   Block Extensions                         │ │
+│  │  ┌────────┐ ┌──────┐ ┌──────────────┐ ┌───────────────┐ │ │
+│  │  │Heading │ │ List │ │  CodeBlock   │ │  BlockQuote   │ │ │
+│  │  └────────┘ └──────┘ └──────────────┘ └───────────────┘ │ │
+│  │  ┌────────┐ ┌──────────┐                                 │ │
+│  │  │ Table  │ │  Image   │                                 │ │
+│  │  └────────┘ └──────────┘                                 │ │
+│  └───────────────────────────────────────────────────────────┘ │
+│  ┌───────────────────────────────────────────────────────────┐ │
+│  │                  Custom Extensions                         │ │
+│  │  ┌─────────────────┐ ┌─────────────────────────────────┐ │ │
+│  │  │  Slash Command  │ │     Collaboration (Y.js)        │ │ │
+│  │  └─────────────────┘ └─────────────────────────────────┘ │ │
+│  │  ┌─────────────────┐ ┌─────────────────────────────────┐ │ │
+│  │  │  Link Extension │ │     Trailing Node               │ │ │
+│  │  └─────────────────┘ └─────────────────────────────────┘ │ │
+│  └───────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Custom extensions
+
+Pointer implements several custom extensions:
+
+- **Slash Command**: `/` triggers a command palette for quick actions
+- **Selection Extension**: Enhanced selection handling for block operations
+- **Image Extension**: Custom image handling with Convex storage
+- **Link Extension**: Enhanced link handling with previews
+- **Trailing Node**: Ensures document always has an insertable position
+
+## Collaboration layer
+
+Real-time collaboration is implemented using Y.js with PartyKit for the synchronization server:
+
+### Collaboration architecture
+
+```
+┌───────────────┐     ┌───────────────┐     ┌───────────────┐
+│   Client A    │     │   Client B    │     │   Client C    │
+│  ┌─────────┐  │     │  ┌─────────┐  │     │  ┌─────────┐  │
+│  │  Y.Doc  │  │     │  │  Y.Doc  │  │     │  │  Y.Doc  │  │
+│  └────┬────┘  │     │  └────┬────┘  │     │  └────┬────┘  │
+└───────┼───────┘     └───────┼───────┘     └───────┼───────┘
+        │                     │                     │
+        └──────────┬──────────┴──────────┬──────────┘
+                   │                     │
+          ┌────────┴────────────────────┴────────┐
+          │              PartyKit                 │
+          │         (Y.js Sync Server)           │
+          │  ┌────────────────────────────────┐  │
+          │  │   Document State Management    │  │
+          │  │   Awareness (Cursors, etc.)    │  │
+          │  │   Persistence Integration      │  │
+          │  └────────────────────────────────┘  │
+          └───────────────────────────────────────┘
+```
+
+### Y.js integration
+
+The collaboration system provides:
+
+- **CRDT-based sync**: Conflict-free replicated data types ensure consistency
+- **Awareness protocol**: Shows cursor positions and selections
+- **Offline support**: Local changes queue until reconnected
+- **Efficient updates**: Only changes are transmitted, not full documents
+
+## Desktop layer (Tauri)
+
+Tauri provides the native desktop wrapper, enabling system integration while maintaining a small footprint:
+
+### Tauri architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      Operating System                            │
+│  ┌───────────────────────────────────────────────────────────┐ │
+│  │                    Tauri Runtime                           │ │
+│  │  ┌─────────────────────────────────────────────────────┐ │ │
+│  │  │                   Rust Core                          │ │ │
+│  │  │  ┌──────────────┐  ┌──────────────────────────────┐ │ │ │
+│  │  │  │   Window     │  │       System APIs             │ │ │ │
+│  │  │  │   Manager    │  │  (FS, Notifications, etc.)   │ │ │ │
+│  │  │  └──────────────┘  └──────────────────────────────┘ │ │ │
+│  │  └─────────────────────────────────────────────────────┘ │ │
+│  │  ┌─────────────────────────────────────────────────────┐ │ │
+│  │  │                   WebView                            │ │ │
+│  │  │  ┌───────────────────────────────────────────────┐ │ │ │
+│  │  │  │              Next.js App                       │ │ │ │
+│  │  │  └───────────────────────────────────────────────┘ │ │ │
+│  │  └─────────────────────────────────────────────────────┘ │ │
+│  └───────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Capabilities
+
+The Tauri configuration defines available capabilities:
+
+- **File system access**: Read and write local files
+- **Window management**: Control window size, position, state
+- **Notifications**: System notification integration
+- **Clipboard**: Copy and paste support
+- **Auto-launch**: Option to start with OS
+
+## State management
+
+Pointer uses a combination of state management approaches:
+
+| Scope | Tool | Use Case |
+|-------|------|----------|
+| **Server state** | Convex + React Query | Notes, user data |
+| **UI state** | Zustand | Sidebar state, modals |
+| **Editor state** | Tiptap | Document content |
+| **Collab state** | Y.js | Real-time sync |
+
+### Data flow
+
+```
+User Action
+    │
+    ▼
+┌────────────────┐
+│  React Event   │
+└───────┬────────┘
+        │
+        ▼
+┌────────────────┐     ┌────────────────┐
+│   UI Update    │     │  Convex Mutation │
+│   (Zustand)    │     │                │
+└────────────────┘     └───────┬────────┘
+                               │
+                               ▼
+                    ┌────────────────────┐
+                    │   Convex Backend   │
+                    │   + Real-time Sync │
+                    └───────┬────────────┘
+                            │
+                            ▼
+                    ┌────────────────┐
+                    │  All Clients   │
+                    │    Updated     │
+                    └────────────────┘
+```
+
+## Performance considerations
+
+### Optimization strategies
+
+1. **Lazy loading**: Components and routes load on demand
+2. **Virtualization**: Long lists render only visible items
+3. **Debouncing**: Editor saves are debounced to reduce API calls
+4. **Caching**: Convex provides automatic query caching
+5. **Code splitting**: Separate bundles for different features
+
+### Content separation
+
+Large note content is stored separately from metadata:
+
+```typescript
+// Metadata in notes table (fast queries)
+notes: { name, createdAt, type, parent_id, ... }
+
+// Content in separate table (loaded on demand)
+notesContent: { noteId, content: { text, tiptap } }
+```
+
+This allows quick navigation and search without loading full content.

@@ -1,0 +1,306 @@
+---
+title: Real-time collaboration
+description: How to collaborate in real-time on Pointer documents, including sharing, presence indicators, and conflict resolution
+---
+
+## Collaboration overview
+
+Pointer provides real-time collaboration capabilities that allow multiple users to edit the same document simultaneously. Built on Y.js and PartyKit, the collaboration system ensures that all changes are synchronized instantly across all connected users while maintaining document consistency.
+
+## How collaboration works
+
+### CRDT-based synchronization
+
+Pointer uses Conflict-free Replicated Data Types (CRDTs) through Y.js to handle concurrent editing:
+
+```
+User A types "Hello"          User B types "World"
+       │                             │
+       ▼                             ▼
+  ┌─────────┐                   ┌─────────┐
+  │ Y.Doc A │                   │ Y.Doc B │
+  │ "Hello" │                   │ "World" │
+  └────┬────┘                   └────┬────┘
+       │                             │
+       └──────────┬──────────────────┘
+                  │
+                  ▼
+           ┌─────────────┐
+           │  PartyKit   │
+           │   Server    │
+           └──────┬──────┘
+                  │
+       ┌──────────┴──────────┐
+       │                     │
+       ▼                     ▼
+  ┌─────────┐           ┌─────────┐
+  │ Y.Doc A │           │ Y.Doc B │
+  │"HelloWorld"│        │"HelloWorld"│
+  └─────────┘           └─────────┘
+```
+
+CRDTs ensure that:
+- Concurrent edits are merged automatically
+- All users eventually see the same document state
+- No conflicts or lost changes
+- Works offline with sync on reconnection
+
+### PartyKit infrastructure
+
+PartyKit provides the real-time infrastructure:
+
+- **WebSocket connections**: Persistent connections for instant updates
+- **Document rooms**: Each document has its own collaboration room
+- **State persistence**: Document state is maintained on the server
+- **Reconnection handling**: Automatic reconnection with state sync
+
+## Sharing documents
+
+### Enabling collaboration
+
+To share a document for collaboration:
+
+<Steps>
+  <Step title="Open share settings">
+    Click the share button in the document header or use `Cmd/Ctrl + Shift + S`
+  </Step>
+  <Step title="Enable collaboration">
+    Toggle "Enable real-time collaboration" to on
+  </Step>
+  <Step title="Add collaborators">
+    Enter email addresses of users to invite
+  </Step>
+  <Step title="Set permissions">
+    Choose between view-only or edit access for each user
+  </Step>
+</Steps>
+
+### Permission levels
+
+| Permission | Capabilities |
+|------------|--------------|
+| **View** | Can see document content, read-only |
+| **Edit** | Can modify document content |
+| **Admin** | Can modify and manage sharing settings |
+
+### Sharing workflow
+
+```
+┌────────────────┐
+│  Document      │
+│  Owner         │
+└───────┬────────┘
+        │
+        ▼
+┌────────────────┐     ┌────────────────┐
+│  Share Dialog  │────▶│  Email Invite  │
+└───────┬────────┘     └────────────────┘
+        │
+        ▼
+┌────────────────┐
+│  documentShares│
+│  Table Entry   │
+└───────┬────────┘
+        │
+        ▼
+┌────────────────┐
+│  Collaborator  │
+│  Can Access    │
+└────────────────┘
+```
+
+## Presence awareness
+
+### Cursor positions
+
+When multiple users are editing, you can see their cursor positions:
+
+- **Colored cursors**: Each user has a unique color
+- **Name labels**: Cursor labels show collaborator names
+- **Real-time movement**: Cursors update as users move
+
+### Selection visibility
+
+Selections made by other users are visible:
+
+- **Highlighted regions**: See what others have selected
+- **User attribution**: Know who selected what
+- **Non-blocking**: You can still edit selected regions
+
+### Online indicators
+
+The document header shows collaboration status:
+
+- **User avatars**: Small avatars of connected users
+- **Online status**: Green dot indicates active connection
+- **User count**: Number of current collaborators
+
+## Editing together
+
+### Concurrent editing
+
+Multiple users can edit simultaneously:
+
+```
+User A (editing intro)     User B (editing conclusion)
+         │                          │
+         ▼                          ▼
+    ┌─────────┐               ┌─────────┐
+    │ Para 1  │               │ Para 10 │
+    │ [edit]  │               │ [edit]  │
+    └─────────┘               └─────────┘
+         │                          │
+         └──────────┬───────────────┘
+                    │
+                    ▼
+              Both changes
+              merge cleanly
+```
+
+### Conflict handling
+
+When edits conflict (same location), Y.js resolves them:
+
+1. **Character-level merging**: Individual characters are tracked
+2. **Intention preservation**: Both users' intentions are kept
+3. **Deterministic ordering**: Same result on all devices
+4. **No data loss**: All edits are preserved
+
+### Best practices
+
+<Tip>
+**Communicate**: Use external chat to coordinate who's editing what
+</Tip>
+
+<Tip>
+**Work in different sections**: Parallel editing works best in different areas
+</Tip>
+
+<Tip>
+**Save frequently**: Though auto-save is on, manual saves ensure persistence
+</Tip>
+
+## Offline support
+
+### Working offline
+
+Pointer supports offline editing:
+
+1. **Local storage**: Changes are stored locally
+2. **Queue management**: Edits queue for later sync
+3. **Reconnection sync**: Changes sync when back online
+4. **Conflict resolution**: CRDT handles any conflicts
+
+### Offline indicators
+
+The UI shows connection status:
+
+- **Online**: Normal operation, real-time sync
+- **Offline**: Working locally, changes queued
+- **Syncing**: Reconnected, uploading queued changes
+- **Error**: Connection issue, retry in progress
+
+### Reconnection flow
+
+```
+Offline editing        Reconnection       Sync complete
+      │                     │                  │
+      ▼                     ▼                  ▼
+ ┌─────────┐          ┌─────────┐        ┌─────────┐
+ │ Local   │          │ Upload  │        │ Merged  │
+ │ Changes │──────────▶│ Queue   │────────▶│ State   │
+ │ Queued  │          │         │        │         │
+ └─────────┘          └─────────┘        └─────────┘
+```
+
+## Version history
+
+### Automatic backups
+
+Pointer maintains version history:
+
+- **Automatic snapshots**: Periodic saves of document state
+- **Manual snapshots**: Create named versions
+- **Metadata tracking**: When and by whom changes were made
+
+### Viewing history
+
+Access document history:
+
+1. Open document menu
+2. Select "View history"
+3. Browse snapshots by date
+4. Preview any version
+5. Restore if needed
+
+### History data model
+
+```typescript
+// Metadata for each version
+notesHistoryMetadata: {
+  noteId: v.id("notes"),
+  tenantId: v.string(),
+  timestamp: v.number(),
+}
+
+// Content stored separately
+notesHistoryContent: {
+  metadataId: v.id("notesHistoryMetadata"),
+  content: { text, tiptap },
+  tenantId: v.string(),
+}
+```
+
+## Security and permissions
+
+### Access control
+
+Document access is controlled through:
+
+- **Tenant isolation**: Users only see their own documents
+- **Share entries**: Explicit grants for collaboration
+- **Permission checks**: Server-side validation on all operations
+
+### Data protection
+
+Collaboration data is protected by:
+
+- **Encrypted transit**: All WebSocket connections are encrypted
+- **User verification**: Authentication required for document access
+- **Audit logging**: Changes are attributed to specific users
+
+### Revoking access
+
+To remove a collaborator:
+
+1. Open share settings
+2. Find the user to remove
+3. Click remove/revoke
+4. Changes take effect immediately
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Collaborator can't see my changes">
+    Check that:
+    - Both users have stable internet connections
+    - The document has collaboration enabled
+    - The collaborator has refreshed their view
+    - No firewall is blocking WebSocket connections
+  </Accordion>
+  
+  <Accordion title="Cursor positions not showing">
+    This can happen when:
+    - Awareness protocol is disconnected
+    - User is in read-only mode
+    - Browser tab is not active (cursors may pause)
+  </Accordion>
+  
+  <Accordion title="Changes not syncing">
+    Try:
+    - Check your internet connection
+    - Refresh the page
+    - Check if the document owner has revoked access
+    - Look for error messages in the status bar
+  </Accordion>
+</AccordionGroup>

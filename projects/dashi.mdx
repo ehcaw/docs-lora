@@ -1,0 +1,242 @@
+---
+title: Dashi
+description: A desktop voice assistant with persistent memory that remembers your conversations, built as a better alternative to Siri
+---
+
+## Overview
+
+Dashi is a desktop voice assistant application that addresses one of the most frustrating limitations of consumer voice assistants: the complete lack of memory between conversations. While Siri, Alexa, and Google Assistant forget everything immediately after each interaction, Dashi maintains persistent memory of your conversations, preferences, and context, enabling genuinely useful long-term interactions.
+
+Built at CalHacks AI 2025, Dashi combines a Letta-powered memory system with fast speech recognition and tool-use capabilities to create a voice assistant that actually improves over time as it learns about you and your workflows.
+
+## The voice assistant problem
+
+Current voice assistants have significant limitations:
+
+1. **Zero memory**: Every conversation starts from scratch
+2. **No learning**: They don't improve based on your usage patterns
+3. **Limited tools**: Can only perform pre-defined actions
+4. **Rigid interaction**: Must use specific command phrases
+5. **No context**: Can't reference previous conversations
+
+Dashi solves these problems by building a fundamentally different kind of assistant.
+
+## Architecture
+
+Dashi uses a layered architecture combining desktop application technologies with AI capabilities:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      Desktop Application                         │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                    Tauri (Rust)                           │   │
+│  │  ┌──────────────────────┬──────────────────────────┐    │   │
+│  │  │    Audio Capture     │     System Integration    │    │   │
+│  │  │    (Microphone)      │     (Notifications, etc)  │    │   │
+│  │  └──────────────────────┴──────────────────────────┘    │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└────────────────────────────────┬────────────────────────────────┘
+                                 │
+┌────────────────────────────────┴────────────────────────────────┐
+│                      Speech Processing                           │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                   Groq Whisper                            │   │
+│  │  ┌──────────────────────┬──────────────────────────┐    │   │
+│  │  │    Audio Stream      │    Text Transcription     │    │   │
+│  │  │    Processing        │    (Real-time)            │    │   │
+│  │  └──────────────────────┴──────────────────────────┘    │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└────────────────────────────────┬────────────────────────────────┘
+                                 │
+┌────────────────────────────────┴────────────────────────────────┐
+│                       AI Agent Layer                             │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                   Letta Agent                             │   │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │   │
+│  │  │  Persistent │  │  Inference  │  │   Tool Use      │  │   │
+│  │  │  Memory     │  │  Engine     │  │   (MCPs)        │  │   │
+│  │  └─────────────┘  └─────────────┘  └─────────────────┘  │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└────────────────────────────────┬────────────────────────────────┘
+                                 │
+┌────────────────────────────────┴────────────────────────────────┐
+│                      Tool Integrations                           │
+│  ┌───────────┐  ┌───────────┐  ┌───────────┐  ┌───────────┐   │
+│  │    Exa    │  │  Calendar │  │   Notes   │  │  Custom   │   │
+│  │  Search   │  │  Access   │  │  Taking   │  │   MCPs    │   │
+│  └───────────┘  └───────────┘  └───────────┘  └───────────┘   │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+### Desktop layer (Tauri)
+
+The Tauri framework provides:
+
+- **Native performance**: Rust-based backend with minimal resource usage
+- **Cross-platform**: Works on Windows, macOS, and Linux
+- **System access**: Can interact with OS features (notifications, files, etc.)
+- **Small footprint**: Much smaller than Electron alternatives
+
+### Speech processing (Groq Whisper)
+
+Fast, accurate speech-to-text:
+
+- **Low latency**: Groq's infrastructure provides near-instant transcription
+- **High accuracy**: Whisper model handles diverse accents and speaking styles
+- **Streaming capable**: Can process audio in real-time
+- **Multiple languages**: Supports many languages out of the box
+
+### Agent layer (Letta)
+
+The core intelligence of Dashi:
+
+- **Persistent memory**: Remembers all previous conversations
+- **Context management**: Maintains relevant context for current discussion
+- **Learning**: Adapts to user preferences over time
+- **Reasoning**: Can plan multi-step actions
+
+### Tool integrations (MCPs)
+
+Model Context Protocol servers enable:
+
+- **Web search**: Research topics using Exa
+- **Calendar management**: Check and create events
+- **Note taking**: Save important information
+- **Custom tools**: Extensible with additional MCPs
+
+## Technology stack
+
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| **Desktop Framework** | Tauri | Native desktop application |
+| **Speech-to-Text** | Groq Whisper | Voice input processing |
+| **Agent Framework** | Letta | Memory and reasoning |
+| **Tool Protocol** | MCPs | External integrations |
+| **UI** | Web technologies | Cross-platform interface |
+
+## Key features
+
+### Persistent memory
+
+Unlike traditional assistants, Dashi remembers:
+
+- **Conversation history**: All previous discussions
+- **User preferences**: Learned over time
+- **Context information**: Background knowledge you've shared
+- **Task history**: What you've asked it to do before
+
+### Voice and text input
+
+Interact how you prefer:
+
+- **Voice commands**: Speak naturally to the assistant
+- **Text chat**: Type when voice isn't appropriate
+- **Mixed mode**: Switch between voice and text seamlessly
+
+### Tool usage
+
+Dashi can take actions through MCP integrations:
+
+- **Search the web**: Find information using Exa
+- **Manage calendar**: Check availability and schedule events
+- **Take notes**: Record information for later
+- **Custom actions**: Connect additional MCP servers
+
+### Learning over time
+
+Dashi improves through use:
+
+- **Preference learning**: Understands how you like things done
+- **Style adaptation**: Matches your communication style
+- **Context accumulation**: Builds knowledge about your life
+- **Habit recognition**: Notices patterns in your requests
+
+## Use cases
+
+### Daily assistant
+
+Start your day with context:
+
+```
+You: Good morning, what do I have today?
+
+Dashi: Good morning! Based on your calendar, you have:
+- 9 AM: Team standup (as we discussed yesterday, you wanted 
+  to bring up the API redesign)
+- 11 AM: Code review with Sarah
+- 2 PM: Product meeting
+
+Also, you mentioned wanting to follow up on that email from 
+Mark about the conference. Want me to remind you after your 
+first meeting?
+```
+
+### Research assistance
+
+Build on previous research:
+
+```
+You: Can you find more about that machine learning paper 
+we discussed last week?
+
+Dashi: You're referring to the paper on efficient attention 
+mechanisms you asked about on Thursday. I found some related 
+work:
+- A follow-up paper by the same authors published last month
+- Two implementation guides that reference it
+- A blog post comparing it to other approaches
+
+Would you like me to summarize any of these?
+```
+
+### Personal organization
+
+Keep track of life details:
+
+```
+You: Remember that I need to pick up my prescription tomorrow
+
+Dashi: Got it, I'll remind you tomorrow. By the way, I noticed 
+you also need to renew your driver's license - you mentioned 
+it expires next month. Want me to remind you about that too?
+```
+
+## Why Dashi is different
+
+| Traditional Assistants | Dashi |
+|-----------------------|-------|
+| Forgets immediately | Persistent memory |
+| Generic responses | Personalized over time |
+| Limited actions | Extensible via MCPs |
+| Wake word required | Always ready |
+| Cloud-dependent | Local processing option |
+| Fixed capabilities | Growing tool ecosystem |
+
+## Privacy considerations
+
+Dashi is designed with privacy in mind:
+
+- **Local-first**: Core functionality runs on your machine
+- **Transparent memory**: You can see and edit what's remembered
+- **Selective sync**: Control what data leaves your device
+- **MCP control**: Choose which tools have access to your data
+
+## Repository
+
+<Card title="View on GitHub" icon="github" href="https://github.com/ehcaw/dashi">
+  Explore the source code, contribute to development, or report issues on GitHub.
+</Card>
+
+## Screenshots
+
+<CardGroup cols={3}>
+  <Card title="Main interface">
+    The clean chat interface with voice input indicator
+  </Card>
+  <Card title="Voice mode">
+    Active listening with real-time transcription
+  </Card>
+  <Card title="Memory view">
+    Browsing what Dashi remembers about you
+  </Card>
+</CardGroup>

@@ -1,0 +1,275 @@
+---
+title: Whiteboard
+description: Using Pointer's integrated whiteboard feature for visual thinking, diagramming, and freehand sketching
+---
+
+## Whiteboard overview
+
+Pointer includes an integrated whiteboard feature powered by Excalidraw, providing a freeform canvas for visual thinking alongside your text-based notes. Whether you're sketching diagrams, creating flowcharts, or just brainstorming visually, the whiteboard gives you the flexibility to express ideas that don't fit neatly into text.
+
+## Creating a whiteboard
+
+### From the sidebar
+
+1. Click the "+" button in the sidebar
+2. Select "New Whiteboard"
+3. Enter a name for your whiteboard
+4. Start drawing
+
+### Keyboard shortcut
+
+Use `Cmd/Ctrl + Shift + W` to create a new whiteboard quickly.
+
+## Drawing tools
+
+### Selection and manipulation
+
+| Tool | Shortcut | Purpose |
+|------|----------|---------|
+| **Select** | `V` or `1` | Select and move elements |
+| **Hand** | `H` or `2` | Pan around the canvas |
+
+### Shape tools
+
+| Tool | Shortcut | Purpose |
+|------|----------|---------|
+| **Rectangle** | `R` or `3` | Draw rectangles and squares |
+| **Diamond** | `D` or `4` | Draw diamond shapes |
+| **Ellipse** | `O` or `5` | Draw circles and ellipses |
+| **Arrow** | `A` or `6` | Draw arrows for connections |
+| **Line** | `L` or `7` | Draw straight lines |
+
+### Freehand tools
+
+| Tool | Shortcut | Purpose |
+|------|----------|---------|
+| **Pencil** | `P` or `8` | Freehand drawing |
+| **Eraser** | `E` or `0` | Erase elements |
+
+### Text and content
+
+| Tool | Shortcut | Purpose |
+|------|----------|---------|
+| **Text** | `T` or `9` | Add text labels |
+| **Image** | - | Insert images |
+| **Frame** | `F` | Create frames for grouping |
+
+## Styling elements
+
+### Colors
+
+Apply colors to elements:
+
+- **Stroke color**: The outline color of shapes
+- **Background color**: The fill color of shapes
+- **Multiple palettes**: Choose from predefined colors
+
+### Stroke properties
+
+Customize lines and borders:
+
+- **Width**: Thin, normal, or thick
+- **Style**: Solid, dashed, or dotted
+- **Sloppiness**: From precise to hand-drawn
+
+### Fill styles
+
+Control how shapes are filled:
+
+- **Solid**: Uniform color fill
+- **Hatch**: Diagonal line pattern
+- **Cross-hatch**: Grid line pattern
+- **None**: No fill (transparent)
+
+## Canvas operations
+
+### Navigation
+
+Move around the canvas:
+
+| Action | Method |
+|--------|--------|
+| **Pan** | Hold Space + drag, or use Hand tool |
+| **Zoom in** | `Cmd/Ctrl + +` or scroll up |
+| **Zoom out** | `Cmd/Ctrl + -` or scroll down |
+| **Reset zoom** | `Cmd/Ctrl + 0` |
+| **Fit to screen** | `Cmd/Ctrl + 1` |
+
+### Element manipulation
+
+Work with elements on the canvas:
+
+| Action | Method |
+|--------|--------|
+| **Move** | Drag selected elements |
+| **Resize** | Drag corner handles |
+| **Rotate** | Drag rotation handle |
+| **Duplicate** | `Cmd/Ctrl + D` or Alt + drag |
+| **Delete** | `Backspace` or `Delete` |
+| **Group** | `Cmd/Ctrl + G` |
+| **Ungroup** | `Cmd/Ctrl + Shift + G` |
+
+### Alignment
+
+Align multiple selected elements:
+
+- **Left align**: Align left edges
+- **Center align**: Align centers horizontally
+- **Right align**: Align right edges
+- **Top align**: Align top edges
+- **Middle align**: Align centers vertically
+- **Bottom align**: Align bottom edges
+
+## Diagramming features
+
+### Arrows and connections
+
+Create connected diagrams:
+
+1. Select the Arrow tool (`A`)
+2. Click and drag from start to end
+3. Arrows can connect to shape edges
+4. Move shapes and arrows follow
+
+### Flowcharts
+
+Build flowcharts efficiently:
+
+```
+┌──────────────┐
+│    Start     │
+└──────┬───────┘
+       │
+       ▼
+  ┌────────────┐
+  │  Process   │
+  └─────┬──────┘
+        │
+        ▼
+  ◇ Decision ◇
+  │         │
+ Yes       No
+  │         │
+  ▼         ▼
+┌─────┐  ┌─────┐
+│ A   │  │ B   │
+└─────┘  └─────┘
+```
+
+### Wireframes
+
+Create UI wireframes:
+
+- Use rectangles for containers
+- Add text for labels
+- Use frames to group related elements
+- Export as images for sharing
+
+## Data persistence
+
+### Automatic saving
+
+Whiteboards are saved automatically:
+
+- Changes sync to Convex in real-time
+- Serialized data preserves full state
+- No manual save required
+
+### Data model
+
+```typescript
+whiteboards: defineTable({
+  title: v.string(),
+  tenantId: v.string(),
+  serializedData: v.optional(v.string()), // Excalidraw JSON
+  lastModified: v.string(),
+})
+```
+
+### Export options
+
+Export your whiteboard:
+
+- **PNG**: Raster image for documents
+- **SVG**: Vector format for scaling
+- **JSON**: Full data for backup/restore
+
+## Integration with notes
+
+### Linking whiteboards
+
+Reference whiteboards from notes:
+
+- Create links between notes and whiteboards
+- Navigate between text and visual content
+- Maintain organized project structure
+
+### Embedded previews
+
+Whiteboard thumbnails show in:
+
+- Sidebar navigation
+- Search results
+- Recent items
+
+## Keyboard shortcuts reference
+
+### Tools
+
+| Shortcut | Tool |
+|----------|------|
+| `V` or `1` | Selection |
+| `H` or `2` | Hand (pan) |
+| `R` or `3` | Rectangle |
+| `D` or `4` | Diamond |
+| `O` or `5` | Ellipse |
+| `A` or `6` | Arrow |
+| `L` or `7` | Line |
+| `P` or `8` | Pencil |
+| `T` or `9` | Text |
+| `E` or `0` | Eraser |
+
+### Actions
+
+| Shortcut | Action |
+|----------|--------|
+| `Cmd/Ctrl + A` | Select all |
+| `Cmd/Ctrl + D` | Duplicate |
+| `Cmd/Ctrl + G` | Group |
+| `Cmd/Ctrl + Shift + G` | Ungroup |
+| `Cmd/Ctrl + C` | Copy |
+| `Cmd/Ctrl + V` | Paste |
+| `Cmd/Ctrl + Z` | Undo |
+| `Cmd/Ctrl + Shift + Z` | Redo |
+| `Backspace` | Delete |
+
+### View
+
+| Shortcut | Action |
+|----------|--------|
+| `Cmd/Ctrl + +` | Zoom in |
+| `Cmd/Ctrl + -` | Zoom out |
+| `Cmd/Ctrl + 0` | Reset zoom |
+| `Cmd/Ctrl + 1` | Fit to screen |
+
+## Tips for effective whiteboarding
+
+<Tip>
+**Use keyboard shortcuts**: Much faster than clicking tools in the toolbar
+</Tip>
+
+<Tip>
+**Start with shapes**: Build structure with shapes before adding details
+</Tip>
+
+<Tip>
+**Group related elements**: Keep diagrams organized with grouping
+</Tip>
+
+<Tip>
+**Use frames**: Frames help organize complex whiteboards into sections
+</Tip>
+
+<Tip>
+**Export frequently**: Save PNG versions for sharing outside Pointer
+</Tip>
