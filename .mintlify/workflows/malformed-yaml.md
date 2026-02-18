@@ -1,5 +1,5 @@
 ---
-name: "Malformed YAML
+name: "Malformed YAML Bleh
 on:
   cron: "0 12 * * *"
   context:
