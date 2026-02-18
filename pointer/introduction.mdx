@@ -1,0 +1,146 @@
+---
+title: Introduction to Pointer
+description: A comprehensive Notion alternative built as a desktop application with real-time collaboration, AI-powered writing assistance, and cross-device synchronization
+---
+
+## What is Pointer?
+
+Pointer is a full-featured note-taking and productivity application designed as an alternative to Notion, built with the goal of providing all the functionality you'd expect from a modern workspace app while avoiding subscription fees and adding genuinely useful AI capabilities. It combines the power of a rich text editor with real-time collaboration, whiteboard functionality, and intelligent writing assistance—all wrapped in a native desktop application.
+
+The project was born from a simple frustration: paying $10/month for notes feels excessive. Rather than just accepting the cost, Pointer was built to demonstrate that powerful productivity tools can be created with modern web technologies and delivered as desktop applications with full functionality.
+
+## Why Pointer exists
+
+Modern productivity applications like Notion have set high expectations for what a workspace tool should offer:
+
+- **Rich content editing** with blocks, databases, and embeds
+- **Real-time collaboration** with presence awareness
+- **Cross-device sync** for seamless access anywhere
+- **Organization tools** like nested pages and search
+
+However, these tools often come with significant drawbacks:
+
+- **Subscription costs** that add up over time
+- **Limited AI features** unless you pay even more
+- **Browser dependency** for desktop usage
+- **Privacy concerns** with cloud-only storage
+
+Pointer addresses these concerns by providing:
+
+<CardGroup cols={2}>
+  <Card title="No subscription fees" icon="piggy-bank">
+    One-time setup, no recurring costs for core functionality
+  </Card>
+  <Card title="Native desktop app" icon="desktop">
+    Proper desktop application built with Tauri for performance
+  </Card>
+  <Card title="Built-in AI" icon="sparkles">
+    AI writing assistance integrated from the start
+  </Card>
+  <Card title="Real-time sync" icon="rotate">
+    Cross-device synchronization via Convex
+  </Card>
+</CardGroup>
+
+## Core capabilities
+
+### Rich text editing
+
+Pointer uses Tiptap, a headless editor framework, to provide a powerful editing experience:
+
+- **Block-based editing**: Create and organize content in blocks
+- **Rich formatting**: Headings, lists, code blocks, tables, and more
+- **Slash commands**: Quick access to formatting and content types
+- **Markdown support**: Write in markdown if you prefer
+- **Image support**: Embed and manage images within notes
+
+### Real-time collaboration
+
+Built on Convex for real-time functionality:
+
+- **Multi-user editing**: Work on documents simultaneously
+- **Presence indicators**: See who's viewing and editing
+- **Conflict resolution**: Automatic merging of concurrent edits
+- **Share permissions**: Control who can view and edit
+
+### Knowledge graph
+
+Visualize connections between your notes:
+
+- **Automatic linking**: Connections based on content relationships
+- **Interactive graph view**: Explore your knowledge visually
+- **Tag exploration**: Navigate by tags and categories
+- **Timeline view**: See your notes chronologically
+
+### Whiteboard
+
+Integrated drawing and diagramming:
+
+- **Freehand drawing**: Sketch ideas naturally
+- **Shape tools**: Create diagrams and flowcharts
+- **Export capabilities**: Save whiteboards as images
+- **Note integration**: Link whiteboards to notes
+
+### Desktop experience
+
+Wrapped in Tauri for native performance:
+
+- **Fast startup**: Native application speed
+- **System integration**: OS notifications, file access
+- **Offline capability**: Work without internet
+- **Small footprint**: Much lighter than Electron
+
+## Technology foundation
+
+Pointer is built on a modern, robust technology stack:
+
+| Layer | Technology | Purpose |
+|-------|------------|---------|
+| **Editor** | Tiptap | Rich text editing with extensions |
+| **Frontend** | Next.js, React | User interface and routing |
+| **Backend** | Convex | Real-time data sync and storage |
+| **Desktop** | Tauri | Native desktop wrapper |
+| **AI** | Vercel AI SDK | Writing assistance features |
+| **Styling** | Tailwind CSS | Consistent, responsive design |
+| **Collab** | PartyKit, Y.js | Real-time collaboration infrastructure |
+
+## Getting started
+
+<Steps>
+  <Step title="Explore the features">
+    Browse the documentation to understand what Pointer can do for your workflow.
+  </Step>
+  <Step title="Understand the architecture">
+    Learn about the [technical architecture](/pointer/architecture) behind Pointer.
+  </Step>
+  <Step title="See the features in detail">
+    Dive into specific features like the [editor](/pointer/editor), [collaboration](/pointer/collaboration), or [whiteboard](/pointer/whiteboard).
+  </Step>
+  <Step title="Set up for development">
+    If you want to run Pointer locally or contribute, see the [development guide](/pointer/development).
+  </Step>
+</Steps>
+
+## Project status
+
+Pointer is actively being developed with a focus on:
+
+- Core note-taking functionality
+- Real-time collaboration features
+- AI-powered writing assistance
+- Desktop application polish
+
+<Note>
+Pointer is a personal project built to solve a real problem. It demonstrates what's possible with modern web technologies while providing genuinely useful functionality.
+</Note>
+
+## Links
+
+<CardGroup cols={2}>
+  <Card title="GitHub Repository" icon="github" href="https://github.com/ehcaw/pointer">
+    View the source code, report issues, or contribute to development
+  </Card>
+  <Card title="Architecture Overview" icon="sitemap" href="/pointer/architecture">
+    Understand how Pointer is built and designed
+  </Card>
+</CardGroup>

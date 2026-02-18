@@ -1,0 +1,297 @@
+---
+title: Editor features
+description: A comprehensive guide to Pointer's rich text editor, including formatting options, slash commands, code blocks, and content embedding
+---
+
+## Editor overview
+
+Pointer's editor is built on Tiptap, providing a modern, block-based editing experience similar to Notion. The editor supports rich formatting, code blocks with syntax highlighting, tables, images, and a powerful slash command system for quick access to all features.
+
+## Basic formatting
+
+### Text styles
+
+Apply formatting using keyboard shortcuts or the toolbar:
+
+| Format | Shortcut | Description |
+|--------|----------|-------------|
+| **Bold** | `Cmd/Ctrl + B` | Make text bold |
+| *Italic* | `Cmd/Ctrl + I` | Make text italic |
+| <u>Underline</u> | `Cmd/Ctrl + U` | Underline text |
+| ~~Strikethrough~~ | `Cmd/Ctrl + Shift + X` | Strike through text |
+| `Code` | `Cmd/Ctrl + E` | Inline code formatting |
+| Highlight | `Cmd/Ctrl + Shift + H` | Highlight text |
+
+### Text alignment
+
+Control text alignment within blocks:
+
+- **Left align**: Default text alignment
+- **Center align**: Center content for titles or emphasis
+- **Right align**: Right-justify text
+- **Justify**: Full justification for prose
+
+## Block types
+
+### Headings
+
+Create hierarchical structure with headings:
+
+```markdown
+# Heading 1      (Cmd/Ctrl + Alt + 1)
+## Heading 2     (Cmd/Ctrl + Alt + 2)
+### Heading 3    (Cmd/Ctrl + Alt + 3)
+#### Heading 4   (Cmd/Ctrl + Alt + 4)
+##### Heading 5  (Cmd/Ctrl + Alt + 5)
+```
+
+### Lists
+
+Create ordered and unordered lists:
+
+**Bullet list** (`Cmd/Ctrl + Shift + 8`):
+- First item
+- Second item
+  - Nested item
+  - Another nested item
+- Third item
+
+**Numbered list** (`Cmd/Ctrl + Shift + 7`):
+1. First step
+2. Second step
+   1. Sub-step
+   2. Another sub-step
+3. Third step
+
+### Code blocks
+
+Insert code with syntax highlighting:
+
+```typescript
+// TypeScript example with syntax highlighting
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
+function greet(user: User): string {
+  return `Hello, ${user.name}!`;
+}
+```
+
+Code blocks support:
+- Automatic language detection
+- Syntax highlighting for common languages
+- Copy button for easy copying
+- Line numbers (optional)
+
+### Block quotes
+
+Emphasize quoted content:
+
+> This is a block quote. Use it to highlight important information,
+> quotes from other sources, or to call attention to specific content.
+
+### Tables
+
+Create structured data with tables:
+
+| Header 1 | Header 2 | Header 3 |
+|----------|----------|----------|
+| Cell 1   | Cell 2   | Cell 3   |
+| Cell 4   | Cell 5   | Cell 6   |
+
+Table features:
+- Add/remove rows and columns
+- Resize columns by dragging
+- Cell alignment options
+- Header row formatting
+
+## Slash commands
+
+The slash command system provides quick access to all content types. Type `/` anywhere in the editor to open the command palette.
+
+### Available commands
+
+<AccordionGroup>
+  <Accordion title="Text blocks">
+    - `/text` - Plain paragraph text
+    - `/h1` through `/h5` - Heading levels
+    - `/bullet` - Bullet list
+    - `/number` - Numbered list
+    - `/quote` - Block quote
+  </Accordion>
+  
+  <Accordion title="Code and technical">
+    - `/code` - Code block with language selection
+    - `/inline` - Inline code formatting
+  </Accordion>
+  
+  <Accordion title="Media">
+    - `/image` - Insert image from URL or upload
+    - `/divider` - Horizontal divider line
+  </Accordion>
+  
+  <Accordion title="Organization">
+    - `/table` - Insert table
+    - `/todo` - Task checkbox item
+  </Accordion>
+</AccordionGroup>
+
+### Using slash commands
+
+1. Place cursor where you want to insert content
+2. Type `/`
+3. Start typing to filter commands
+4. Use arrow keys to navigate
+5. Press `Enter` to select
+
+## Images
+
+### Inserting images
+
+Add images to your notes:
+
+1. **Slash command**: Type `/image` and press Enter
+2. **Drag and drop**: Drop an image file onto the editor
+3. **Paste**: Paste an image from clipboard
+4. **URL**: Enter an image URL directly
+
+### Image handling
+
+Images in Pointer are:
+
+- **Stored in Convex**: Uploaded to secure cloud storage
+- **Referenced by ID**: Tracked for cleanup when deleted
+- **Optimized**: Automatically resized for web display
+- **Persistent**: Survive note editing and reorganization
+
+## Links
+
+### Creating links
+
+Add links to your content:
+
+1. **Select text**: Highlight the text to link
+2. **Shortcut**: Press `Cmd/Ctrl + K`
+3. **Enter URL**: Paste or type the destination URL
+4. **Confirm**: Press Enter or click outside
+
+### Link features
+
+- **Auto-detection**: URLs typed directly become links
+- **Preview**: Hover to see link destination
+- **Edit**: Click link and modify URL
+- **Open**: Cmd/Ctrl + Click to open in browser
+
+## Keyboard shortcuts
+
+### Navigation
+
+| Shortcut | Action |
+|----------|--------|
+| `Cmd/Ctrl + Home` | Go to document start |
+| `Cmd/Ctrl + End` | Go to document end |
+| `Cmd/Ctrl + ↑` | Go to paragraph start |
+| `Cmd/Ctrl + ↓` | Go to paragraph end |
+
+### Selection
+
+| Shortcut | Action |
+|----------|--------|
+| `Cmd/Ctrl + A` | Select all |
+| `Shift + ↑/↓` | Extend selection by line |
+| `Cmd/Ctrl + Shift + ↑/↓` | Extend selection by paragraph |
+| `Alt + Shift + ←/→` | Extend selection by word |
+
+### Editing
+
+| Shortcut | Action |
+|----------|--------|
+| `Cmd/Ctrl + Z` | Undo |
+| `Cmd/Ctrl + Shift + Z` | Redo |
+| `Cmd/Ctrl + C` | Copy |
+| `Cmd/Ctrl + V` | Paste |
+| `Cmd/Ctrl + X` | Cut |
+| `Tab` | Indent list item |
+| `Shift + Tab` | Outdent list item |
+
+### Formatting
+
+| Shortcut | Action |
+|----------|--------|
+| `Cmd/Ctrl + B` | Bold |
+| `Cmd/Ctrl + I` | Italic |
+| `Cmd/Ctrl + U` | Underline |
+| `Cmd/Ctrl + E` | Code |
+| `Cmd/Ctrl + K` | Link |
+| `Cmd/Ctrl + Shift + H` | Highlight |
+
+## Markdown support
+
+Pointer supports Markdown shortcuts for quick formatting:
+
+### Inline formatting
+
+```
+**bold** or __bold__
+*italic* or _italic_
+~~strikethrough~~
+`inline code`
+[link text](url)
+```
+
+### Block formatting
+
+```
+# Heading 1
+## Heading 2
+### Heading 3
+
+- Bullet item
+* Bullet item
+
+1. Numbered item
+2. Numbered item
+
+> Block quote
+
+---  (horizontal rule)
+
+```code block```
+```
+
+## Editor toolbar
+
+The toolbar provides visual access to formatting options:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ B  I  U  S  •  H1 H2 H3  •  • 1. ❝  •  { }  🔗  📷  •  ← →   │
+│ ↑  ↑  ↑  ↑     ↑  ↑  ↑     ↑ ↑  ↑     ↑   ↑   ↑     ↑ ↑     │
+│ │  │  │  │     │  │  │     │ │  │     │   │   │     │ │     │
+│ │  │  │  Strike│  │  │  Bullet│ Quote │   │   │  Undo Redo  │
+│ │  │  Under    Headings    Number     Code Link Image       │
+│ │  Italic                                                    │
+│ Bold                                                         │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## Tips for effective editing
+
+<Tip>
+**Use keyboard shortcuts**: They're much faster than reaching for the toolbar
+</Tip>
+
+<Tip>
+**Master slash commands**: Type `/` and start typing to quickly insert any content type
+</Tip>
+
+<Tip>
+**Use Markdown**: If you know Markdown, you can use it directly for faster formatting
+</Tip>
+
+<Tip>
+**Organize with headings**: Use headings to create navigable document structure
+</Tip>

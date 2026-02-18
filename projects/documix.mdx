@@ -1,0 +1,206 @@
+---
+title: Documix
+description: A web application that lets you chat with any documentation instead of endlessly scrolling through docs to find what you need
+---
+
+## Overview
+
+Documix is a web application designed to transform how developers interact with documentation. Instead of scrolling through pages of documentation, searching with keywords that may or may not match the terminology used, and trying to piece together information from multiple sections, Documix allows you to simply ask questions in natural language and receive direct, contextual answers.
+
+The application accepts documentation from URLs or local files, indexes the content using vector embeddings, and provides a conversational interface where you can ask questions and receive accurate, source-cited responses. This makes finding information in documentation as simple as having a conversation.
+
+## The problem with traditional documentation
+
+Even well-written documentation can be frustrating to navigate:
+
+1. **Search limitations**: Keyword search often fails when you don't know the exact terminology
+2. **Information fragmentation**: Relevant information is spread across multiple pages
+3. **Context switching**: You have to keep multiple tabs open to piece together understanding
+4. **Learning curve**: Complex documentation requires significant time investment to navigate effectively
+5. **Outdated mental models**: Documentation organization doesn't always match how developers think about problems
+
+Documix addresses these issues by providing an intelligent layer on top of documentation that understands context and can synthesize information from multiple sources.
+
+## Architecture
+
+Documix uses a modern RAG (Retrieval-Augmented Generation) architecture to provide accurate, contextual responses:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         User Interface                           │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                   Next.js Frontend                        │   │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │   │
+│  │  │  Doc Input  │  │    Chat     │  │  Source Links   │  │   │
+│  │  │   (URL/File)│  │  Interface  │  │                 │  │   │
+│  │  └─────────────┘  └─────────────┘  └─────────────────┘  │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└────────────────────────────────┬────────────────────────────────┘
+                                 │
+┌────────────────────────────────┴────────────────────────────────┐
+│                       Processing Pipeline                        │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────┐ │
+│  │   Content   │  │  Chunking   │  │       Embedding         │ │
+│  │   Scraper   │─▶│  & Parsing  │─▶│      Generation         │ │
+│  └─────────────┘  └─────────────┘  │  (Nomic Models)         │ │
+│                                     └────────────┬──────────────┘ │
+└──────────────────────────────────────────────────┬──────────────┘
+                                                   │
+┌──────────────────────────────────────────────────┴──────────────┐
+│                        Storage Layer                             │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                   Upstash Vector                          │   │
+│  │                (Semantic Search Index)                    │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└──────────────────────────────────────────────────────────────────┘
+                                 │
+┌────────────────────────────────┴────────────────────────────────┐
+│                      Generation Layer                            │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │           LLM Options (OpenAI / Groq / Ollama)            │   │
+│  │                                                           │   │
+│  │  Context from Vector DB + User Query = Accurate Response │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+### Content ingestion
+
+When you provide a URL or upload files, Documix:
+
+1. **Scrapes content**: Extracts text content from web pages or documents
+2. **Chunks intelligently**: Splits content into semantically meaningful segments
+3. **Generates embeddings**: Creates vector representations using Nomic embedding models
+4. **Stores vectors**: Indexes embeddings in Upstash Vector for fast retrieval
+
+### Query processing
+
+When you ask a question:
+
+1. **Query embedding**: Your question is converted to a vector representation
+2. **Semantic search**: The most relevant documentation chunks are retrieved
+3. **Context assembly**: Retrieved chunks are formatted as context for the LLM
+4. **Response generation**: The LLM generates an answer based on the context
+5. **Source citation**: Links to original documentation are included with the response
+
+### Rate limiting
+
+Redis-based rate limiting prevents abuse:
+
+- Per-user request limits
+- Configurable rate windows
+- Graceful degradation under load
+
+## Technology stack
+
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| **Frontend** | Next.js | User interface and server-side rendering |
+| **Vector DB** | Upstash Vector | Semantic search and document indexing |
+| **Embeddings** | Nomic | High-quality document embeddings |
+| **LLMs** | OpenAI, Groq, Ollama | Response generation |
+| **Rate Limiting** | Redis | Request throttling and abuse prevention |
+
+## Key features
+
+### Multi-source documentation
+
+Documix can index documentation from various sources:
+
+- **URLs**: Point to any documentation website
+- **Local files**: Upload markdown, text, or HTML files
+- **Multiple docs**: Combine documentation from different sources
+
+### Flexible LLM options
+
+Choose the model that best fits your needs:
+
+- **OpenAI**: High-quality responses with GPT models
+- **Groq**: Fast inference with open-source models
+- **Ollama**: Self-hosted option for privacy
+
+### Accurate retrieval
+
+The combination of Nomic embeddings and Upstash Vector provides:
+
+- **Semantic understanding**: Finds relevant content even with different wording
+- **Fast retrieval**: Quick search across large documentation sets
+- **Relevance ranking**: Returns the most pertinent information first
+
+### Source transparency
+
+Every response includes:
+
+- Links to the original documentation sections used
+- Clear indication of which sources informed the answer
+- Ability to verify information in context
+
+### Clean chat interface
+
+The conversation interface is designed for productivity:
+
+- Clear message history
+- Code block formatting
+- Quick input for follow-up questions
+- Mobile-friendly design
+
+## Use cases
+
+### Learning a new library
+
+When starting with unfamiliar documentation:
+
+```
+You: How do I set up authentication in this framework?
+
+Documix: Based on the authentication guide, you'll need to:
+1. Install the auth middleware package
+2. Configure your auth provider in config/auth.js
+3. Apply the middleware to protected routes
+
+Here's an example configuration:
+[code example with source link]
+```
+
+### Finding specific implementation details
+
+When you know what you want but not where to find it:
+
+```
+You: What are all the configuration options for the database connection?
+
+Documix: The database connection accepts the following options:
+- host: Database server hostname (default: localhost)
+- port: Connection port (default: 5432)
+- poolSize: Maximum connection pool size (default: 10)
+[complete list with source citations]
+```
+
+### Understanding concepts
+
+When documentation assumes prior knowledge:
+
+```
+You: Can you explain how the middleware pipeline works?
+
+Documix: The middleware pipeline in this framework processes
+requests through a series of functions before reaching your
+route handler. Each middleware can:
+[detailed explanation with referenced examples]
+```
+
+## Benefits over traditional search
+
+| Traditional Search | Documix |
+|--------------------|---------|
+| Requires exact keywords | Understands natural language |
+| Returns page links | Provides direct answers |
+| Manual information synthesis | Combines information automatically |
+| Context switching required | Single conversation interface |
+| Same results regardless of context | Context-aware follow-up questions |
+
+## Repository
+
+<Card title="View on GitHub" icon="github" href="https://github.com/ehcaw/documix">
+  Explore the source code, contribute to development, or report issues on GitHub.
+</Card>

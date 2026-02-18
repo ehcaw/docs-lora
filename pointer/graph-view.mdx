@@ -1,0 +1,291 @@
+---
+title: Graph view
+description: Visualizing connections between your notes with Pointer's interactive knowledge graph and timeline features
+---
+
+## Graph view overview
+
+Pointer's graph view provides a visual representation of your notes and their relationships. Instead of navigating through a hierarchical folder structure, you can explore your knowledge as an interconnected network, discovering unexpected connections and patterns in your thinking.
+
+## Accessing graph view
+
+### Opening the graph
+
+1. Click the graph icon in the sidebar
+2. Or use keyboard shortcut `Cmd/Ctrl + G`
+3. The graph opens in a new view
+
+### Graph modes
+
+The graph view supports several visualization modes:
+
+| Mode | Description |
+|------|-------------|
+| **Full graph** | All notes and connections |
+| **Local graph** | Notes connected to current note |
+| **Tag view** | Group notes by tags |
+| **Timeline** | Notes arranged chronologically |
+
+## Understanding the graph
+
+### Nodes
+
+Each node in the graph represents a note:
+
+- **Size**: Based on connection count
+- **Color**: Based on note type or custom tag
+- **Label**: Note title (truncated if long)
+- **Icon**: Indicates note type (file, folder, whiteboard)
+
+### Edges
+
+Connections between notes are shown as edges:
+
+- **Links**: Explicit links between notes
+- **Tags**: Notes sharing the same tags
+- **Parent-child**: Hierarchical relationships
+- **Semantic**: AI-detected similarity (planned)
+
+### Visual encoding
+
+```
+Node size = number of connections
+    ○ = few connections
+    ● = many connections
+
+Node color = note type or tag
+    Blue = Regular note
+    Green = Folder
+    Purple = Whiteboard
+    Custom = Tagged content
+
+Edge thickness = connection strength
+    ─ = single connection
+    ━ = multiple connections
+```
+
+## Interacting with the graph
+
+### Navigation
+
+| Action | Method |
+|--------|--------|
+| **Pan** | Click and drag on background |
+| **Zoom** | Scroll wheel or pinch |
+| **Select node** | Click on a node |
+| **Open note** | Double-click a node |
+| **Multi-select** | Shift + click |
+
+### Filtering
+
+Narrow down what's displayed:
+
+1. **By folder**: Show only notes in specific folders
+2. **By tag**: Show only notes with certain tags
+3. **By date**: Show notes from a time range
+4. **By type**: Show only files, folders, or whiteboards
+
+### Search in graph
+
+Find specific notes:
+
+1. Press `Cmd/Ctrl + F` in graph view
+2. Type note name or content
+3. Matching nodes highlight
+4. Navigate between matches
+
+## Graph features
+
+### Clustering
+
+The graph automatically groups related content:
+
+- Notes with many connections cluster together
+- Related topics form visible groups
+- Outliers are positioned at the periphery
+
+### Force simulation
+
+The graph uses physics-based layout:
+
+- **Attraction**: Connected nodes pull together
+- **Repulsion**: Unconnected nodes push apart
+- **Gravity**: Nodes pulled toward center
+- **Collision**: Nodes don't overlap
+
+### Interactive exploration
+
+Discover your knowledge:
+
+1. Hover over a node to highlight connections
+2. Click to focus and see details
+3. Drag nodes to rearrange
+4. Use filters to explore subsets
+
+## Tag explorer
+
+### Viewing by tags
+
+The tag explorer shows your content organized by tags:
+
+```
+Tags                    Notes
+─────                   ─────
+◉ work (12)     ──────▶ Meeting notes
+◉ projects (8)  ──────▶ Project ideas
+◉ ideas (15)    ──────▶ Random thoughts
+◉ archive (23)  ──────▶ Old content
+```
+
+### Tag management
+
+From the tag explorer:
+
+- View all tags and counts
+- Click to filter by tag
+- See tag relationships
+- Identify orphaned content
+
+## Timeline view
+
+### Chronological visualization
+
+See your notes arranged by time:
+
+```
+2025 ─────────────────────────────────────────
+     │
+Jan  ●──● Project kickoff
+     │  │
+Feb  │  ●──● Design docs
+     │     │
+Mar  ●─────●──● Implementation notes
+     │        │
+Apr  │        ●──● Testing notes
+     │           │
+May  ●───────────●──● Launch docs
+```
+
+### Timeline features
+
+- **Zoom**: Focus on specific time periods
+- **Filter**: Show certain note types
+- **Activity**: See editing activity over time
+- **Gaps**: Identify periods without notes
+
+### Timeline interactions
+
+| Action | Method |
+|--------|--------|
+| **Scroll** | Pan through time |
+| **Zoom** | Pinch or scroll wheel |
+| **Select** | Click on a note marker |
+| **Open** | Double-click to open note |
+
+## Search overlay
+
+### Quick search
+
+Access notes quickly from the graph:
+
+1. Press `Cmd/Ctrl + K` or `/`
+2. Type to search
+3. Results appear in overlay
+4. Select to navigate to note
+
+### Search features
+
+- **Fuzzy matching**: Finds approximate matches
+- **Content search**: Searches note contents
+- **Title priority**: Titles ranked higher
+- **Recent boost**: Recent notes appear first
+
+## Capture modal
+
+### Quick capture
+
+Add notes without leaving the graph:
+
+1. Press `N` or click the + button
+2. Enter note content
+3. Choose location (folder)
+4. Note appears in graph
+
+### Capture options
+
+- **Title**: Required name for the note
+- **Content**: Optional initial content
+- **Location**: Folder to place the note
+- **Tags**: Optional tags to apply
+
+## Side panel
+
+### Note preview
+
+When you select a node:
+
+- **Title**: Note name at top
+- **Preview**: Content preview
+- **Connections**: List of linked notes
+- **Actions**: Edit, delete, share buttons
+
+### Panel features
+
+| Feature | Description |
+|---------|-------------|
+| **Preview** | See note content without opening |
+| **Backlinks** | Notes that link to this one |
+| **Outlinks** | Notes this links to |
+| **Tags** | Applied tags |
+| **Modified** | Last edit timestamp |
+
+## Performance
+
+### Large graphs
+
+For large note collections:
+
+- **Progressive loading**: Nodes load as needed
+- **Level of detail**: Distant nodes simplify
+- **Viewport culling**: Off-screen nodes skip rendering
+- **Caching**: Positions cached between sessions
+
+### Optimization tips
+
+<Tip>
+**Use filters**: Reduce visible nodes for better performance
+</Tip>
+
+<Tip>
+**Local graph**: Start with local view for specific exploration
+</Tip>
+
+<Tip>
+**Limit depth**: Reduce connection depth for faster rendering
+</Tip>
+
+## Use cases
+
+### Research organization
+
+Visualize research connections:
+
+- See how papers and sources relate
+- Find gaps in research coverage
+- Discover unexpected connections
+
+### Project management
+
+Understand project structure:
+
+- Visualize dependencies
+- See what's connected to what
+- Identify isolated documents
+
+### Personal knowledge
+
+Map your thinking:
+
+- See how ideas connect
+- Find patterns in interests
+- Build a personal knowledge graph

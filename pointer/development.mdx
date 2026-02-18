@@ -1,0 +1,373 @@
+---
+title: Development guide
+description: How to set up Pointer for local development, contribute to the project, and understand the codebase
+---
+
+## Prerequisites
+
+Before setting up Pointer for development, ensure you have:
+
+- **Node.js** (v18 or later)
+- **Bun** (recommended) or npm/yarn
+- **Rust** (for Tauri desktop builds)
+- **Git** for version control
+
+## Project structure
+
+```
+pointer/
+├── convex/                 # Backend - Convex functions and schema
+│   ├── __tests__/          # Backend tests
+│   ├── schema.ts           # Database schema
+│   ├── notes.ts            # Note operations
+│   ├── whiteboards.ts      # Whiteboard operations
+│   └── ...
+├── partykit/               # Real-time collaboration server
+│   ├── server.ts           # PartyKit server
+│   └── partykit.json       # PartyKit config
+├── src/                    # Frontend application
+│   ├── app/                # Next.js app router pages
+│   ├── components/         # React components
+│   │   ├── graph/          # Knowledge graph components
+│   │   ├── history/        # Version history
+│   │   ├── navigation/     # Sidebar, tabs, etc.
+│   │   ├── preview/        # Read-only views
+│   │   ├── sidebar/        # Tree view, context menus
+│   │   ├── tiptap/         # Editor components
+│   │   ├── ui/             # shadcn/ui components
+│   │   ├── views/          # Main view components
+│   │   └── whiteboard/     # Whiteboard components
+│   └── lib/                # Utilities and helpers
+├── src-tauri/              # Tauri desktop configuration
+│   ├── capabilities/       # Permission definitions
+│   ├── src/                # Rust source
+│   └── tauri.conf.json     # Tauri config
+├── __tests__/              # Frontend tests
+├── package.json            # Dependencies
+└── vitest.config.ts        # Test configuration
+```
+
+## Getting started
+
+### Clone the repository
+
+```bash
+git clone https://github.com/ehcaw/pointer.git
+cd pointer
+```
+
+### Install dependencies
+
+```bash
+# Using Bun (recommended)
+bun install
+
+# Or using npm
+npm install
+```
+
+### Set up environment
+
+Create a `.env.local` file:
+
+```bash
+# Convex
+CONVEX_DEPLOYMENT=your-deployment
+NEXT_PUBLIC_CONVEX_URL=https://your-project.convex.cloud
+
+# Clerk (authentication)
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+
+# PartyKit (collaboration)
+NEXT_PUBLIC_PARTYKIT_HOST=your-project.partykit.dev
+```
+
+### Start development servers
+
+```bash
+# Start Next.js development server
+bun run dev
+
+# In another terminal, start Convex
+npx convex dev
+
+# For PartyKit (if working on collaboration)
+npx partykit dev
+```
+
+### Open in browser
+
+Navigate to `http://localhost:3000` to see the application.
+
+## Running tests
+
+### Frontend tests
+
+```bash
+# Run all tests
+bun run test
+
+# Watch mode
+bun run test:watch
+
+# With coverage
+bun run test:coverage
+
+# UI mode
+bun run test:ui
+```
+
+### Convex tests
+
+```bash
+# Run Convex-specific tests
+bun run test:convex
+```
+
+### All tests
+
+```bash
+# Run everything
+bun run test:all
+```
+
+## Building for desktop
+
+### Prerequisites for Tauri
+
+Install Rust and system dependencies:
+
+```bash
+# macOS
+xcode-select --install
+
+# Ubuntu
+sudo apt install libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
+
+# Windows
+# Install Visual Studio C++ Build Tools
+```
+
+### Build desktop app
+
+```bash
+# Development build
+bun run tauri dev
+
+# Production build
+bun run tauri build
+```
+
+## Key development concepts
+
+### Convex mutations and queries
+
+Backend logic lives in the `convex/` directory:
+
+```typescript
+// convex/notes.ts
+import { mutation, query } from "./_generated/server";
+import { v } from "convex/values";
+
+export const createNote = mutation({
+  args: {
+    name: v.string(),
+    tenantId: v.string(),
+    parent_id: v.optional(v.id("notes")),
+  },
+  handler: async (ctx, args) => {
+    const noteId = await ctx.db.insert("notes", {
+      name: args.name,
+      tenantId: args.tenantId,
+      parent_id: args.parent_id,
+      type: "file",
+      collaborative: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      lastAccessed: new Date().toISOString(),
+      lastEdited: new Date().toISOString(),
+      pointer_id: generatePointerId(),
+    });
+    return noteId;
+  },
+});
+
+export const getNotes = query({
+  args: { tenantId: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("notes")
+      .withIndex("by_tenant", (q) => q.eq("tenantId", args.tenantId))
+      .collect();
+  },
+});
+```
+
+### Using Convex in components
+
+```typescript
+// src/components/NotesList.tsx
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+export function NotesList({ tenantId }: { tenantId: string }) {
+  const notes = useQuery(api.notes.getNotes, { tenantId });
+  const createNote = useMutation(api.notes.createNote);
+
+  const handleCreate = async () => {
+    await createNote({
+      name: "New Note",
+      tenantId,
+    });
+  };
+
+  return (
+    <div>
+      {notes?.map((note) => (
+        <div key={note._id}>{note.name}</div>
+      ))}
+      <button onClick={handleCreate}>Create Note</button>
+    </div>
+  );
+}
+```
+
+### Tiptap editor extensions
+
+Custom editor extensions are in `src/components/tiptap/tiptap-extension/`:
+
+```typescript
+// src/components/tiptap/tiptap-extension/slash-command-extension.ts
+import { Extension } from "@tiptap/core";
+import Suggestion from "@tiptap/suggestion";
+
+export const SlashCommand = Extension.create({
+  name: "slashCommand",
+
+  addOptions() {
+    return {
+      suggestion: {
+        char: "/",
+        command: ({ editor, range, props }) => {
+          // Handle command selection
+        },
+      },
+    };
+  },
+
+  addProseMirrorPlugins() {
+    return [
+      Suggestion({
+        editor: this.editor,
+        ...this.options.suggestion,
+      }),
+    ];
+  },
+});
+```
+
+## Code style
+
+### TypeScript
+
+- Use strict TypeScript configuration
+- Define explicit types for function parameters
+- Use type inference where appropriate
+
+### React
+
+- Functional components with hooks
+- Use React Query for server state
+- Zustand for client state
+- Follow React Server Components patterns
+
+### Formatting
+
+The project uses Prettier and ESLint:
+
+```bash
+# Lint code
+bun run lint
+
+# Format code
+bunx prettier --write .
+```
+
+## Contributing
+
+### Creating a feature
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/my-feature`
+3. Make changes and add tests
+4. Run tests: `bun run test`
+5. Commit: `git commit -m "feat: add my feature"`
+6. Push: `git push origin feature/my-feature`
+7. Open a pull request
+
+### Pull request guidelines
+
+- Include tests for new functionality
+- Update documentation if needed
+- Follow existing code style
+- Keep PRs focused and reasonably sized
+- Reference related issues
+
+### Commit messages
+
+Follow conventional commits:
+
+```
+feat: add new feature
+fix: fix bug in component
+docs: update documentation
+refactor: refactor code without changing behavior
+test: add or update tests
+chore: maintenance tasks
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Convex not connecting">
+    - Check `CONVEX_DEPLOYMENT` is set correctly
+    - Run `npx convex dev` to start the development server
+    - Check for schema sync issues
+  </Accordion>
+  
+  <Accordion title="PartyKit errors">
+    - Verify `NEXT_PUBLIC_PARTYKIT_HOST` is configured
+    - Run `npx partykit dev` locally for development
+    - Check WebSocket connection in browser dev tools
+  </Accordion>
+  
+  <Accordion title="Tauri build fails">
+    - Ensure Rust is installed and up to date
+    - Check system dependencies are installed
+    - Review Tauri prerequisites for your platform
+  </Accordion>
+  
+  <Accordion title="Tests failing">
+    - Run `bun run test:ui` for interactive debugging
+    - Check test database is properly mocked
+    - Review test output for specific errors
+  </Accordion>
+</AccordionGroup>
+
+## Resources
+
+<CardGroup cols={2}>
+  <Card title="Convex Documentation" icon="database" href="https://docs.convex.dev">
+    Learn about Convex backend development
+  </Card>
+  <Card title="Tiptap Documentation" icon="pen" href="https://tiptap.dev/docs">
+    Explore Tiptap editor features
+  </Card>
+  <Card title="Tauri Documentation" icon="desktop" href="https://tauri.app/v1/guides">
+    Build desktop apps with Tauri
+  </Card>
+  <Card title="Next.js Documentation" icon="react" href="https://nextjs.org/docs">
+    Next.js framework documentation
+  </Card>
+</CardGroup>
