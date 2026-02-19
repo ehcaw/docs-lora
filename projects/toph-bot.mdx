@@ -1,0 +1,132 @@
+---
+title: "Toph Bot"
+description: "An integrated GitHub PR review bot with persistent memory that actually remembers what it's looking at across reviews"
+---
+
+## Overview
+
+<Info>
+  **Project type**: Personal project (in development)  
+  **GitHub**: [github.com/ehcaw/toph-bot](https://github.com/ehcaw/toph-bot)
+</Info>
+
+Toph Bot is a GitHub pull request review bot that actually remembers what it's looking at. Unlike other code review bots that start fresh every time, Toph keeps context across reviews using persistent memory - learning from previous conversations and building understanding of your codebase over time.
+
+## The problem
+
+Most AI-powered code review tools have a frustrating limitation: they have no memory. Every time you:
+
+- Push a new commit
+- Open a new PR
+- Ask a follow-up question
+
+The bot starts completely fresh. This means:
+
+- **Repeated explanations**: You have to re-explain context that you've already provided
+- **No learning**: The bot doesn't learn your team's conventions or preferences
+- **Shallow reviews**: Without codebase context, reviews can only catch surface-level issues
+- **Wasted tokens**: You're paying for the same context to be processed again and again
+
+## What I'm building
+
+A PR review bot that maintains persistent memory across all interactions:
+
+<CardGroup cols={2}>
+  <Card title="Persistent memory" icon="brain">
+    Uses Letta for memory management so the bot remembers previous conversations, feedback, and context about your codebase.
+  </Card>
+  <Card title="GitHub integration" icon="github">
+    Built with FastAPI webhooks to seamlessly integrate with your GitHub workflow - just @mention the bot on any PR.
+  </Card>
+  <Card title="Codebase understanding" icon="magnifying-glass">
+    Planning to integrate HelixDB for storing and searching through codebase information, enabling deeper code understanding.
+  </Card>
+  <Card title="RAG for context" icon="database">
+    Retrieval-augmented generation to pull relevant context from your codebase when reviewing code changes.
+  </Card>
+</CardGroup>
+
+## Technical architecture
+
+```python
+# Simplified view of how Toph Bot maintains context
+class TophBot:
+    def __init__(self):
+        self.memory = LettaMemoryAgent()
+        self.github = GitHubWebhookHandler()
+    
+    async def review_pr(self, pr_event):
+        # Retrieve relevant memories about this repo/author/patterns
+        context = await self.memory.recall(
+            repo=pr_event.repo,
+            author=pr_event.author,
+            files_changed=pr_event.files
+        )
+        
+        # Generate review with full context
+        review = await self.generate_review(
+            pr=pr_event,
+            historical_context=context
+        )
+        
+        # Store this interaction for future reference
+        await self.memory.remember(
+            interaction=pr_event,
+            review=review
+        )
+        
+        return review
+```
+
+### Technologies
+
+<AccordionGroup>
+  <Accordion title="Letta for memory">
+    Letta provides the memory infrastructure that makes Toph Bot special. It handles storing, retrieving, and managing memories across conversations, letting the bot build long-term understanding of your codebase and team.
+  </Accordion>
+  <Accordion title="FastAPI for webhooks">
+    FastAPI handles incoming GitHub webhook events efficiently. Its async support is perfect for handling multiple concurrent PR events without blocking.
+  </Accordion>
+  <Accordion title="HelixDB (planned)">
+    HelixDB will store vector embeddings of your codebase, enabling semantic search when the bot needs to understand how a change relates to the rest of your code.
+  </Accordion>
+  <Accordion title="RAG pipeline (planned)">
+    A retrieval-augmented generation pipeline will combine memories with relevant code context to produce more informed, contextual reviews.
+  </Accordion>
+</AccordionGroup>
+
+## How it works
+
+<Steps>
+  <Step title="Receive PR event">
+    When you open a PR or @mention Toph, GitHub sends a webhook to the FastAPI server with details about the pull request.
+  </Step>
+  <Step title="Recall context">
+    Toph queries its memory system for relevant context - previous reviews on this repo, feedback from this author, patterns in these files.
+  </Step>
+  <Step title="Generate review">
+    Using the PR diff plus historical context, Toph generates a code review that's informed by everything it knows about your codebase.
+  </Step>
+  <Step title="Learn and remember">
+    After the review, Toph stores this interaction - the code, the review, any follow-up discussion - for future reference.
+  </Step>
+</Steps>
+
+## Why persistent memory matters
+
+The difference between a stateless bot and one with memory is dramatic:
+
+| Aspect | Stateless bots | Toph Bot |
+|--------|----------------|----------|
+| Context | Starts fresh each time | Remembers previous interactions |
+| Learning | No improvement over time | Learns your team's patterns |
+| Reviews | Surface-level only | Deep, contextual insights |
+| Efficiency | Repeats analysis | Builds on prior knowledge |
+
+## Origin story
+
+<Note>
+  I tried making a code review bot for club repos and realized that most bots are frustratingly forgetful. Toph actually learns from each review, making it more useful over time.
+</Note>
+
+The name "Toph" is inspired by the character from Avatar: The Last Airbender, who could "see" through earth and vibrations - like how this bot aims to "see" through your codebase history and context to provide better reviews.

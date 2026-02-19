@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Ryan Nguyen Portfolio",
   "colors": {
     "primary": "#16A34A",
     "light": "#07C983",
@@ -10,6 +10,67 @@
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
+      {
+        "tab": "About",
+        "groups": [
+          {
+            "group": "About me",
+            "pages": [
+              "about/index"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Experience",
+        "groups": [
+          {
+            "group": "Professional experience",
+            "pages": [
+              "experience/index",
+              "experience/mintlify",
+              "experience/amazon",
+              "experience/ttc",
+              "experience/petanano"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Projects",
+        "groups": [
+          {
+            "group": "Projects overview",
+            "pages": [
+              "projects/index"
+            ]
+          },
+          {
+            "group": "Featured projects",
+            "pages": [
+              "projects/pointer",
+              "projects/dashi",
+              "projects/catdoc",
+              "projects/documix"
+            ]
+          },
+          {
+            "group": "AI and ML tools",
+            "pages": [
+              "projects/toph-bot",
+              "projects/splat",
+              "projects/elitecode"
+            ]
+          },
+          {
+            "group": "Developer tools",
+            "pages": [
+              "projects/lsclear",
+              "projects/shelly"
+            ]
+          }
+        ]
+      },
       {
         "tab": "Guides",
         "groups": [
@@ -71,14 +132,14 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "GitHub",
+          "href": "https://github.com/ehcaw",
+          "icon": "github"
         },
         {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "LinkedIn",
+          "href": "https://linkedin.com/in/ryannguyenc",
+          "icon": "linkedin"
         }
       ]
     }
@@ -90,14 +151,14 @@
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "label": "Contact",
+        "href": "mailto:ryannguyenc@gmail.com"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "GitHub",
+      "href": "https://github.com/ehcaw"
     }
   },
   "contextual": {
@@ -114,9 +175,9 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/wacheeeeee",
+      "github": "https://github.com/ehcaw",
+      "linkedin": "https://linkedin.com/in/ryannguyenc"
     }
   }
 }

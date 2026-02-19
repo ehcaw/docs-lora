@@ -1,0 +1,158 @@
+---
+title: "CatDoc"
+description: "A CLI app that automatically generates documentation for your codebase using AI - built at HackDavis 2025"
+---
+
+## Overview
+
+<Info>
+  **Project type**: Hackathon project (HackDavis 2025)  
+  **Team**: vibecoders  
+  **GitHub**: [github.com/ehcaw/catdoc](https://github.com/ehcaw/catdoc)
+</Info>
+
+CatDoc is a CLI application that reads your entire codebase and generates comprehensive documentation automatically. Built at HackDavis 2025, it leverages Gemini 2.5's massive context window to understand whole codebases and produce accurate, useful documentation.
+
+## The problem
+
+Documentation is always outdated. The reasons are simple:
+
+- **It's tedious**: Writing docs is the least fun part of coding
+- **It's time-consuming**: Good documentation takes significant effort
+- **It drifts**: Code changes faster than docs get updated
+- **It's forgotten**: In the rush to ship, docs are the first thing cut
+
+The result? Most codebases have incomplete, outdated, or missing documentation.
+
+## What I built
+
+An AI-powered documentation generator that:
+
+<CardGroup cols={2}>
+  <Card title="Reads entire codebases" icon="folder-tree">
+    Uses Gemini 2.5's massive context window to understand your entire codebase at once, not just individual files.
+  </Card>
+  <Card title="Generates comprehensive docs" icon="file-lines">
+    Produces documentation covering functions, classes, modules, architecture, and usage patterns.
+  </Card>
+  <Card title="Smart regeneration" icon="rotate">
+    Only updates documentation for files that have actually changed, using file hashing to detect modifications.
+  </Card>
+  <Card title="Interactive chatbot" icon="comments">
+    After indexing, you can chat with the bot to ask questions about your codebase.
+  </Card>
+</CardGroup>
+
+<Frame>
+  <img src="/catdoc/catdoc1.png" alt="CatDoc CLI showing documentation generation" />
+</Frame>
+
+<Frame>
+  <img src="/catdoc/catdoc2.png" alt="CatDoc CLI showing the interactive chatbot" />
+</Frame>
+
+## Technical implementation
+
+CatDoc is built as a CLI using Ink React, providing a beautiful terminal interface:
+
+```typescript
+// CatDoc workflow
+const catdocWorkflow = {
+  // 1. Scan the codebase
+  scan: async (directory) => {
+    const files = await walkDirectory(directory);
+    const hashes = files.map(f => ({
+      path: f,
+      hash: computeHash(readFile(f))
+    }));
+    return hashes;
+  },
+  
+  // 2. Check what changed
+  diff: (current, cached) => {
+    return current.filter(f => 
+      !cached.find(c => c.path === f.path && c.hash === f.hash)
+    );
+  },
+  
+  // 3. Generate docs for changed files
+  generate: async (changedFiles, context) => {
+    return await gemini.generate({
+      model: 'gemini-2.5-pro',
+      input: { files: changedFiles, codebase: context }
+    });
+  }
+};
+```
+
+### Technologies
+
+<AccordionGroup>
+  <Accordion title="Ink React">
+    Ink lets you build CLI applications using React components. This made building the terminal interface intuitive - the same component model as web development, but for the command line.
+  </Accordion>
+  <Accordion title="Gemini 2.5 Pro">
+    Gemini 2.5's massive context window (up to 2 million tokens) is what makes CatDoc possible. Most LLMs can only see a few files at once; Gemini can understand your entire codebase in context.
+  </Accordion>
+  <Accordion title="File hashing for change detection">
+    Computing file hashes lets CatDoc quickly determine what's changed since the last run. Only changed files get re-documented, making subsequent runs fast and efficient.
+  </Accordion>
+</AccordionGroup>
+
+## Features
+
+### Documentation generation
+
+CatDoc generates multiple types of documentation:
+
+- **Function/method docs**: Parameters, return types, purpose, and usage examples
+- **Class documentation**: Properties, methods, inheritance, and usage patterns
+- **Module overviews**: What each file/module does and how it fits into the larger picture
+- **Architecture docs**: High-level overview of how the codebase is organized
+
+### Smart regeneration
+
+The file hashing system makes updates efficient:
+
+<Steps>
+  <Step title="Hash all files">
+    On each run, CatDoc computes hashes for all source files in your codebase.
+  </Step>
+  <Step title="Compare with cache">
+    Hashes are compared against the previous run to identify what changed.
+  </Step>
+  <Step title="Regenerate only changes">
+    Only documentation for changed files is regenerated, saving time and API costs.
+  </Step>
+  <Step title="Update cache">
+    New hashes are cached for the next run.
+  </Step>
+</Steps>
+
+### Interactive chatbot
+
+After indexing your codebase, you can ask questions:
+
+- "How does the authentication flow work?"
+- "What's the purpose of the UserService class?"
+- "Where is the API rate limiting implemented?"
+- "How do I add a new endpoint?"
+
+## Hackathon story
+
+Built at HackDavis 2025 with team vibecoders, CatDoc came from a shared frustration: we were tired of joining projects with terrible or nonexistent documentation, and equally tired of writing docs ourselves.
+
+The "aha" moment was realizing that Gemini 2.5's context window was finally large enough to understand entire codebases at once - something that wasn't possible with previous models.
+
+## Use cases
+
+CatDoc is perfect for:
+
+- **New team members**: Get them up to speed with auto-generated documentation
+- **Legacy codebases**: Generate documentation for code that never had any
+- **Keeping docs current**: Run CatDoc in CI to update docs on every merge
+- **Personal projects**: Even your side projects deserve good docs
+
+<Note>
+  Documentation is always outdated - CatDoc keeps it current automatically by regenerating docs whenever your code changes.
+</Note>
