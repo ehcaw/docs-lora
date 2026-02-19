@@ -1,0 +1,178 @@
+---
+title: Shelly
+description: A terminal-based chatbot and code editor with AI agent features, all running in your terminal.
+---
+
+# Shelly
+
+<Info>
+  **Status:** Complete  
+  **GitHub:** [github.com/ehcaw/shelly](https://github.com/ehcaw/shelly)
+</Info>
+
+<Frame>
+  <img src="/images/shelly/shelly1.png" alt="Shelly TUI interface" />
+</Frame>
+
+## The problem
+
+Sometimes the terminal is all you need. You're SSHed into a server, working in a minimal environment, or just prefer keeping your hands on the keyboard. But when you need AI assistance or want to quickly edit some code, you have to context-switch to a browser or GUI application.
+
+What if you could have an AI assistant and code editor without leaving the terminal?
+
+## What I built
+
+Shelly is a Terminal User Interface (TUI) application that combines:
+
+- **AI chatbot** - Get help, ask questions, and have conversations directly in your terminal
+- **Code editor** - Simple but functional text editing capabilities
+- **AI agent features** - Basic agentic capabilities for code assistance
+
+All packaged in a beautiful, responsive interface that runs anywhere you have a terminal.
+
+<Frame>
+  <img src="/images/shelly/shelly2.png" alt="Shelly code editing" />
+</Frame>
+
+## Features
+
+### Chat interface
+
+The chat panel provides a conversational interface to AI:
+
+- **Natural language queries** - Ask questions in plain English
+- **Code explanations** - Paste code and get explanations
+- **Problem solving** - Describe issues and get suggestions
+- **Persistent history** - Scroll through previous conversations
+
+### Code editor
+
+The integrated editor handles basic editing needs:
+
+- **Syntax highlighting** - Language-aware coloring
+- **Multiple files** - Switch between open files
+- **Basic editing** - Insert, delete, copy, paste
+- **File operations** - Save, load, create new files
+
+### AI agent capabilities
+
+Beyond simple chat, Shelly includes agent-like features:
+
+- **Code suggestions** - Context-aware recommendations
+- **Error analysis** - Paste error messages and get debugging help
+- **Code generation** - Describe what you want and get code
+
+## Technical implementation
+
+<CardGroup cols={2}>
+  <Card title="TUI Framework" icon="terminal">
+    **Textual** - Modern Python framework for building rich terminal applications
+  </Card>
+  <Card title="AI Integration" icon="brain">
+    **Various AI APIs** - Flexible backend supporting multiple AI providers
+  </Card>
+</CardGroup>
+
+### Why Textual?
+
+Textual is a Python framework for building TUI applications with modern conveniences:
+
+- **CSS-like styling** - Familiar approach to layout and theming
+- **Widget system** - Composable UI components
+- **Async support** - Non-blocking I/O for responsive interfaces
+- **Cross-platform** - Works on macOS, Linux, and Windows
+
+### Architecture
+
+The application is structured around three main components:
+
+1. **Chat panel** - Handles conversation display and input
+2. **Editor panel** - Manages file editing and display
+3. **AI service** - Coordinates with AI APIs and manages context
+
+These components communicate through Textual's message system, allowing for loose coupling and easy testing.
+
+## Design decisions
+
+### Split-pane layout
+
+The interface is divided into two panes:
+
+- **Left pane** - Chat interface for AI interaction
+- **Right pane** - Code editor for viewing and editing files
+
+Users can resize the panes based on their current focus, and keyboard shortcuts make it easy to switch between them.
+
+### Keyboard-first interaction
+
+Every feature is accessible via keyboard:
+
+- Navigation shortcuts for moving between panels
+- Editing shortcuts matching common conventions
+- Quick access to AI features without reaching for the mouse
+
+### Minimal dependencies
+
+The application keeps dependencies minimal for easy installation:
+
+- Pure Python implementation
+- Few external packages beyond Textual
+- No native compilation required
+
+## Use cases
+
+### Remote development
+
+When working on remote servers via SSH:
+
+- Get AI assistance without opening a browser
+- Edit configuration files with syntax highlighting
+- Debug issues with AI-powered analysis
+
+### Minimal environments
+
+In resource-constrained settings:
+
+- Low memory footprint compared to GUI applications
+- Works over slow connections
+- No display server required
+
+### Terminal enthusiasts
+
+For those who prefer command-line interfaces:
+
+- Stay in the flow of terminal-based work
+- Consistent interface with other terminal tools
+- Customizable through configuration files
+
+## Lessons learned
+
+### TUI development is fun
+
+Building terminal interfaces feels like going back to basics in a good way:
+
+- Constraints breed creativity
+- Character-based layouts are surprisingly capable
+- There's satisfaction in making something work everywhere a terminal exists
+
+### AI integration patterns
+
+Integrating AI into interactive applications taught me:
+
+- The importance of streaming responses for perceived responsiveness
+- How to manage conversation context efficiently
+- Balancing AI capabilities with interface simplicity
+
+### Cross-platform challenges
+
+Even terminal apps have platform differences:
+
+- Key codes vary between terminals
+- Unicode support is inconsistent
+- Color capabilities differ
+
+---
+
+<Tip>
+  Sometimes the terminal is all you need—I wanted to see how much I could fit into a TUI.
+</Tip>

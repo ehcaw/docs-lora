@@ -1,0 +1,216 @@
+---
+title: Splat
+description: A Python CLI for agentic debugging that reads trace logs, executes files, and suggests actual code fixes.
+---
+
+# Splat
+
+<Info>
+  **Status:** Complete  
+  **GitHub:** [github.com/ehcaw/splat](https://github.com/ehcaw/splat)
+</Info>
+
+<Frame>
+  <img src="/images/splat/splat1.png" alt="Splat analyzing code" />
+</Frame>
+
+## The problem
+
+Debugging is tedious. You run your code, hit an error, read the traceback, search Stack Overflow, try a fix, repeat. Most debugging tools help you find problems, but they stop there—they don't suggest how to fix them.
+
+What if a debugging tool could analyze the error, understand the context, and propose actual code changes?
+
+## What I built
+
+Splat is a command-line debugging tool that goes beyond finding bugs to suggesting fixes. It:
+
+1. **Reads trace logs** - Analyzes Python application error output
+2. **Executes files** - Runs code to reproduce and understand issues
+3. **Suggests fixes** - Proposes specific code edits to resolve problems
+4. **Iterates** - Can apply fixes and test again in an agentic loop
+
+<Frame>
+  <img src="/images/splat/splat2.png" alt="Splat suggesting fixes" />
+</Frame>
+
+## Key features
+
+### Trace log analysis
+
+Splat parses Python tracebacks to understand:
+
+- **Error type** - What kind of exception occurred
+- **Call stack** - The sequence of function calls leading to the error
+- **Variable state** - Values at the time of the error (when available)
+- **Context** - Surrounding code and related functions
+
+### Intelligent fix suggestions
+
+Based on the analysis, Splat proposes fixes:
+
+- **Specific code changes** - Not just descriptions, but actual edit suggestions
+- **Multiple options** - When there are different valid approaches
+- **Explanation** - Why each fix addresses the problem
+- **Confidence levels** - How certain the tool is about each suggestion
+
+<Frame>
+  <img src="/images/splat/splat3.png" alt="Splat fix suggestions" />
+</Frame>
+
+### Agentic iteration
+
+Splat can work as an agent:
+
+1. Analyze the error
+2. Suggest a fix
+3. Apply the fix (with user approval)
+4. Run the code again
+5. Repeat if new errors emerge
+
+## Technical implementation
+
+<CardGroup cols={2}>
+  <Card title="Analysis" icon="magnifying-glass">
+    **Groq** - Fast inference for bug analysis and understanding
+  </Card>
+  <Card title="Fix Generation" icon="wrench">
+    **FetchAI** - Agent-based fix suggestions with structured output
+  </Card>
+  <Card title="CLI" icon="terminal">
+    **Python CLI frameworks** - Clean command-line interface
+  </Card>
+</CardGroup>
+
+## How it works
+
+### Trace parsing
+
+Python tracebacks follow a consistent format that Splat parses:
+
+```
+Traceback (most recent call last):
+  File "example.py", line 10, in main
+    result = calculate(data)
+  File "example.py", line 5, in calculate
+    return data / 0
+ZeroDivisionError: division by zero
+```
+
+From this, Splat extracts:
+- File paths and line numbers
+- Function names and call order
+- The specific error message
+
+### Context gathering
+
+With the traceback parsed, Splat gathers additional context:
+
+- Reads the relevant source files
+- Identifies related functions and classes
+- Looks for patterns that might explain the error
+- Checks for common mistake patterns
+
+### AI-powered analysis
+
+The gathered context goes to Groq for analysis:
+
+- Understanding why the error occurred
+- Identifying the root cause (which may differ from where the error surfaced)
+- Considering multiple potential fixes
+
+### Fix generation
+
+FetchAI generates structured fix suggestions:
+
+- Specific line changes with before/after code
+- Multiple alternatives when appropriate
+- Explanations suitable for developers
+
+## Agent architecture
+
+Splat's agentic capabilities follow a simple loop:
+
+```
+while has_errors:
+    error = analyze_trace(run_code())
+    fixes = generate_fixes(error)
+    
+    if user_approves(fixes[0]):
+        apply_fix(fixes[0])
+    else:
+        break
+```
+
+This allows for:
+- Chained bug fixing
+- Complex issues that require multiple changes
+- Verification that fixes actually work
+
+## Use cases
+
+### Development debugging
+
+Day-to-day debugging workflow:
+
+1. Hit an error during development
+2. Run Splat on the traceback
+3. Review suggested fixes
+4. Apply the best option
+
+### Learning tool
+
+For developers learning Python:
+
+- Understand why errors occur
+- Learn common patterns and fixes
+- See multiple approaches to problems
+
+### CI/CD integration
+
+Automated debugging in pipelines:
+
+- Analyze test failures
+- Generate fix suggestions for review
+- Speed up the bug fix process
+
+## Challenges
+
+### Accurate analysis
+
+Understanding the true cause of an error is hard:
+
+- The line that throws may not be the bug
+- Context from multiple files may be needed
+- Some bugs require runtime information
+
+### Safe suggestions
+
+Generated fixes must be safe to apply:
+
+- Can't break working code
+- Must preserve existing functionality
+- Should follow project conventions
+
+### Confidence calibration
+
+Knowing when fixes are reliable:
+
+- Simple errors are usually easy
+- Complex bugs may need human judgment
+- Communicating uncertainty is important
+
+## Lessons learned
+
+1. **Tracebacks are information-rich** - Python's error output contains a lot of useful information for automated analysis.
+
+2. **LLMs understand code** - Modern language models are surprisingly good at understanding and fixing code, especially for common patterns.
+
+3. **Agency requires care** - Automated code modification is powerful but needs safeguards. User approval before applying changes is essential.
+
+4. **Context is crucial** - The quality of fix suggestions improves dramatically with more context. Gathering the right context is key.
+
+---
+
+<Tip>
+  Debugging is tedious—this suggests actual fixes instead of just finding problems.
+</Tip>

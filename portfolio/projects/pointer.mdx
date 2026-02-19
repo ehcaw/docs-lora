@@ -1,0 +1,122 @@
+---
+title: Pointer
+description: A Notion clone with better AI features and no subscription fees, built with Tiptap, NextJS, Convex, and Tauri.
+---
+
+# Pointer
+
+<Info>
+  **Status:** In Development  
+  **GitHub:** [github.com/ehcaw/pointer](https://github.com/ehcaw/pointer)
+</Info>
+
+## The problem
+
+I love Notion. It's an incredible tool for organizing thoughts, taking notes, and managing projects. But there's one thing I don't love: paying $10 per month for features I use daily. As a student and developer, subscription fatigue is real, and I started wondering—could I build something that does everything I need without the recurring cost?
+
+## What I'm building
+
+Pointer is a desktop note-taking application that aims to replicate the core Notion experience while adding AI features that are actually useful. The goal is to create a powerful, offline-first note-taking app that doesn't require a monthly subscription.
+
+### Core features
+
+The application includes all the essential note-taking features you'd expect:
+
+- **Block-based editing** - Just like Notion, everything is a block. Text, headings, lists, code blocks, images—all modular and rearrangeable.
+- **Rich text formatting** - Full markdown support with a WYSIWYG editor that makes formatting intuitive.
+- **Databases** - Tables, kanban boards, and other structured data views for organizing information.
+- **Pages and navigation** - Hierarchical page structure with a sidebar for easy navigation.
+- **Cross-device sync** - Real-time synchronization between devices using Convex.
+
+### AI enhancements
+
+Beyond the basics, Pointer includes AI-powered features designed to enhance productivity:
+
+- **Smart writing assistance** - AI suggestions that help you write more clearly and efficiently.
+- **Content generation** - Generate outlines, summaries, and first drafts based on prompts.
+- **Intelligent search** - Semantic search that understands what you're looking for, not just keyword matching.
+
+### Quality of life features
+
+Small touches that make daily use more pleasant:
+
+- **Full markdown support** - Write in markdown and see it rendered beautifully.
+- **Keyboard shortcuts** - Power users can navigate and edit without touching the mouse.
+- **Offline-first** - Works without an internet connection, syncing when connectivity is restored.
+- **Native desktop app** - Fast startup, low resource usage, and OS integration.
+
+## Technical architecture
+
+<CardGroup cols={2}>
+  <Card title="Frontend" icon="browser">
+    **Next.js + React + TypeScript** - Modern web stack wrapped in a desktop application
+  </Card>
+  <Card title="Editor" icon="pen">
+    **Tiptap** - Headless, extensible rich text editor built on ProseMirror
+  </Card>
+  <Card title="Backend" icon="database">
+    **Convex** - Real-time database and backend that handles sync automatically
+  </Card>
+  <Card title="Desktop" icon="desktop">
+    **Tauri (Rust)** - Lightweight alternative to Electron for native desktop apps
+  </Card>
+  <Card title="Styling" icon="palette">
+    **Tailwind CSS** - Utility-first CSS for rapid UI development
+  </Card>
+  <Card title="AI" icon="brain">
+    **Vercel AI SDK** - Unified interface for multiple AI providers
+  </Card>
+</CardGroup>
+
+## Why these technologies?
+
+### Tiptap for the editor
+
+Tiptap is built on ProseMirror, which provides a solid foundation for complex text editing. Unlike other editors, Tiptap is:
+
+- **Headless** - Complete control over the UI and styling
+- **Extensible** - Easy to add custom node types and functionality
+- **Well-documented** - Comprehensive docs and active community
+
+### Convex for real-time sync
+
+Convex handles the complexity of real-time data synchronization:
+
+- **Automatic syncing** - Changes propagate to all devices without manual refresh
+- **Conflict resolution** - Built-in handling for concurrent edits
+- **Serverless** - No infrastructure to manage
+
+### Tauri for desktop
+
+Tauri provides native desktop capabilities with a much smaller footprint than Electron:
+
+- **Smaller bundle size** - Uses the system's native webview
+- **Better performance** - Lower memory usage and faster startup
+- **Rust backend** - Safe, fast native code when needed
+
+## Development journey
+
+Building a Notion clone is an ambitious project. Here's what I've learned so far:
+
+1. **Rich text editing is hard** - There's a reason Notion took years to build. Handling edge cases in text editing—cursor positioning, selection, formatting—is surprisingly complex.
+
+2. **Real-time sync adds complexity** - Keeping multiple clients in sync while handling offline scenarios and conflicts requires careful architecture.
+
+3. **AI integration requires thought** - It's not enough to just add AI—the features need to be genuinely useful and not intrusive.
+
+4. **Desktop apps have unique challenges** - Managing multiple windows, system tray integration, and native menus all require platform-specific considerations.
+
+## Current status
+
+Pointer is actively in development. Current focus areas include:
+
+- Completing the core block types (tables, code blocks with syntax highlighting)
+- Implementing the database features
+- Refining the AI writing assistant
+- Testing cross-platform builds (macOS, Windows, Linux)
+
+---
+
+<Tip>
+  Building this to learn desktop development and because paying $10/month for notes feels ridiculous.
+</Tip>

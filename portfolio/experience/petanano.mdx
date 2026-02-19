@@ -1,0 +1,112 @@
+---
+title: SWE Intern at Petanano
+description: Ryan's experience as a Software Engineering Intern at Petanano, developing optimization algorithms for robotic arms.
+---
+
+# Software Engineering Intern
+
+<Info>
+  **Company:** Petanano  
+  **Period:** June 2023 - September 2023  
+  **Location:** Remote
+</Info>
+
+## Overview
+
+At Petanano, I worked on developing optimized algorithms for controlling robotic arms. This was my first foray into robotics and embedded systems, and it was incredibly rewarding to see software I wrote manifested in physical movement in the real world. The experience bridged the gap between pure software development and hardware interaction.
+
+## What I did
+
+My primary focus at Petanano was developing and optimizing the algorithms that control robotic arm movement:
+
+### Gradient descent optimization
+
+I implemented a patented gradient descent algorithm that significantly improved the efficiency of robot arm movements:
+
+- Studied the mathematical foundations of gradient descent optimization
+- Implemented the algorithm in Python with careful attention to numerical stability
+- Achieved a **50% improvement** in movement optimization, reducing the time required for the arm to reach target positions
+- Tuned hyperparameters to balance speed and precision
+
+### Robot arm development
+
+Beyond the software, I was involved in the physical construction of test robots:
+
+- Developed 3-link and 4-link robot arm prototypes
+- Worked with Dynamixel motors, configuring their parameters for optimal performance
+- Designed and 3D printed limb components to create custom arm configurations
+- Integrated hardware components with the control software
+
+### Simulation and testing CLI
+
+To accelerate development and testing, I created a command-line interface for simulating robot arm movements:
+
+- Built a 3D visualization using Matplotlib to display arm movements
+- Created commands for testing individual algorithms without physical hardware
+- Implemented trajectory planning visualization to debug movement paths
+- Enabled rapid iteration on algorithm improvements without risk of damaging physical components
+
+## Technologies used
+
+<CardGroup cols={2}>
+  <Card title="Python" icon="python">
+    Primary language for algorithm implementation
+  </Card>
+  <Card title="NumPy" icon="calculator">
+    Numerical computing for matrix operations
+  </Card>
+  <Card title="PyTorch" icon="brain">
+    Deep learning framework for advanced optimization
+  </Card>
+  <Card title="Matplotlib" icon="chart-line">
+    3D visualization for simulation
+  </Card>
+  <Card title="Dynamixel SDK" icon="robot">
+    Motor control and communication
+  </Card>
+</CardGroup>
+
+## The mathematics behind it
+
+Robot arm control involves fascinating mathematical concepts:
+
+### Inverse kinematics
+
+Given a desired end-effector position (where you want the arm to reach), inverse kinematics calculates the joint angles needed to achieve that position. This is a non-trivial problem, especially for arms with multiple joints, as there may be:
+
+- Multiple valid solutions (different arm configurations reaching the same point)
+- No valid solutions (points outside the arm's reach)
+- Singularities (configurations where the math becomes unstable)
+
+### Gradient descent for optimization
+
+Our approach used gradient descent to iteratively adjust joint angles:
+
+1. Calculate the current end-effector position based on joint angles
+2. Compute the error between current and target positions
+3. Calculate gradients indicating how to adjust each joint
+4. Update joint angles proportionally to the gradients
+5. Repeat until the error is acceptably small
+
+The patented algorithm I implemented included optimizations for:
+- Faster convergence in typical scenarios
+- Avoiding local minima
+- Smooth motion trajectories
+
+## Impact and learnings
+
+This internship was a pivotal experience that expanded my understanding of software's role in the physical world:
+
+1. **Software meets hardware** - Seeing code translate into physical movement is deeply satisfying. It also teaches you to think about constraints (motor limits, physical obstacles, safety) that don't exist in pure software.
+
+2. **Mathematical foundations matter** - The underlying mathematics of robotics—linear algebra, calculus, optimization—are not just academic exercises. Understanding them deeply enables you to innovate and improve algorithms.
+
+3. **Simulation accelerates development** - Building good simulation tools early pays dividends throughout a project. Being able to test safely and quickly is essential for robotics development.
+
+4. **Real-world constraints** - Physical systems have latency, noise, and uncertainty that simulations don't capture. Learning to build robust systems that handle these realities is a crucial skill.
+
+---
+
+<Tip>
+  My first robotics experience was incredibly rewarding—seeing my software working in the real world as opposed to strictly on a screen was a transformative experience.
+</Tip>

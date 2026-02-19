@@ -1,0 +1,170 @@
+---
+title: Documix
+description: A webapp that lets you chat with any documentation instead of endlessly scrolling through docs.
+---
+
+# Documix
+
+<Info>
+  **Status:** Complete  
+  **GitHub:** [github.com/ehcaw/documix](https://github.com/ehcaw/documix)
+</Info>
+
+## The problem
+
+Documentation is essential but often frustrating to navigate. You know the information is there somewhere, but:
+
+- Search returns too many irrelevant results
+- You spend more time scrolling than reading
+- The section you need is buried in a 50-page guide
+- Different docs have different structures and conventions
+
+What if you could just ask the docs what you need to know?
+
+## What I built
+
+Documix is a web application that lets you index documentation from any URL or local files, then chat with it naturally. Instead of searching and scrolling, you ask questions and get answers with citations.
+
+### How it works
+
+1. **Add documentation** - Provide URLs or upload files
+2. **Automatic indexing** - Content is processed and embedded
+3. **Start chatting** - Ask questions in natural language
+4. **Get answers** - Receive responses with citations to the source material
+
+## Key features
+
+### Multiple input methods
+
+Documentation can come from various sources:
+
+- **URLs** - Point to any public documentation site
+- **File uploads** - PDF, markdown, plain text files
+- **Batch processing** - Index entire documentation sites at once
+
+### Intelligent retrieval
+
+The chat doesn't just keyword match—it understands meaning:
+
+- **Semantic search** - Find relevant content even with different wording
+- **Context aggregation** - Combine information from multiple sections
+- **Citation tracking** - Always know where answers come from
+
+### Flexible AI backends
+
+Choose your preferred language model:
+
+- **OpenAI** - GPT models for high-quality responses
+- **Groq** - Fast inference for quick answers
+- **Ollama** - Local models for privacy and offline use
+
+## Technical architecture
+
+<CardGroup cols={2}>
+  <Card title="Frontend" icon="browser">
+    **Next.js** - React framework for the chat interface
+  </Card>
+  <Card title="Vector Store" icon="database">
+    **Upstash Vector** - Serverless vector database for semantic search
+  </Card>
+  <Card title="Embeddings" icon="code">
+    **Nomic** - Embedding models for document understanding
+  </Card>
+  <Card title="Rate Limiting" icon="shield">
+    **Redis** - Prevent abuse with intelligent rate limiting
+  </Card>
+  <Card title="LLMs" icon="brain">
+    **OpenAI/Groq/Ollama** - Flexible AI provider support
+  </Card>
+</CardGroup>
+
+## RAG pipeline
+
+Documix implements a Retrieval-Augmented Generation (RAG) pipeline:
+
+### Document processing
+
+When documentation is added:
+
+1. **Fetching** - Content is retrieved from URLs or processed from uploads
+2. **Chunking** - Documents are split into meaningful segments
+3. **Embedding** - Each chunk is converted to a vector representation
+4. **Indexing** - Vectors are stored in Upstash for fast retrieval
+
+### Query processing
+
+When you ask a question:
+
+1. **Query embedding** - Your question is converted to a vector
+2. **Retrieval** - Similar document chunks are found using vector similarity
+3. **Context assembly** - Retrieved chunks are combined with the conversation history
+4. **Generation** - The LLM generates a response using the context
+5. **Citation** - Sources are tracked and displayed with the answer
+
+### Why Upstash Vector?
+
+Upstash provides a serverless vector database that's perfect for this use case:
+
+- **Serverless** - No infrastructure to manage, scales automatically
+- **Low latency** - Fast retrieval for responsive chat
+- **Pay-per-use** - Cost-effective for variable workloads
+- **Simple API** - Easy to integrate with existing code
+
+### Why Nomic embeddings?
+
+Nomic provides high-quality embedding models:
+
+- **Semantic understanding** - Captures meaning, not just keywords
+- **Reasonable performance** - Good balance of quality and speed
+- **Open models** - Can run locally if needed
+
+## Rate limiting with Redis
+
+To prevent abuse and manage costs, Documix implements intelligent rate limiting:
+
+- **Per-user limits** - Prevent individual users from overwhelming the system
+- **Sliding windows** - Fair distribution of capacity over time
+- **Graceful degradation** - Informative messages when limits are reached
+
+## Challenges and solutions
+
+### Document chunking
+
+Splitting documents effectively is crucial for good retrieval:
+
+- **Too small** - Context is lost, answers lack coherence
+- **Too large** - Retrieval is imprecise, context windows are wasted
+
+The solution involves semantic chunking that respects document structure—splitting on headings, paragraphs, and logical boundaries.
+
+### Citation accuracy
+
+Users need to trust that answers come from the documentation:
+
+- Track source chunks throughout the pipeline
+- Display citations with each response
+- Allow users to verify by viewing original content
+
+### Multiple LLM support
+
+Different users have different preferences and constraints:
+
+- Abstracted provider interface
+- Consistent behavior across providers
+- Easy to add new providers
+
+## Lessons learned
+
+1. **Chunking strategy matters** - The quality of RAG depends heavily on how documents are split. Experiment with different approaches for different content types.
+
+2. **Embeddings are not magic** - Semantic search is powerful but imperfect. Understanding its limitations helps set appropriate user expectations.
+
+3. **Rate limiting is essential** - AI APIs are expensive. Even for personal projects, implementing rate limiting early saves money and prevents abuse.
+
+4. **Citations build trust** - Users are more likely to trust AI answers when they can verify the sources.
+
+---
+
+<Tip>
+  Searching through documentation is painful—this makes it actually useful.
+</Tip>

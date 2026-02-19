@@ -1,0 +1,187 @@
+---
+title: Dashi
+description: A desktop voice assistant with persistent memory—basically a better Siri that actually remembers your conversations.
+---
+
+# Dashi
+
+<Info>
+  **Status:** Complete (Hackathon Project)  
+  **Event:** CalHacks AI 2025  
+  **GitHub:** [github.com/ehcaw/dashi](https://github.com/ehcaw/dashi)
+</Info>
+
+<Frame>
+  <img src="/images/dashi/dashi1.png" alt="Dashi desktop interface" />
+</Frame>
+
+## The problem
+
+Voice assistants have been around for years, but they all share a frustrating limitation: they forget everything immediately. Siri doesn't remember that you mentioned your flight is at 3 PM. Alexa doesn't recall that you prefer morning meetings. Every interaction starts from scratch.
+
+This makes voice assistants feel less like assistants and more like fancy search interfaces. A real assistant would remember context, learn your preferences, and get more useful over time.
+
+## What I built
+
+Dashi is a desktop voice assistant with persistent memory. It remembers your conversations, learns your preferences, and can actually use tools to accomplish tasks. Built at CalHacks AI 2025, it demonstrates what voice assistants could be with proper memory systems.
+
+<Frame>
+  <img src="/images/dashi/dashi2.png" alt="Dashi in action" />
+</Frame>
+
+### Key features
+
+- **Persistent memory** - Conversations are remembered across sessions
+- **Voice interaction** - Natural speech-to-text and text-to-speech
+- **Tool use** - Can take actions, not just answer questions
+- **Chat fallback** - Type when you don't want to talk
+- **Desktop integration** - Native application with system access
+
+<Frame>
+  <img src="/images/dashi/dashi3.png" alt="Dashi conversation" />
+</Frame>
+
+## Technical architecture
+
+<CardGroup cols={2}>
+  <Card title="Memory" icon="brain">
+    **Letta** - Memory management framework for persistent, structured context
+  </Card>
+  <Card title="Speech-to-Text" icon="microphone">
+    **Groq Whisper** - Fast, accurate speech transcription
+  </Card>
+  <Card title="Desktop App" icon="desktop">
+    **Tauri** - Lightweight cross-platform desktop framework
+  </Card>
+  <Card title="Tool Integration" icon="plug">
+    **MCPs (Exa, etc.)** - Model Context Protocol for tool capabilities
+  </Card>
+</CardGroup>
+
+## Memory system with Letta
+
+Letta is the key differentiator that makes Dashi actually useful. It provides:
+
+### Structured memory types
+
+Different types of information are stored differently:
+
+- **Core memory** - Persistent facts about the user (name, preferences, context)
+- **Archival memory** - Long-term storage for detailed information
+- **Recall memory** - Recent conversation history for context
+
+### Memory management
+
+Letta handles the complexity of memory operations:
+
+- **Automatic summarization** - Compresses old conversations while preserving key information
+- **Relevance scoring** - Retrieves the most pertinent memories for each interaction
+- **Context optimization** - Fits the most useful context within model limits
+
+### Learning over time
+
+With each interaction, Dashi:
+
+1. Processes the conversation
+2. Extracts important information
+3. Updates relevant memory stores
+4. Builds a richer understanding of the user
+
+## Voice pipeline
+
+### Speech-to-text with Groq Whisper
+
+Groq provides blazing-fast Whisper inference:
+
+- **Low latency** - Transcription completes in milliseconds
+- **High accuracy** - State-of-the-art speech recognition
+- **Streaming capable** - Can process audio in real-time
+
+### Text-to-speech
+
+Responses are spoken back naturally:
+
+- Multiple voice options
+- Natural prosody and pacing
+- Appropriate for conversational interaction
+
+### Voice activity detection
+
+Smart detection of when the user is speaking:
+
+- Silence detection to know when input is complete
+- Noise filtering for cleaner transcription
+- Wake word support (optional)
+
+## Tool integration with MCPs
+
+Model Context Protocols allow Dashi to take actions:
+
+### Exa for search
+
+When you ask questions that need current information:
+
+- Web search for up-to-date answers
+- Results are processed and summarized
+- Sources are provided for verification
+
+### Potential tool expansions
+
+The MCP architecture allows for many capabilities:
+
+- Calendar management
+- Email access
+- Smart home control
+- File system operations
+- API integrations
+
+## Desktop integration with Tauri
+
+Tauri provides a native desktop experience:
+
+- **Small bundle** - Much smaller than Electron alternatives
+- **System integration** - Access to notifications, file system, etc.
+- **Cross-platform** - Works on macOS, Windows, and Linux
+- **Fast startup** - Opens instantly when you need it
+
+## Hackathon experience
+
+Building Dashi at CalHacks AI was intense:
+
+- **Scope management** - Focusing on core memory features over polish
+- **Integration challenges** - Getting Letta, Groq, and Tauri to play nicely together
+- **Demo preparation** - Making sure it worked reliably for judging
+
+The time constraint forced us to prioritize ruthlessly, which resulted in a focused product that demonstrates the core concept effectively.
+
+## What makes it different
+
+### vs. Siri/Alexa/Google Assistant
+
+- **Persistent memory** - Actually remembers conversations
+- **Learning** - Gets more useful over time
+- **Desktop-native** - Full access to your computer
+- **Open** - Extensible with custom tools
+
+### vs. ChatGPT voice
+
+- **Memory across sessions** - Not limited to conversation history
+- **Tool use** - Can take actions beyond search
+- **Local processing** - Voice processing can be local
+- **Integration** - Works with desktop applications
+
+## Lessons learned
+
+1. **Memory changes everything** - Adding persistence fundamentally transforms what an AI assistant can do. The same model becomes dramatically more useful with proper memory.
+
+2. **Voice UX is hard** - Designing good voice interactions requires careful attention to latency, feedback, and error handling. Users are impatient with voice interfaces.
+
+3. **Letta abstracts complexity** - Managing AI memory manually would be enormously complex. Letta provides sensible defaults while allowing customization.
+
+4. **Desktop apps have advantages** - Unlike web or mobile, desktop apps can integrate deeply with the system and persist across sessions easily.
+
+---
+
+<Tip>
+  Siri forgets everything immediately—this one actually learns from our conversations.
+</Tip>
