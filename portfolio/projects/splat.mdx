@@ -201,13 +201,15 @@ Knowing when fixes are reliable:
 
 ## Lessons learned
 
-1. **Tracebacks are information-rich** - Python's error output contains a lot of useful information for automated analysis.
+1. **Tracebacks are information-rich** - Python's error output contains a lot of useful information for automated analysis. The structured format makes parsing straightforward, and the call stack provides valuable context about how the error occurred.
 
-2. **LLMs understand code** - Modern language models are surprisingly good at understanding and fixing code, especially for common patterns.
+2. **LLMs understand code** - Modern language models are surprisingly good at understanding and fixing code, especially for common patterns. Combining Groq for fast analysis with FetchAI for structured edit suggestions creates a powerful debugging pipeline.
 
-3. **Agency requires care** - Automated code modification is powerful but needs safeguards. User approval before applying changes is essential.
+3. **Agency requires care** - Automated code modification is powerful but needs safeguards. User approval before applying changes is essential. The agentic loop lets Splat iterate on fixes, but always with human oversight.
 
-4. **Context is crucial** - The quality of fix suggestions improves dramatically with more context. Gathering the right context is key.
+4. **Context is crucial** - The quality of fix suggestions improves dramatically with more context. Gathering not just the error line but related functions, imports, and usage patterns produces much better recommendations.
+
+5. **Debugging is tedious but automatable** - So many debugging sessions follow the same pattern: read error, search for solution, try fix, repeat. Splat automates the tedious parts while keeping humans in control of the decision-making.
 
 ---
 
