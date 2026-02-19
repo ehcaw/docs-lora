@@ -125,13 +125,15 @@ While Monaco is feature-rich out of the box, customizing it for a Python-specifi
 
 ## Lessons learned
 
-1. **Security is hard** - Running untrusted code safely requires defense in depth. No single measure is sufficient.
+1. **Security is hard** - Running untrusted code safely requires defense in depth. No single measure is sufficient. Sandboxing, resource limits, network isolation, and separate infrastructure all work together to create a secure execution environment.
 
-2. **UX matters in developer tools** - Small details like editor responsiveness and keyboard shortcuts significantly impact the experience.
+2. **UX matters in developer tools** - Small details like editor responsiveness and keyboard shortcuts significantly impact the experience. Monaco Editor provides a familiar VS Code-like experience that makes users feel at home immediately.
 
-3. **Serverless isn't always simpler** - While serverless services reduce operational burden, they introduce their own complexities around cold starts, connection management, and debugging.
+3. **Serverless isn't always simpler** - While serverless services reduce operational burden, they introduce their own complexities around cold starts, connection management, and debugging. NeonDB's ability to scale to zero was perfect for variable workloads without paying for idle resources.
 
-4. **Ship something useful** - This project doesn't try to replace local development environments. It solves a specific problem—quick Python coding without setup—and does it well.
+4. **Ship something useful** - This project doesn't try to replace local development environments. It solves a specific problem—quick Python coding without setup—and does it well. Sometimes you just want to code Python without setting up a whole environment, and that's exactly what LSClear provides.
+
+5. **Cloudflare Tunnels simplify networking** - Exposing the execution backend without opening ports or managing complex networking was crucial for both security and ease of deployment.
 
 ---
 
