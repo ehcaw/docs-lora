@@ -3,7 +3,6 @@ name: "Merge Trigger Test"
 on:
   push:
     - repo: "ehcaw/portfolio"
-      branch: "main"
     - repo: "ehcaw/pointer"
       branch: "main"
 context:
