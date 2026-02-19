@@ -1,0 +1,161 @@
+---
+title: CatDoc
+description: A CLI app that automatically generates documentation for your codebase using AI, built at HackDavis 2025.
+---
+
+# CatDoc
+
+<Info>
+  **Status:** Complete (Hackathon Project)  
+  **Event:** HackDavis 2025 - Team Vibecoders  
+  **GitHub:** [github.com/ehcaw/catdoc](https://github.com/ehcaw/catdoc)
+</Info>
+
+<Frame>
+  <img src="/images/catdoc/catdoc1.png" alt="CatDoc CLI interface" />
+</Frame>
+
+## The problem
+
+Documentation is always outdated. It's a universal truth of software development. You write comprehensive docs when you start a project, but as the code evolves, the docs lag behind. Before you know it, you're reading documentation that describes how the code worked six months ago.
+
+The issue isn't laziness—it's friction. Updating documentation is a manual process that competes with writing features and fixing bugs for developer attention. And it usually loses.
+
+## What I built
+
+CatDoc is a command-line tool that automatically generates and updates documentation for your codebase. Point it at your project, and it:
+
+1. **Analyzes your code** - Understands structure, functions, classes, and relationships
+2. **Generates documentation** - Creates comprehensive docs in markdown format
+3. **Stays current** - Only regenerates docs for files that have actually changed
+4. **Answers questions** - Includes a chatbot for querying your codebase
+
+<Frame>
+  <img src="/images/catdoc/catdoc2.png" alt="CatDoc generated documentation" />
+</Frame>
+
+## Key features
+
+### Intelligent code analysis
+
+CatDoc doesn't just dump raw code into an LLM. It:
+
+- Parses code structure to understand relationships
+- Identifies key abstractions and patterns
+- Groups related functionality together
+- Extracts existing comments and docstrings
+
+### Smart regeneration
+
+Documentation doesn't need to be regenerated from scratch every time:
+
+- **File hashing** - Tracks which files have changed since last generation
+- **Incremental updates** - Only processes modified files
+- **Dependency awareness** - Updates docs that reference changed files
+- **Fast iteration** - Quick updates even in large codebases
+
+### Codebase chatbot
+
+After indexing, you can ask questions about your code:
+
+- "How does the authentication system work?"
+- "What functions call the database?"
+- "Explain the payment processing flow"
+
+The chatbot uses the generated documentation and code context to provide accurate answers.
+
+## Technical implementation
+
+<CardGroup cols={2}>
+  <Card title="CLI Interface" icon="terminal">
+    **Ink React** - React-based framework for building beautiful CLI applications
+  </Card>
+  <Card title="AI Backend" icon="brain">
+    **Gemini 2.5 Pro** - Massive context window for understanding entire codebases
+  </Card>
+  <Card title="Change Detection" icon="code-compare">
+    **File Hashing** - Efficient tracking of modified files
+  </Card>
+</CardGroup>
+
+### Why Ink React?
+
+Ink brings React's component model to the terminal:
+
+- **Familiar patterns** - React developers feel right at home
+- **Rich UI** - Spinners, progress bars, colors, and layouts
+- **Component reuse** - Build a library of CLI components
+- **Fast development** - Rapid iteration on CLI interfaces
+
+### Why Gemini 2.5 Pro?
+
+Gemini's massive context window is perfect for code understanding:
+
+- **Long context** - Can process entire codebases in a single prompt
+- **Code comprehension** - Trained on extensive code data
+- **Fast inference** - Reasonable response times even for large inputs
+- **Structured output** - Reliable markdown generation
+
+### File hashing for change detection
+
+To avoid unnecessary regeneration:
+
+```
+file_hash = hash(file_contents)
+if file_hash != stored_hash:
+    regenerate_docs(file)
+    stored_hash = file_hash
+```
+
+This simple approach provides:
+- O(n) change detection across the codebase
+- No false negatives (all changes caught)
+- Minimal storage overhead
+- Works with any file type
+
+## Documentation generation approach
+
+### Multi-pass analysis
+
+CatDoc uses multiple passes to understand code:
+
+1. **Structure pass** - Build a map of files, classes, and functions
+2. **Relationship pass** - Identify dependencies and call graphs
+3. **Semantic pass** - Understand what each component does
+4. **Documentation pass** - Generate human-readable descriptions
+
+### Output format
+
+Generated documentation includes:
+
+- **Overview** - High-level description of the project
+- **Architecture** - System structure and key components
+- **API reference** - Function and class documentation
+- **Examples** - Usage patterns extracted from code
+- **Diagrams** - Visual representations of relationships (where possible)
+
+## Hackathon context
+
+CatDoc was built at HackDavis 2025 with Team Vibecoders. The 24-hour time constraint forced us to:
+
+- Focus on core functionality over polish
+- Make quick technology decisions
+- Ship something working by the deadline
+
+Despite the time pressure, we delivered a functional tool that demonstrates the concept effectively.
+
+## Lessons learned
+
+1. **Context window size matters** - Large context windows fundamentally change what's possible. Being able to process an entire codebase without chunking simplifies architecture significantly.
+
+2. **Change detection is essential** - For any tool that processes large codebases, incremental processing is necessary for acceptable performance.
+
+3. **CLI UX matters** - Even command-line tools benefit from thoughtful interface design. Progress indicators, colors, and clear output make tools more pleasant to use.
+
+4. **Documentation is a product** - Generated documentation needs to be useful, not just complete. Focusing on what developers actually need to know improves output quality.
+
+---
+
+<Tip>
+  Documentation is always outdated—this keeps it current automatically.
+</Tip>

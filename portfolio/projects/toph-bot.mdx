@@ -1,0 +1,123 @@
+---
+title: Toph Bot
+description: An integrated GitHub PR review bot with persistent memory that actually remembers context across reviews.
+---
+
+# Toph Bot
+
+<Info>
+  **Status:** In Development  
+  **GitHub:** [github.com/ehcaw/toph-bot](https://github.com/ehcaw/toph-bot)
+</Info>
+
+## The problem
+
+Most AI code review tools have a frustrating limitation: they start fresh with every review. They don't remember that you explained a design decision yesterday, that a particular pattern is intentional, or that certain warnings have already been addressed. Every review feels like talking to someone with amnesia.
+
+When I was helping manage code reviews for club repositories, I wanted a bot that could actually learn—one that builds context over time and provides increasingly relevant feedback.
+
+## What I'm building
+
+Toph Bot is a GitHub PR review bot that maintains persistent memory across reviews. Instead of analyzing each PR in isolation, it builds a knowledge base about:
+
+- **Your codebase patterns** - Common idioms, architectural decisions, and coding standards
+- **Previous discussions** - Past review comments and resolutions
+- **Team preferences** - What kinds of issues matter most to your team
+
+### How it works
+
+The bot integrates directly with GitHub through webhooks:
+
+1. **PR opened** - When a new PR is created, Toph Bot receives a webhook notification
+2. **Context gathering** - The bot retrieves relevant context from its memory about the repository and author
+3. **Intelligent review** - Using its accumulated knowledge, it provides targeted, contextual feedback
+4. **Memory update** - After the review, new learnings are stored for future reference
+
+### Planned features
+
+The roadmap includes several exciting capabilities:
+
+- **Codebase indexing** - Deep understanding of your repository's structure and patterns using RAG
+- **Conversation continuity** - Remember ongoing discussions within a PR
+- **Team learning** - Aggregate learnings across team members
+- **Custom rules** - Define project-specific review criteria
+
+## Technical architecture
+
+<CardGroup cols={2}>
+  <Card title="Memory Layer" icon="brain">
+    **Letta** - Memory management framework for persistent context across conversations
+  </Card>
+  <Card title="API Server" icon="server">
+    **FastAPI** - High-performance Python web framework for handling GitHub webhooks
+  </Card>
+  <Card title="GitHub Integration" icon="github">
+    **Webhooks** - Real-time notifications for PR events
+  </Card>
+  <Card title="Vector Storage" icon="database">
+    **HelixDB (planned)** - Storing and searching codebase information with semantic similarity
+  </Card>
+</CardGroup>
+
+## Why Letta for memory?
+
+Letta is a framework specifically designed for building AI agents with persistent memory. Key benefits include:
+
+- **Structured memory** - Organized storage of different types of information (facts, preferences, context)
+- **Memory management** - Automatic summarization and prioritization of stored information
+- **Context window optimization** - Intelligent selection of relevant memories for each interaction
+- **Persistence** - Memory survives across sessions and deployments
+
+## RAG for codebase understanding
+
+Retrieval-Augmented Generation (RAG) allows the bot to understand your entire codebase:
+
+1. **Indexing** - Code files are embedded and stored in a vector database
+2. **Retrieval** - When reviewing a PR, relevant code context is retrieved
+3. **Generation** - The LLM uses retrieved context to provide informed feedback
+
+This approach means the bot understands:
+- How similar code is written elsewhere in the repo
+- Related functions and classes that might be affected
+- Historical patterns and conventions
+
+## Use cases
+
+### Club repository management
+
+The original motivation—helping manage reviews for student club projects:
+
+- Consistent feedback even as reviewers change
+- Institutional knowledge preserved across semesters
+- New members can get up to speed faster
+
+### Team code reviews
+
+For professional teams looking to augment human review:
+
+- Catch issues before human reviewers see them
+- Enforce coding standards automatically
+- Provide context for complex changes
+
+### Personal projects
+
+Even for solo developers:
+
+- Remember decisions you made months ago
+- Consistent code quality across long-running projects
+- Quick feedback while human reviewers are unavailable
+
+## Development status
+
+Toph Bot is in active development. Current focus:
+
+- Core webhook handling and GitHub integration
+- Letta memory integration for context persistence
+- Basic review capabilities with GPT-4
+- Planning HelixDB integration for codebase RAG
+
+---
+
+<Tip>
+  Tried making a code review bot for club repos and this one actually learns.
+</Tip>

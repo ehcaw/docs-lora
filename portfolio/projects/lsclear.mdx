@@ -1,0 +1,140 @@
+---
+title: LSClear
+description: A web-based Python IDE with file persistence across sessions, because sometimes you just need to code without installing anything.
+---
+
+# LSClear
+
+<Info>
+  **Status:** Complete  
+  **GitHub:** [github.com/ehcaw/lsclear](https://github.com/ehcaw/lsclear)
+</Info>
+
+<Frame>
+  <img src="/images/lsclear/lsclear.png" alt="LSClear IDE interface" />
+</Frame>
+
+## The problem
+
+Sometimes you just want to write some Python code without:
+
+- Setting up a virtual environment
+- Installing dependencies
+- Configuring your local environment
+- Finding your laptop
+
+Maybe you're on a friend's computer, at a library, or just want a quick scratchpad. Online REPLs exist, but they often don't save your work, have limited functionality, or require sign-ups.
+
+## What I built
+
+LSClear is a full-featured Python development environment that runs entirely in your browser. Your files persist across sessions, so you can close the tab and come back later to find your work exactly where you left it.
+
+### Key features
+
+- **Monaco Editor** - The same editor that powers VS Code, with syntax highlighting, autocomplete, and all the keyboard shortcuts you're used to
+- **File persistence** - Your files are saved to a database, accessible from any device
+- **Real code execution** - Not just syntax checking—your code actually runs on a real Python interpreter
+- **Clean interface** - Minimal distractions, focused on writing code
+
+## Technical architecture
+
+<CardGroup cols={2}>
+  <Card title="Editor" icon="code">
+    **Monaco Editor** - Microsoft's VS Code editor component for the web
+  </Card>
+  <Card title="Frontend" icon="browser">
+    **Next.js** - React framework for the user interface
+  </Card>
+  <Card title="Execution" icon="server">
+    **FastAPI** - Python backend that handles code execution securely
+  </Card>
+  <Card title="Hosting" icon="cloud">
+    **Digital Ocean** - VPS hosting for the execution backend
+  </Card>
+  <Card title="Networking" icon="network-wired">
+    **Cloudflare Tunnels** - Secure routing without exposing ports
+  </Card>
+  <Card title="Database" icon="database">
+    **NeonDB** - Serverless Postgres for file storage
+  </Card>
+</CardGroup>
+
+## Architecture decisions
+
+### Why Monaco Editor?
+
+Monaco is the obvious choice for a web-based code editor:
+
+- **Familiar experience** - Users who know VS Code feel right at home
+- **Full-featured** - Syntax highlighting, autocomplete, multiple cursors, find/replace
+- **Well-maintained** - Backed by Microsoft with regular updates
+- **Extensible** - Can add language support, themes, and custom functionality
+
+### Secure code execution
+
+Running arbitrary user code is inherently risky. The execution architecture includes several safety measures:
+
+- **Isolated environment** - Code runs in sandboxed containers
+- **Resource limits** - CPU time, memory, and output are all bounded
+- **No network access** - Executed code cannot make external requests
+- **Separate infrastructure** - Execution happens on a dedicated server, isolated from user data
+
+### Cloudflare Tunnels
+
+Using Cloudflare Tunnels for the execution backend provides several benefits:
+
+- **No open ports** - The execution server doesn't expose any ports to the internet
+- **DDoS protection** - Cloudflare's network absorbs attacks
+- **SSL termination** - HTTPS handled automatically
+- **Easy deployment** - No complex networking configuration required
+
+### NeonDB for persistence
+
+NeonDB provides serverless Postgres, which is perfect for this use case:
+
+- **Scales to zero** - No cost when not in use
+- **Instant provisioning** - Database ready in seconds
+- **Branching** - Easy to create development and test environments
+- **Postgres compatibility** - Standard SQL, familiar tooling
+
+## Challenges and learnings
+
+### Secure code execution
+
+The hardest part of building this project was safely executing arbitrary Python code. Considerations included:
+
+- **Sandbox escapes** - Preventing code from breaking out of the sandbox
+- **Resource exhaustion** - Handling infinite loops and memory-hungry programs
+- **Import restrictions** - Deciding which Python modules to allow
+
+### State management
+
+Keeping the editor state, file system state, and execution state in sync required careful architecture:
+
+- Optimistic updates for responsiveness
+- Conflict resolution when the same file is edited in multiple tabs
+- Graceful handling of network interruptions
+
+### Editor customization
+
+While Monaco is feature-rich out of the box, customizing it for a Python-specific IDE required:
+
+- Python language configuration
+- Custom themes matching the overall design
+- Keybinding adjustments for consistency
+
+## Lessons learned
+
+1. **Security is hard** - Running untrusted code safely requires defense in depth. No single measure is sufficient.
+
+2. **UX matters in developer tools** - Small details like editor responsiveness and keyboard shortcuts significantly impact the experience.
+
+3. **Serverless isn't always simpler** - While serverless services reduce operational burden, they introduce their own complexities around cold starts, connection management, and debugging.
+
+4. **Ship something useful** - This project doesn't try to replace local development environments. It solves a specific problem—quick Python coding without setup—and does it well.
+
+---
+
+<Tip>
+  Sometimes you just want to code Python without setting up a whole environment.
+</Tip>

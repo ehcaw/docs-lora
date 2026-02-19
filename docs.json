@@ -48,6 +48,42 @@
         ]
       },
       {
+        "tab": "Portfolio",
+        "groups": [
+          {
+            "group": "About",
+            "pages": [
+              "portfolio/about"
+            ]
+          },
+          {
+            "group": "Experience",
+            "pages": [
+              "portfolio/experience/overview",
+              "portfolio/experience/mintlify",
+              "portfolio/experience/amazon",
+              "portfolio/experience/tutoring-center",
+              "portfolio/experience/petanano"
+            ]
+          },
+          {
+            "group": "Projects",
+            "pages": [
+              "portfolio/projects/overview",
+              "portfolio/projects/pointer",
+              "portfolio/projects/toph-bot",
+              "portfolio/projects/lsclear",
+              "portfolio/projects/shelly",
+              "portfolio/projects/documix",
+              "portfolio/projects/catdoc",
+              "portfolio/projects/dashi",
+              "portfolio/projects/splat",
+              "portfolio/projects/elitecode"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "API reference",
         "groups": [
           {
