@@ -1,0 +1,114 @@
+---
+title: "SWE Intern at Petanano"
+description: "Developed optimized gradient descent and reverse kinematics algorithms for operating robot arms at Petanano"
+---
+
+## Role overview
+
+<Info>
+  **Position**: Software Engineering Intern  
+  **Company**: Petanano  
+  **Duration**: June 2023 - September 2023
+</Info>
+
+At Petanano, I worked on robotics software, developing optimized algorithms for controlling robot arms. This was my first foray into robotics and the intersection of software and hardware - and it was an incredibly rewarding experience to see my code control physical machines in the real world.
+
+## What I did
+
+My work focused on developing and optimizing algorithms for robot arm control:
+
+<CardGroup cols={2}>
+  <Card title="Gradient descent optimization" icon="chart-line">
+    Used a patented gradient descent algorithm to optimize robot arm movements, achieving a 50% improvement in movement efficiency.
+  </Card>
+  <Card title="Hardware development" icon="robot">
+    Developed 3 and 4 link robot arms using Dynamixel motors and 3D printed limbs, getting hands-on experience with robotics hardware.
+  </Card>
+  <Card title="Simulation tools" icon="terminal">
+    Created a CLI to mock robot arm movements and test algorithms on a 3D plane before deploying to physical hardware.
+  </Card>
+  <Card title="Kinematics algorithms" icon="calculator">
+    Implemented reverse kinematics algorithms that calculate the joint angles needed to reach a target position.
+  </Card>
+</CardGroup>
+
+## The technical challenges
+
+Robot arm control involves solving complex mathematical problems in real-time:
+
+### Inverse kinematics
+
+Given a target position in 3D space, inverse kinematics calculates the joint angles needed for the robot arm to reach that position. This is a non-trivial problem because:
+
+- There may be multiple solutions (different arm configurations that reach the same point)
+- Some target positions may be unreachable
+- The calculations must be fast enough for real-time control
+
+### Gradient descent optimization
+
+The gradient descent algorithm I worked with optimized the path the arm takes to reach its target:
+
+```python
+# Simplified concept of gradient descent for robot arm optimization
+def optimize_path(current_position, target_position):
+    """
+    Iteratively adjust the path to minimize movement cost
+    while respecting joint constraints and avoiding obstacles.
+    """
+    path = initial_path(current_position, target_position)
+    
+    for iteration in range(max_iterations):
+        gradient = compute_gradient(path)
+        path = path - learning_rate * gradient
+        
+        if converged(path):
+            break
+    
+    return path
+```
+
+## Technologies used
+
+<AccordionGroup>
+  <Accordion title="Python">
+    Python was the primary language for algorithm development and robot control. Its extensive scientific computing ecosystem made it ideal for this work.
+  </Accordion>
+  <Accordion title="NumPy and PyTorch">
+    NumPy provided efficient numerical operations for the mathematical calculations, while PyTorch was used for implementing and optimizing the gradient descent algorithms.
+  </Accordion>
+  <Accordion title="Matplotlib">
+    Matplotlib was essential for visualizing robot arm movements, debugging algorithms, and creating the 3D simulation environment in the CLI tool.
+  </Accordion>
+  <Accordion title="Dynamixel SDK">
+    The Dynamixel SDK provided the interface for controlling the Dynamixel servo motors that powered the robot arms. Learning to work with hardware SDKs was a valuable experience.
+  </Accordion>
+</AccordionGroup>
+
+## Key achievements
+
+<Steps>
+  <Step title="50% movement optimization">
+    The patented gradient descent algorithm I implemented and optimized improved robot arm movement efficiency by 50%, making operations faster and more energy-efficient.
+  </Step>
+  <Step title="Physical robot arm development">
+    Designed and built functional 3 and 4 link robot arms using Dynamixel motors and 3D printed components. Seeing my software control hardware I helped build was incredibly satisfying.
+  </Step>
+  <Step title="Testing infrastructure">
+    The CLI simulation tool I created allowed testing algorithms in a virtual environment before deploying to physical hardware, reducing development time and preventing potential damage to the robots.
+  </Step>
+</Steps>
+
+## Key learnings
+
+This internship taught me important lessons about software that interacts with the physical world:
+
+<Note>
+  My first robotics experience taught me the unique challenges and rewards of building software that operates in the real world rather than just on a screen.
+</Note>
+
+- **Real-world constraints**: Software that controls hardware must deal with constraints that pure software doesn't - physics, timing, sensor noise, and mechanical limitations.
+- **Testing is different**: You can't just run a test suite - you need simulation environments and careful physical testing to ensure safety and correctness.
+- **The feedback is tangible**: There's something uniquely satisfying about seeing your code move a physical robot. The feedback loop between code and physical action is immediate and visceral.
+- **Precision matters**: In robotics, small errors compound quickly. Careful attention to numerical precision and error handling is essential.
+
+This role was my first robotics experience, and it was incredibly rewarding to see my software working in the real world rather than strictly on a screen. It opened my eyes to the exciting possibilities at the intersection of software and hardware.
