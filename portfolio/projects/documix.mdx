@@ -155,13 +155,15 @@ Different users have different preferences and constraints:
 
 ## Lessons learned
 
-1. **Chunking strategy matters** - The quality of RAG depends heavily on how documents are split. Experiment with different approaches for different content types.
+1. **Chunking strategy matters** - The quality of RAG depends heavily on how documents are split. Experiment with different approaches for different content types. I found that documentation with clear section headers benefits from header-based splitting, while long-form prose requires more sophisticated semantic chunking. The "right" chunk size also depends on the embedding model and the types of questions users ask.
 
-2. **Embeddings are not magic** - Semantic search is powerful but imperfect. Understanding its limitations helps set appropriate user expectations.
+2. **Embeddings are not magic** - Semantic search is powerful but imperfect. Understanding its limitations helps set appropriate user expectations. Semantic similarity doesn't always match conceptual relevance, and there are cases where keyword matching would actually work better. I've learned to combine semantic search with traditional keyword filtering for best results.
 
-3. **Rate limiting is essential** - AI APIs are expensive. Even for personal projects, implementing rate limiting early saves money and prevents abuse.
+3. **Rate limiting is essential** - AI APIs are expensive. Even for personal projects, implementing rate limiting early saves money and prevents abuse. I learned this the hard way when a bug in my code caused runaway API calls. Now I implement rate limiting from the start, with per-user and global limits.
 
-4. **Citations build trust** - Users are more likely to trust AI answers when they can verify the sources.
+4. **Citations build trust** - Users are more likely to trust AI answers when they can verify the sources. This was one of the most requested features early on—users wanted to know exactly where the answer came from so they could verify it themselves.
+
+5. **Multi-model flexibility pays off** - Supporting multiple LLM providers (OpenAI, Groq, Ollama) gives users flexibility based on their needs. Some users prioritize speed, others cost, and others privacy. Having options makes the tool useful to a broader audience.
 
 ---
 
