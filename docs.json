@@ -8,8 +8,10 @@
     "dark": "#15803D"
   },
   "favicon": "/favicon.svg",
-  "telemetry": {
-    "enabled": true
+  "integrations": {
+    "telemetry": {
+      "enabled": true
+    }
   },
   "navigation": {
     "tabs": [
@@ -48,9 +50,7 @@
         "groups": [
           {
             "group": "About",
-            "pages": [
-              "portfolio/about"
-            ]
+            "pages": ["portfolio/about"]
           },
           {
             "group": "Experience",
