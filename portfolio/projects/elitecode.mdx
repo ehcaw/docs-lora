@@ -1,0 +1,202 @@
+---
+title: EliteCode
+description: A NextJS app for practicing coding interview explanations with voice feedback, built at SFHacks 2023.
+---
+
+# EliteCode
+
+<Info>
+  **Status:** Complete (Hackathon Project)  
+  **Event:** SFHacks 2023  
+  **GitHub:** [github.com/ehcaw/sfhacks](https://github.com/ehcaw/sfhacks)
+</Info>
+
+## The problem
+
+Coding interviews are hard enough without fumbling through explanations. You might know how to solve a problem, but articulating your thought process clearly while coding is a completely different skill. And like any skill, it requires practice.
+
+The challenge is that practicing explanations alone isn't very effective:
+
+- You don't get feedback on clarity
+- You can't tell if you're rambling
+- There's no one to ask clarifying questions
+- You don't know if you're hitting the key points
+
+## What I built
+
+EliteCode is a web application for practicing coding interview explanations out loud. You explain your approach verbally, and AI provides feedback on your explanation's clarity, completeness, and communication style.
+
+### How it works
+
+1. **Choose a problem** - Select a coding problem to practice
+2. **Explain your approach** - Speak your solution out loud
+3. **Get transcription** - Your speech is converted to text
+4. **Receive feedback** - AI analyzes your explanation and provides suggestions
+5. **Hear the response** - Feedback is spoken back to you
+
+## Key features
+
+### Speech-to-text pipeline
+
+Your verbal explanation is transcribed accurately:
+
+- **Real-time transcription** - See your words as you speak
+- **High accuracy** - Handles technical vocabulary well
+- **Noise tolerance** - Works even with background noise
+
+### Intelligent feedback
+
+AI analyzes your explanation across multiple dimensions:
+
+- **Clarity** - Is your explanation easy to follow?
+- **Completeness** - Did you cover the key aspects?
+- **Structure** - Is your explanation well-organized?
+- **Technical accuracy** - Are your statements correct?
+- **Communication** - Are you being concise and clear?
+
+### Voice responses
+
+Feedback is spoken back to you:
+
+- **Natural voice** - Sounds conversational, not robotic
+- **Appropriate pacing** - Easy to follow and understand
+- **Encouraging tone** - Constructive feedback that helps you improve
+
+## Technical implementation
+
+<CardGroup cols={2}>
+  <Card title="Framework" icon="react">
+    **Next.js** - React framework for the web application
+  </Card>
+  <Card title="Speech-to-Text" icon="microphone">
+    **Whisper** - OpenAI's speech recognition model
+  </Card>
+  <Card title="Analysis" icon="brain">
+    **OpenAI 3.5 Turbo** - Language model for explanation analysis
+  </Card>
+  <Card title="Text-to-Speech" icon="volume-high">
+    **ElevenLabs** - Natural-sounding voice synthesis
+  </Card>
+</CardGroup>
+
+## Voice pipeline architecture
+
+### Input processing
+
+1. **Audio capture** - Browser APIs record microphone input
+2. **Audio processing** - Raw audio is formatted for Whisper
+3. **Transcription** - Whisper converts speech to text
+4. **Text cleanup** - Minor corrections for technical terms
+
+### Analysis
+
+The transcribed explanation is analyzed for:
+
+- **Structure markers** - Does the explanation have a clear beginning, middle, end?
+- **Key concept coverage** - Are important ideas mentioned?
+- **Filler words** - "Um", "like", etc. that reduce clarity
+- **Technical accuracy** - Are the technical claims correct?
+- **Time management** - Is the explanation appropriately paced?
+
+### Output generation
+
+1. **Feedback generation** - GPT-3.5 creates constructive feedback
+2. **Text formatting** - Feedback is structured for voice output
+3. **Voice synthesis** - ElevenLabs generates natural speech
+4. **Audio playback** - Feedback is played to the user
+
+## Why these technologies?
+
+### Whisper for transcription
+
+Whisper handles coding vocabulary well:
+
+- Technical terms are transcribed accurately
+- Works with accents and speaking styles
+- Open source and well-documented
+
+### GPT-3.5 for analysis
+
+At the time (2023), GPT-3.5 provided:
+
+- Good balance of quality and speed
+- Reasonable cost for hackathon budget
+- Sufficient capability for explanation analysis
+
+### ElevenLabs for voice
+
+Natural voice output enhances the experience:
+
+- Sounds like a real person giving feedback
+- Multiple voice options
+- Good API for integration
+
+## Interview skills addressed
+
+### Problem decomposition
+
+EliteCode helps you practice:
+
+- Breaking problems into smaller parts
+- Explaining each part clearly
+- Showing how parts fit together
+
+### Communication clarity
+
+Feedback focuses on:
+
+- Avoiding jargon without explanation
+- Using concrete examples
+- Maintaining logical flow
+
+### Time management
+
+The tool helps you learn to:
+
+- Provide appropriately detailed explanations
+- Know when to go deeper vs. move on
+- Respect typical interview time constraints
+
+### Confidence building
+
+Practice reduces anxiety:
+
+- Familiar with explaining out loud
+- Comfortable with being recorded
+- Prepared for follow-up questions
+
+## Hackathon context
+
+EliteCode was built at SFHacks 2023, which meant:
+
+- 24-hour development timeline
+- Focus on demonstrable functionality
+- Quick integration of multiple APIs
+- Presentation-ready demo
+
+The time constraint forced pragmatic decisions about scope and polish, resulting in a focused tool that demonstrates the core concept effectively.
+
+## Lessons learned
+
+1. **Voice interfaces need good feedback** - Users need to know they're being heard and understood. Visual feedback during recording is essential.
+
+2. **Transcription quality varies** - Technical vocabulary and speaking style affect accuracy. Providing correction mechanisms improves user experience.
+
+3. **Natural voice matters** - Robotic text-to-speech breaks immersion. Investing in natural voice synthesis significantly improves the experience.
+
+4. **Interview prep is emotional** - Users are often anxious. Framing feedback constructively and encouragingly is as important as accuracy.
+
+## Potential improvements
+
+If continuing development:
+
+- **More problem types** - Data structures, system design, behavioral
+- **Progress tracking** - Monitor improvement over time
+- **Mock interviews** - Full interview simulations with AI interviewer
+- **Peer practice** - Match with other users for practice sessions
+
+---
+
+<Tip>
+  Coding interviews are hard enough without fumbling through explanations—this helps you practice the talking part.
+</Tip>

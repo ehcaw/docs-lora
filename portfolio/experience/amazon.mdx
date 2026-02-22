@@ -1,0 +1,98 @@
+---
+title: SDE Intern at Amazon
+description: Ryan's experience as a Software Development Engineer Intern at Amazon, building a feature lineage system for the Search Data Platform team.
+---
+
+# Software Development Engineer Intern
+
+<Info>
+  **Company:** Amazon  
+  **Team:** Search Data Platform (Amazon Search)  
+  **Period:** May 2025 - August 2025  
+  **Location:** Seattle, WA
+</Info>
+
+## Overview
+
+During my internship at Amazon, I worked on the Amazon Search team, specifically within the Search Data Platform organization. My primary project involved building a comprehensive feature lineage system for the Offline Feature Store, a critical component of Amazon's search infrastructure that handles feature engineering and management at massive scale.
+
+## The challenge
+
+The Offline Feature Store manages thousands of features used across Amazon Search. As the number of features grew, teams faced increasing difficulty understanding:
+
+- How features were transformed from raw data to their final form
+- Which upstream changes might affect downstream features
+- The dependencies between different features and data sources
+
+Without proper lineage tracking, debugging issues, ensuring data quality, and managing feature deprecation became increasingly complex challenges.
+
+## What I built
+
+To address these challenges, I designed and implemented a complete feature lineage system with several key components:
+
+### Parsing algorithm and data model
+
+I developed a sophisticated parsing algorithm that could analyze feature transformation definitions and extract lineage information automatically. This included:
+
+- Parsing complex transformation logic to identify upstream dependencies
+- Building a graph-based data model to represent feature relationships
+- Handling edge cases like circular dependencies and indirect transformations
+
+### Automated CI/CD pipeline
+
+To ensure lineage information stayed current, I constructed a fully automated CI/CD pipeline that:
+
+- Automatically refreshes lineage data whenever feature models are updated
+- Validates lineage integrity before deployment
+- Notifies teams of significant changes to their feature dependencies
+
+### Scala API
+
+I created a robust Scala API that allows teams to programmatically query feature lineage information, enabling:
+
+- Impact analysis before making changes to features
+- Automated documentation generation
+- Integration with existing monitoring and alerting systems
+
+### Visualization dashboard
+
+To make lineage information accessible to non-technical stakeholders, I built a Next.js dashboard featuring:
+
+- Interactive D3.js visualizations of feature lineage graphs
+- Search and filtering capabilities
+- Drill-down views for detailed dependency analysis
+
+## Technologies used
+
+<CardGroup cols={2}>
+  <Card title="Frontend" icon="browser">
+    React, Next.js, D3.js for the visualization dashboard
+  </Card>
+  <Card title="Backend" icon="code">
+    Python, Scala, TypeScript for APIs and data processing
+  </Card>
+  <Card title="AWS Services" icon="aws">
+    Neptune (graph database), S3 (storage), Lambda (serverless compute)
+  </Card>
+  <Card title="Infrastructure" icon="gears">
+    Amazon Pipelines for CI/CD automation
+  </Card>
+</CardGroup>
+
+## Impact and learnings
+
+This internship was an incredible learning experience that exposed me to systems operating at Amazon scale. Key takeaways include:
+
+1. **Systems at scale require different thinking** - Solutions that work for small datasets often fail catastrophically at Amazon's scale. Learning to think about performance, reliability, and cost from the beginning was crucial.
+
+2. **Observability is essential** - In complex distributed systems, you can't improve what you can't measure. Building comprehensive lineage tracking is a form of observability that pays dividends in debugging, compliance, and operational efficiency.
+
+3. **Cross-team collaboration** - Building infrastructure that serves multiple teams requires careful API design, clear documentation, and proactive communication.
+
+4. **Impact through tooling** - Developer productivity tools and infrastructure improvements can have outsized impact by improving the efficiency of entire organizations.
+
+---
+
+<Tip>
+  This role taught me about systems at scale and the critical importance of observability in large distributed systems.
+</Tip>
