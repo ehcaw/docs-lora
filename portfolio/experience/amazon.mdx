@@ -1,6 +1,6 @@
 ---
 title: SDE Intern at Amazon
-description: Ryan's experience as a Software Development Engineer Intern at Amazon, building a feature lineage system for the Search Data Platform team.
+description: Ryan's experience as a Software Development Engineer Intern at Amazon, building a comprehensive feature lineage system for the Search Data Platform team within Amazon Search.
 ---
 
 # Software Development Engineer Intern
@@ -14,17 +14,17 @@ description: Ryan's experience as a Software Development Engineer Intern at Amaz
 
 ## Overview
 
-During my internship at Amazon, I worked on the Amazon Search team, specifically within the Search Data Platform organization. My primary project involved building a comprehensive feature lineage system for the Offline Feature Store, a critical component of Amazon's search infrastructure that handles feature engineering and management at massive scale.
+During my internship at Amazon, I worked on the Amazon Search team, specifically within the Search Data Platform organization. My primary project involved building a comprehensive feature lineage system for the Offline Feature Store, a critical component of Amazon's search infrastructure that handles feature engineering and management at massive scale. This was an opportunity to work on infrastructure that directly impacts how millions of customers experience search on Amazon, and to learn what it means to build reliable systems at unprecedented scale.
 
 ## The challenge
 
-The Offline Feature Store manages thousands of features used across Amazon Search. As the number of features grew, teams faced increasing difficulty understanding:
+The Offline Feature Store manages thousands of features used across Amazon Search—features that power everything from product recommendations to search ranking. As the number of features grew over time, teams faced increasing difficulty understanding the complex web of data transformations and dependencies:
 
-- How features were transformed from raw data to their final form
-- Which upstream changes might affect downstream features
-- The dependencies between different features and data sources
+- How features were transformed from raw data to their final form through multiple processing stages
+- Which upstream changes might affect downstream features, creating a ripple effect across the system
+- The dependencies between different features and data sources, which could span multiple teams and services
 
-Without proper lineage tracking, debugging issues, ensuring data quality, and managing feature deprecation became increasingly complex challenges.
+Without proper lineage tracking, debugging issues became a time-consuming detective exercise, ensuring data quality required extensive manual verification, and managing feature deprecation was risky because the impact of changes was unclear. Teams needed visibility into the "family tree" of their features.
 
 ## What I built
 
@@ -81,18 +81,20 @@ To make lineage information accessible to non-technical stakeholders, I built a 
 
 ## Impact and learnings
 
-This internship was an incredible learning experience that exposed me to systems operating at Amazon scale. Key takeaways include:
+This internship was an incredible learning experience that exposed me to systems operating at Amazon scale—scale that requires fundamentally different approaches to problems. The feature lineage system I built is now being used by teams across Amazon Search to understand their feature dependencies, debug issues faster, and make more confident changes to their features. Key takeaways include:
 
-1. **Systems at scale require different thinking** - Solutions that work for small datasets often fail catastrophically at Amazon's scale. Learning to think about performance, reliability, and cost from the beginning was crucial.
+1. **Systems at scale require different thinking** - Solutions that work for small datasets often fail catastrophically at Amazon's scale. Learning to think about performance, reliability, and cost from the beginning was crucial. A query that takes 100ms on a small dataset might take minutes or fail entirely when scaled to millions of features. I learned to always ask "what happens when this grows 10x? 100x?"
 
-2. **Observability is essential** - In complex distributed systems, you can't improve what you can't measure. Building comprehensive lineage tracking is a form of observability that pays dividends in debugging, compliance, and operational efficiency.
+2. **Observability is essential** - In complex distributed systems, you can't improve what you can't measure. Building comprehensive lineage tracking is a form of observability that pays dividends in debugging, compliance, and operational efficiency. The lineage system I built is essentially observability infrastructure—giving teams visibility into how data flows through their systems.
 
-3. **Cross-team collaboration** - Building infrastructure that serves multiple teams requires careful API design, clear documentation, and proactive communication.
+3. **Cross-team collaboration** - Building infrastructure that serves multiple teams requires careful API design, clear documentation, and proactive communication. I learned to design APIs that are intuitive for users who weren't involved in building them, and to document not just what the system does but why it works the way it does.
 
-4. **Impact through tooling** - Developer productivity tools and infrastructure improvements can have outsized impact by improving the efficiency of entire organizations.
+4. **Impact through tooling** - Developer productivity tools and infrastructure improvements can have outsized impact by improving the efficiency of entire organizations. A tool that saves each engineer 10 minutes per day multiplied across hundreds of engineers adds up to enormous value.
+
+5. **The importance of operational excellence** - At Amazon, it's not enough to build something that works; it needs to work reliably, be observable, have runbooks for common issues, and gracefully handle failures. This operational mindset was new to me and has influenced how I think about shipping software.
 
 ---
 
 <Tip>
-  This role taught me about systems at scale and the critical importance of observability in large distributed systems.
+  This role was super cool and allowed me to learn about systems at scale and the importance of observability. Seeing my code running in production at Amazon scale was a humbling and exciting experience.
 </Tip>

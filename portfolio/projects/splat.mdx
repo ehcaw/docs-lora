@@ -1,6 +1,6 @@
 ---
 title: Splat
-description: A Python CLI for agentic debugging that reads trace logs, executes files, and suggests actual code fixes.
+description: A Python CLI for agentic debugging that reads trace logs, executes files, and suggests actual code fixes using Groq and FetchAI.
 ---
 
 # Splat
@@ -16,9 +16,9 @@ description: A Python CLI for agentic debugging that reads trace logs, executes 
 
 ## The problem
 
-Debugging is tedious. You run your code, hit an error, read the traceback, search Stack Overflow, try a fix, repeat. Most debugging tools help you find problems, but they stop there—they don't suggest how to fix them.
+Debugging is tedious. You run your code, hit an error, read the traceback, search Stack Overflow for someone who had the same problem, try a fix, run again, hit another error, repeat. It's a slow, iterative process that often feels like detective work. Most debugging tools help you find problems—they show you where the error occurred, what the stack trace looks like, maybe some variable values—but they stop there. They don't suggest how to fix them.
 
-What if a debugging tool could analyze the error, understand the context, and propose actual code changes?
+What if a debugging tool could analyze the error, understand the context of your code, and propose actual code changes? What if instead of showing you the problem, it showed you the solution?
 
 ## What I built
 
