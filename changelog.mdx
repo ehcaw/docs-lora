@@ -1,0 +1,37 @@
+---
+title: Changelog
+description: Recent updates and changes to Pointer
+---
+
+# Changelog
+
+Track the latest updates and improvements to Pointer.
+
+---
+
+## January 4, 2026
+
+### Next.js upgrade and testing infrastructure
+
+Upgraded Next.js and added comprehensive testing infrastructure across the codebase.
+
+**Changes:**
+
+- Upgraded Next.js to the latest version with Turbopack support for faster development builds
+- Added Vitest testing framework with full coverage configuration
+- Introduced comprehensive unit tests for:
+  - Tiptap collaborative editor utilities
+  - URL metadata fetching
+  - Whiteboard utilities
+  - Tree utilities and data structures
+  - Highlight colors and general utilities
+- Added Convex backend tests for note versioning and task management
+- New test configuration files (`vitest.config.ts`, `vitest.convex.config.ts`)
+
+**Why this matters:**
+
+Testing infrastructure ensures code reliability as Pointer grows. The Next.js upgrade improves development speed with Turbopack while keeping the app on the latest stable release.
+
+<Info>
+  This release corresponds to [PR #76](https://github.com/ehcaw/pointer/pull/76) on GitHub.
+</Info>
