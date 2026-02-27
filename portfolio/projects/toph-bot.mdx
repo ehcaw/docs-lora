@@ -1,6 +1,6 @@
 ---
 title: Toph Bot
-description: An integrated GitHub PR review bot with persistent memory that actually remembers context across reviews.
+description: An integrated GitHub PR review bot with persistent memory that actually remembers context across reviews, built with Letta and FastAPI.
 ---
 
 # Toph Bot
@@ -12,9 +12,9 @@ description: An integrated GitHub PR review bot with persistent memory that actu
 
 ## The problem
 
-Most AI code review tools have a frustrating limitation: they start fresh with every review. They don't remember that you explained a design decision yesterday, that a particular pattern is intentional, or that certain warnings have already been addressed. Every review feels like talking to someone with amnesia.
+Most AI code review tools have a frustrating limitation: they start fresh with every review. They don't remember that you explained a design decision yesterday, that a particular pattern is intentional, or that certain warnings have already been addressed. Every review feels like talking to someone with amnesia—you end up repeating the same explanations over and over.
 
-When I was helping manage code reviews for club repositories, I wanted a bot that could actually learn—one that builds context over time and provides increasingly relevant feedback.
+When I was helping manage code reviews for club repositories, this became painfully apparent. New contributors would get the same generic feedback on every PR. Context from previous discussions was lost. Institutional knowledge about why certain patterns existed wasn't preserved when reviewers changed. I wanted a bot that could actually learn—one that builds context over time and provides increasingly relevant, personalized feedback. A bot that remembers.
 
 ## What I'm building
 
@@ -111,13 +111,21 @@ Even for solo developers:
 
 Toph Bot is in active development. Current focus:
 
-- Core webhook handling and GitHub integration
-- Letta memory integration for context persistence
-- Basic review capabilities with GPT-4
-- Planning HelixDB integration for codebase RAG
+- Core webhook handling and GitHub integration—receiving events and responding with reviews
+- Letta memory integration for context persistence—the key differentiator
+- Basic review capabilities with GPT-4—providing useful, actionable feedback
+- Planning HelixDB integration for codebase RAG—understanding the full context of changes
+
+## Future roadmap
+
+- **Automated configuration** - Self-configuring based on repository patterns
+- **Review templates** - Team-specific review checklists and requirements
+- **Metrics dashboard** - Track code quality trends over time
+- **Integration with issue tracking** - Link reviews to related issues and tasks
+- **Self-improving feedback** - Learn from which suggestions are accepted vs. rejected
 
 ---
 
 <Tip>
-  Tried making a code review bot for club repos and this one actually learns.
+  Tried making a code review bot for club repos and this one actually learns. The memory system is what makes it different from every other code review bot out there.
 </Tip>

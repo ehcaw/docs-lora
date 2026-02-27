@@ -1,11 +1,11 @@
 ---
 title: Projects overview
-description: An overview of Ryan Nguyen's personal projects, from AI-powered tools to developer utilities and hackathon creations.
+description: An overview of Ryan Nguyen's personal projects, from AI-powered tools with persistent memory to developer utilities, terminal applications, and hackathon creations.
 ---
 
 # Projects
 
-I love building things. Whether it's a hackathon project completed in 24 hours or a side project I've been iterating on for months, each project represents an opportunity to learn something new and solve a problem I care about. Below you'll find a collection of my most notable projects, spanning AI tools, developer utilities, and more.
+I love building things. Whether it's a hackathon project completed in 24 hours or a side project I've been iterating on for months, each project represents an opportunity to learn something new and solve a problem I care about. Building is how I learn best—diving into new frameworks, wrestling with unfamiliar paradigms, and shipping something that works. Below you'll find a collection of my most notable projects, spanning AI tools, developer utilities, terminal applications, and more. Each project has taught me something valuable, and most started with a personal frustration I wanted to solve.
 
 ## Featured projects
 
@@ -43,20 +43,30 @@ I love building things. Whether it's a hackathon project completed in 24 hours o
 
 ## Hackathon projects
 
-<Card title="EliteCode" icon="graduation-cap" href="/portfolio/projects/elitecode">
-  Practice coding interview explanations with voice feedback—built at SFHacks 2023.
-</Card>
+<CardGroup cols={2}>
+  <Card title="EliteCode" icon="graduation-cap" href="/portfolio/projects/elitecode">
+    Practice coding interview explanations with voice feedback—built at SFHacks 2023 using Whisper and ElevenLabs.
+  </Card>
+  <Card title="CatDoc" icon="file-lines" href="/portfolio/projects/catdoc">
+    Automatically generate and maintain documentation for your codebase—built at HackDavis 2025.
+  </Card>
+  <Card title="Dashi" icon="microphone" href="/portfolio/projects/dashi">
+    A desktop voice assistant with persistent memory—built at CalHacks AI 2025.
+  </Card>
+</CardGroup>
 
 ---
 
 ## Project philosophy
 
-When I build projects, I focus on:
+When I build projects, I focus on principles that have served me well across dozens of projects, hackathons, and side endeavors:
 
-1. **Solving real problems** - Every project starts with a pain point I've experienced personally. If I'm frustrated by something, chances are others are too.
+1. **Solving real problems** - Every project starts with a pain point I've experienced personally. If I'm frustrated by something, chances are others are too. The best projects come from genuine frustration, not theoretical exercises.
 
-2. **Learning new technologies** - Projects are an excuse to explore new frameworks, languages, and paradigms in a context where I have complete creative control.
+2. **Learning new technologies** - Projects are an excuse to explore new frameworks, languages, and paradigms in a context where I have complete creative control. Want to learn Tauri? Build a desktop app. Want to understand RAG pipelines? Build a documentation chatbot. Projects make abstract concepts concrete.
 
-3. **Shipping quickly** - I'd rather have a working MVP that I can iterate on than a perfect design that never sees the light of day.
+3. **Shipping quickly** - I'd rather have a working MVP that I can iterate on than a perfect design that never sees the light of day. Hackathons have taught me the value of time constraints—you learn more by shipping something imperfect than by endlessly polishing something that never ships.
 
-4. **Open source when possible** - Most of my projects are open source. I've learned so much from other developers' code, and I want to pay it forward.
+4. **Open source when possible** - Most of my projects are open source. I've learned so much from other developers' code, and I want to pay it forward. Open source also keeps me honest about code quality and documentation.
+
+5. **Building for myself first** - If I wouldn't use it, I shouldn't build it. The projects I'm most proud of are the ones I actually use in my daily workflow.
