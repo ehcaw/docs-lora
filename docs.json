@@ -67,6 +67,7 @@
             "pages": [
               "portfolio/projects/overview",
               "portfolio/projects/pointer",
+              "portfolio/projects/pointer-changelog",
               "portfolio/projects/toph-bot",
               "portfolio/projects/lsclear",
               "portfolio/projects/shelly",
