@@ -2,7 +2,7 @@
 name: "test"
 on:
   push:
-    - repo: "ehcaw/portfolio"
+    - repo: "ehcaw/docs-lora"
 ---
 
-when there are pushes to main on portfolio, update my docs with the new information.
+when there are pushes to main on docs-lora, add a page about the first avengers movie.
