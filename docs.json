@@ -80,6 +80,15 @@
         ]
       },
       {
+        "tab": "Movies",
+        "groups": [
+          {
+            "group": "Marvel Cinematic Universe",
+            "pages": ["movies/the-avengers"]
+          }
+        ]
+      },
+      {
         "tab": "API reference",
         "groups": [
           {
