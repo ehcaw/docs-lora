@@ -85,6 +85,10 @@
           {
             "group": "Marvel Cinematic Universe",
             "pages": ["movies/the-avengers"]
+          },
+          {
+            "group": "Classic Animation",
+            "pages": ["movies/tom-and-jerry"]
           }
         ]
       },
