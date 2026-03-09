@@ -87,6 +87,10 @@
             "pages": ["movies/the-avengers", "movies/avengers-endgame"]
           },
           {
+            "group": "Star Wars",
+            "pages": ["movies/star-wars"]
+          },
+          {
             "group": "Classic animation",
             "pages": ["movies/tom-and-jerry"]
           }
