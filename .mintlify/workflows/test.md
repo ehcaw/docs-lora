@@ -5,4 +5,4 @@ on:
     - repo: "ehcaw/docs-lora"
 ---
 
-when there are pushes to main on docs-lora, add a new page about the first avengers movie.
+when there are pushes to main on docs-lora, add a new page about avengers: endgame.
