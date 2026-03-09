@@ -84,7 +84,11 @@
         "groups": [
           {
             "group": "Marvel Cinematic Universe",
-            "pages": ["movies/the-avengers"]
+            "pages": ["movies/the-avengers", "movies/avengers-endgame"]
+          },
+          {
+            "group": "Classic animation",
+            "pages": ["movies/tom-and-jerry"]
           }
         ]
       },
