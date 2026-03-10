@@ -83,10 +83,6 @@
         "tab": "Movies",
         "groups": [
           {
-            "group": "Star Wars",
-            "pages": ["movies/star-wars", "movies/star-wars-characters"]
-          },
-          {
             "group": "Classic animation",
             "pages": ["movies/tom-and-jerry"]
           }
