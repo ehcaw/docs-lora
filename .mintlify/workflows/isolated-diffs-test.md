@@ -2,8 +2,8 @@
 name: "isolated diffs test"
 on:
   push:
-    - repo: "ehcaw/portfolio"
+    - repo: "ehcaw/workflows-testing"
 ---
 
 # Agent Instructions
-When there is a change to ehcaw/portfolio, update my docs with those changes.
+when there are changes to ehcaw/workflows-testing, update my docs with the new, updated, or removed content
