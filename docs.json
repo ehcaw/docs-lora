@@ -84,7 +84,7 @@
         "groups": [
           {
             "group": "Star Wars",
-            "pages": ["movies/star-wars", "movies/star-wars-characters", "movies/star-wars-planets"]
+            "pages": ["movies/star-wars", "movies/star-wars-characters", "movies/star-wars-planets", "movies/star-wars-starships"]
           },
           {
             "group": "Classic animation",
