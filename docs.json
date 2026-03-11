@@ -76,6 +76,13 @@
               "portfolio/projects/splat",
               "portfolio/projects/elitecode"
             ]
+          },
+          {
+            "group": "Hobbies",
+            "pages": [
+              "portfolio/hobbies/keyboards",
+              "portfolio/hobbies/coffee"
+            ]
           }
         ]
       },
