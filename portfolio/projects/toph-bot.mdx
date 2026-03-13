@@ -116,6 +116,32 @@ Toph Bot is in active development. Current focus:
 - Basic review capabilities with GPT-4
 - Planning HelixDB integration for codebase RAG
 
+## Technical challenges and solutions
+
+### Memory management at scale
+
+One of the key challenges with persistent memory is deciding what to remember and what to forget. Not everything is equally important:
+
+- **Prioritization** - Major architectural decisions are more important than minor style suggestions
+- **Summarization** - Old conversations need to be compressed without losing key information
+- **Retrieval** - Finding the right memories for each new review requires efficient search
+
+### Webhook reliability
+
+GitHub webhooks need to be handled reliably:
+
+- **Idempotency** - Handling duplicate webhook deliveries gracefully
+- **Error handling** - Graceful degradation when the bot can't complete a review
+- **Rate limiting** - Respecting GitHub's API limits while still being responsive
+
+### Context window management
+
+LLMs have limited context windows, so I need to be strategic:
+
+- **Selective retrieval** - Only include the most relevant memories and code
+- **Chunking strategies** - Break large PRs into reviewable pieces
+- **Priority ordering** - Put the most important context first
+
 ---
 
 <Tip>
