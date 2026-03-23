@@ -63,10 +63,16 @@
             ]
           },
           {
+            "group": "Pointer",
+            "pages": [
+              "portfolio/projects/pointer",
+              "changelog"
+            ]
+          },
+          {
             "group": "Projects",
             "pages": [
               "portfolio/projects/overview",
-              "portfolio/projects/pointer",
               "portfolio/projects/toph-bot",
               "portfolio/projects/lsclear",
               "portfolio/projects/shelly",
