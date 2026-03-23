@@ -1,0 +1,71 @@
+---
+title: Pointer changelog
+description: Release notes and updates for Pointer, the AI-powered note-taking desktop app.
+---
+
+# Changelog
+
+Track the latest updates and improvements to Pointer.
+
+## January 2026
+
+### v1.0.0 - Initial release
+
+<Info>
+  **Released:** January 4, 2026  
+  **PR:** [#76](https://github.com/ehcaw/pointer/pull/76)
+</Info>
+
+The first major release of Pointer includes a complete note-taking experience with real-time collaboration, AI assistance, and a native desktop app.
+
+#### Editor
+
+- Block-based rich text editor powered by Tiptap with full markdown support
+- Slash commands for quick formatting and content insertion
+- Text highlighting with customizable colors
+- Image uploads with drag-and-drop support
+- Tables with context menus for row/column management
+- Code blocks with syntax highlighting
+
+#### Real-time collaboration
+
+- Live collaborative editing using PartyKit WebSockets
+- Cursor presence showing other users' positions
+- Connection status badge indicating sync state
+
+#### Whiteboard
+
+- Excalidraw-based whiteboard for visual note-taking
+- Read-only preview mode for sharing
+
+#### Note organization
+
+- Hierarchical folder structure with drag-and-drop
+- Tree view sidebar with context menus
+- Note versioning and history with restore capability
+
+#### Knowledge graph
+
+- Visual graph view showing connections between notes
+- Tag explorer for filtering and navigation
+- Timeline view for chronological browsing
+- Search overlay with semantic matching
+
+#### Desktop app
+
+- Native Tauri application for macOS, Windows, and Linux
+- Text-to-speech support via native APIs
+- Offline-first architecture with sync on reconnect
+
+#### Backend
+
+- Convex for real-time database and automatic syncing
+- Authentication with Clerk
+- Image reference management and cleanup via scheduled crons
+- Task management system for todos within notes
+
+#### Developer experience
+
+- Comprehensive test suite with Vitest
+- ESLint configuration for code quality
+- TypeScript throughout the codebase
