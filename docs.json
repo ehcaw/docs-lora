@@ -83,11 +83,11 @@
         "groups": [
           {
             "group": "Star Wars",
-            "pages": ["movies/star-wars", "movies/star-wars-characters", "movies/star-wars-planets"]
+            "pages": ["movies/star-wars", "movies/star-wars-characters", "movies/star-wars-planets", "movies/star-wars-ships"]
           },
           {
             "group": "Classic animation",
-            "pages": ["movies/tom-and-jerry", "movies/wild-kratts"]
+            "pages": ["movies/tom-and-jerry"]
           }
         ]
       },
