@@ -1,0 +1,145 @@
+---
+title: "Documix"
+description: "A webapp that lets you chat with any documentation instead of endlessly scrolling through docs"
+---
+
+## Overview
+
+<Info>
+  **Project type**: Personal project  
+  **GitHub**: [github.com/ehcaw/documix](https://github.com/ehcaw/documix)
+</Info>
+
+Documix is a web application that lets you index documentation from URLs or local files and then chat with it to find what you actually need. Instead of scrolling through pages of documentation, you can just ask questions in natural language.
+
+## The problem
+
+Documentation is supposed to help developers, but the experience is often frustrating:
+
+- **Information overload**: Large documentation sites can be overwhelming
+- **Poor search**: Built-in search often returns irrelevant results
+- **Wrong context**: You know what you're trying to do, but not the right keywords
+- **Time consuming**: Finding one specific piece of information can take forever
+
+## What I built
+
+A conversational interface for documentation:
+
+<CardGroup cols={2}>
+  <Card title="Index any docs" icon="download">
+    Point Documix at a URL or upload local files, and it will index the documentation for semantic search.
+  </Card>
+  <Card title="Natural language queries" icon="comments">
+    Ask questions the way you'd ask a colleague - no need to know the exact terminology.
+  </Card>
+  <Card title="Multiple LLM options" icon="brain">
+    Choose your preferred LLM provider - OpenAI, Groq, or even local models via Ollama.
+  </Card>
+  <Card title="Source citations" icon="quote-right">
+    Every answer includes links to the original documentation, so you can verify and read more.
+  </Card>
+</CardGroup>
+
+## Technical architecture
+
+Documix uses a RAG (Retrieval-Augmented Generation) architecture to provide accurate, contextual answers:
+
+```typescript
+const architecture = {
+  frontend: {
+    framework: 'Next.js',
+    purpose: 'Chat interface and doc management'
+  },
+  vectorStore: {
+    provider: 'Upstash Vector',
+    purpose: 'Semantic search over documentation'
+  },
+  embeddings: {
+    model: 'Nomic',
+    purpose: 'Convert text to searchable vectors'
+  },
+  llm: {
+    providers: ['OpenAI', 'Groq', 'Ollama'],
+    purpose: 'Generate natural language answers'
+  },
+  rateLimit: {
+    provider: 'Redis',
+    purpose: 'Prevent abuse'
+  }
+};
+```
+
+### How it works
+
+<Steps>
+  <Step title="Ingest documentation">
+    Provide a URL or upload files. Documix crawls and extracts the text content, splitting it into chunks optimized for retrieval.
+  </Step>
+  <Step title="Create embeddings">
+    Each chunk is converted to a vector embedding using Nomic embedding models. These embeddings capture the semantic meaning of the content.
+  </Step>
+  <Step title="Store in vector database">
+    Embeddings are stored in Upstash Vector, a serverless vector database that enables fast similarity search.
+  </Step>
+  <Step title="Query with natural language">
+    When you ask a question, your query is embedded and compared against the documentation. The most relevant chunks are retrieved.
+  </Step>
+  <Step title="Generate answer">
+    The retrieved context is sent to an LLM along with your question. The model generates a natural language answer with citations.
+  </Step>
+</Steps>
+
+### Technologies explained
+
+<AccordionGroup>
+  <Accordion title="Next.js">
+    The frontend is built with Next.js, providing a responsive chat interface for interacting with your documentation. Server components handle the API communication efficiently.
+  </Accordion>
+  <Accordion title="Upstash Vector">
+    Upstash provides a serverless vector database that makes semantic search fast and affordable. The pay-per-request pricing means you only pay for actual usage.
+  </Accordion>
+  <Accordion title="Nomic embedding models">
+    Nomic provides high-quality embedding models that capture semantic meaning better than simple keyword matching. This is what enables "fuzzy" searches where you don't need exact terms.
+  </Accordion>
+  <Accordion title="OpenAI/Groq/Ollama">
+    Multiple LLM providers give you flexibility. Use OpenAI for quality, Groq for speed, or Ollama for privacy and cost (running locally).
+  </Accordion>
+  <Accordion title="Redis">
+    Redis handles rate limiting to prevent abuse and manage costs. It's fast enough to not add noticeable latency to requests.
+  </Accordion>
+</AccordionGroup>
+
+## Features
+
+### Documentation ingestion
+
+- **URL crawling**: Provide a URL and Documix will crawl the documentation site
+- **File upload**: Upload markdown, text, or PDF files directly
+- **Automatic chunking**: Content is split intelligently to optimize retrieval
+
+### Conversational interface
+
+- **Natural language**: Ask questions the way you think about them
+- **Follow-up questions**: Context is maintained across the conversation
+- **Source links**: Every answer includes links to the original documentation
+
+### Model flexibility
+
+| Provider | Pros | Best for |
+|----------|------|----------|
+| OpenAI | Highest quality answers | Complex questions |
+| Groq | Very fast responses | Quick lookups |
+| Ollama | Free, private, local | Privacy-conscious users |
+
+## Why I built this
+
+<Note>
+  Searching through documentation is painful - Documix makes it actually useful by letting you ask questions in natural language and getting answers with sources.
+</Note>
+
+I built Documix because I was tired of:
+- Cmd+F'ing through endless doc pages
+- Rewording searches to find what I need
+- Opening dozens of tabs to piece together information
+
+Now I can just ask "How do I authenticate API requests?" and get a direct answer with links to learn more.

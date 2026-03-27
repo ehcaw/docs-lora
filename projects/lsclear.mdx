@@ -1,0 +1,136 @@
+---
+title: "LSClear"
+description: "A web-based Python IDE with file persistence across sessions - code without installing anything"
+---
+
+## Overview
+
+<Info>
+  **Project type**: Personal project  
+  **GitHub**: [github.com/ehcaw/lsclear](https://github.com/ehcaw/lsclear)
+</Info>
+
+LSClear is a full Python development environment that runs entirely in your browser. No installation required - just open the URL and start coding. Your files persist across sessions, so you can close the tab and come back to your code later.
+
+## The problem
+
+Sometimes you just want to write some Python code without:
+
+- Installing Python on a new machine
+- Setting up a virtual environment
+- Configuring VS Code or another IDE
+- Worrying about conflicting dependencies
+
+Maybe you're on a borrowed computer, maybe you're testing something quick, or maybe you just don't want to clutter your local machine. For these situations, you need a browser-based solution that actually works well.
+
+## What I built
+
+A complete browser-based Python development environment:
+
+<CardGroup cols={2}>
+  <Card title="Monaco Editor" icon="code">
+    The same editor that powers VS Code, giving you syntax highlighting, IntelliSense, and all the editing features you expect from a modern IDE.
+  </Card>
+  <Card title="Real code execution" icon="play">
+    Your Python code runs on a real server (not a limited browser sandbox), so you can use any Python library and do real work.
+  </Card>
+  <Card title="File persistence" icon="hard-drive">
+    Your files are stored in NeonDB and persist across sessions. Come back tomorrow and your code is still there.
+  </Card>
+  <Card title="Clean interface" icon="browser">
+    A simple, distraction-free interface built with Next.js that focuses on what matters - writing code.
+  </Card>
+</CardGroup>
+
+<Frame>
+  <img src="/lsclear/lsclear.png" alt="LSClear IDE interface showing the Monaco editor with Python code" />
+</Frame>
+
+## Technical architecture
+
+The system consists of three main components:
+
+```typescript
+const architecture = {
+  frontend: {
+    framework: 'Next.js',
+    editor: 'Monaco Editor',
+    purpose: 'IDE interface'
+  },
+  backend: {
+    framework: 'FastAPI',
+    hosting: 'Digital Ocean',
+    purpose: 'Code execution'
+  },
+  storage: {
+    database: 'NeonDB',
+    purpose: 'File persistence'
+  },
+  networking: {
+    tunnels: 'Cloudflare',
+    purpose: 'Clean API routing'
+  }
+};
+```
+
+### How it works
+
+<Steps>
+  <Step title="Write code in the browser">
+    The Monaco Editor provides a familiar coding experience with syntax highlighting, auto-completion, and all the features you'd expect from VS Code.
+  </Step>
+  <Step title="Execute on the server">
+    When you run your code, it's sent to a FastAPI server running on Digital Ocean. The server executes your Python code in a controlled environment.
+  </Step>
+  <Step title="Return results">
+    Output, errors, and any generated files are sent back to the browser and displayed in the terminal panel.
+  </Step>
+  <Step title="Persist files">
+    Your code is automatically saved to NeonDB, associated with your session, so you can close the browser and come back later.
+  </Step>
+</Steps>
+
+### Technologies explained
+
+<AccordionGroup>
+  <Accordion title="Monaco Editor">
+    Monaco is the editor component that powers VS Code. It provides syntax highlighting, IntelliSense, error detection, and a polished editing experience that makes coding in the browser feel natural.
+  </Accordion>
+  <Accordion title="Next.js">
+    Next.js provides the foundation for the web application, handling routing, server-side rendering, and API endpoints for communicating with the execution backend.
+  </Accordion>
+  <Accordion title="FastAPI">
+    The Python execution server is built with FastAPI, which handles code execution requests efficiently. The async nature of FastAPI makes it well-suited for handling multiple concurrent execution requests.
+  </Accordion>
+  <Accordion title="Digital Ocean">
+    The FastAPI server runs on a Digital Ocean droplet, providing a reliable execution environment for user code. Sandboxing ensures user code can't affect the host system.
+  </Accordion>
+  <Accordion title="Cloudflare tunnels">
+    Cloudflare tunnels provide clean, secure routing to the execution API without exposing the Digital Ocean server directly to the internet.
+  </Accordion>
+  <Accordion title="NeonDB">
+    NeonDB (serverless Postgres) stores user files and sessions. Its serverless nature means I don't have to manage database infrastructure while getting the reliability of Postgres.
+  </Accordion>
+</AccordionGroup>
+
+## Security considerations
+
+Running arbitrary user code is inherently risky. LSClear implements several protections:
+
+- **Sandboxed execution**: User code runs in isolated environments that can't affect other users or the host system
+- **Resource limits**: CPU, memory, and execution time are limited to prevent runaway code
+- **Network restrictions**: Outbound network access is controlled to prevent abuse
+- **Session isolation**: Each user's files and execution environment are completely separate
+
+## Use cases
+
+LSClear is perfect for:
+
+- **Quick scripts**: Test an idea without setting up a local environment
+- **Learning**: Practice Python without any installation barriers
+- **Sharing**: Share code that others can run instantly in their browser
+- **Borrowed machines**: Code on computers where you can't install software
+
+<Note>
+  Sometimes you just want to code Python without setting up a whole environment. LSClear makes that possible - just open the URL and start writing code.
+</Note>

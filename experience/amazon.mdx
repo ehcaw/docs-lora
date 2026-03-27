@@ -1,0 +1,116 @@
+---
+title: "Software Development Engineer Intern at Amazon"
+description: "Built a feature lineage system for Amazon's Offline Feature Store as part of the Amazon Search Data Platform team"
+---
+
+## Role overview
+
+<Info>
+  **Position**: Software Development Engineer Intern  
+  **Company**: Amazon  
+  **Team**: Search Data Platform (Amazon Search)  
+  **Duration**: May 2025 - August 2025
+</Info>
+
+During my internship at Amazon, I worked on the Amazon Search team within the Search Data Platform organization. My project focused on building a comprehensive feature lineage system for the Offline Feature Store - a critical piece of infrastructure that helps teams understand how their machine learning features are created and transformed.
+
+## The problem I solved
+
+Machine learning teams at Amazon work with thousands of features that go through complex transformations before being used in models. Understanding where a feature comes from, how it's transformed, and what it depends on is crucial for:
+
+- **Debugging issues**: When something goes wrong with a feature, you need to trace back through its entire history to find the root cause.
+- **Impact analysis**: Before changing a data source or transformation, you need to know what downstream features and models will be affected.
+- **Compliance and governance**: For regulatory and business reasons, teams need to document and understand their feature pipelines.
+
+## What I built
+
+I designed and implemented a complete feature lineage system with multiple components:
+
+<CardGroup cols={2}>
+  <Card title="Parsing algorithm" icon="code">
+    Developed a sophisticated parsing algorithm that analyzes feature transformation code and extracts lineage information automatically.
+  </Card>
+  <Card title="Data model" icon="database">
+    Designed a flexible data model to represent feature transformations, dependencies, and relationships in a queryable format.
+  </Card>
+  <Card title="CI/CD pipeline" icon="rotate">
+    Built a fully automated CI/CD pipeline that refreshes lineage information whenever feature models are updated, ensuring lineage data stays current.
+  </Card>
+  <Card title="Scala API" icon="code">
+    Created a Scala API that allows teams to programmatically query feature lineage information from their applications.
+  </Card>
+</CardGroup>
+
+### The dashboard
+
+One of the most impactful parts of the project was building a visualization dashboard:
+
+```typescript
+// The dashboard visualizes complex feature lineage graphs
+const dashboardFeatures = {
+  framework: 'Next.js',
+  visualization: 'D3.js',
+  features: [
+    'Interactive lineage graphs',
+    'Search and filter capabilities',
+    'Dependency impact analysis',
+    'Historical lineage tracking'
+  ]
+};
+```
+
+The dashboard allowed teams to:
+- Visualize feature lineage as interactive graphs using D3.js
+- Search for specific features and see their complete lineage
+- Analyze the impact of changes before making them
+- Explore historical changes to feature definitions
+
+## Technologies used
+
+<AccordionGroup>
+  <Accordion title="Frontend">
+    **React, Next.js, D3.js**
+    
+    Built an interactive dashboard using React and Next.js for the application framework, with D3.js powering the lineage graph visualizations. The dashboard needed to handle complex, deeply nested graphs while remaining performant and easy to navigate.
+  </Accordion>
+  <Accordion title="Backend languages">
+    **Python, Scala, TypeScript**
+    
+    Used Python for the parsing algorithm and data processing, Scala for the querying API (integrating with existing team tooling), and TypeScript for the dashboard backend.
+  </Accordion>
+  <Accordion title="AWS infrastructure">
+    **AWS Neptune, AWS S3, AWS Lambda, Amazon Pipelines**
+    
+    - **AWS Neptune**: Graph database for storing and querying lineage relationships
+    - **AWS S3**: Storage for raw feature definitions and historical data
+    - **AWS Lambda**: Serverless functions for API endpoints and data processing
+    - **Amazon Pipelines**: Orchestration for the automated lineage refresh pipeline
+  </Accordion>
+</AccordionGroup>
+
+## Key learnings
+
+This internship taught me invaluable lessons about building systems at scale:
+
+<Steps>
+  <Step title="Scale changes everything">
+    Building for Amazon's scale requires thinking differently about every decision. What works for thousands of records doesn't work for billions. Performance, reliability, and cost efficiency become critical considerations.
+  </Step>
+  <Step title="Observability is essential">
+    At scale, you can't just "check the logs" when something goes wrong. You need robust observability systems that let you understand system behavior, track metrics, and quickly identify issues.
+  </Step>
+  <Step title="Automation is non-negotiable">
+    Manual processes don't scale. The CI/CD pipeline I built was essential because manually updating lineage data would have been impossible to maintain as the system grew.
+  </Step>
+  <Step title="Design for the future">
+    Systems at Amazon are expected to work for years and handle 10x growth. Building with flexibility and extensibility in mind is crucial.
+  </Step>
+</Steps>
+
+## Impact
+
+<Note>
+  The feature lineage system I built provides Search teams with visibility into their feature pipelines that they didn't have before, enabling faster debugging, better impact analysis, and improved governance.
+</Note>
+
+This internship was an incredible opportunity to work on infrastructure that supports one of Amazon's most important product surfaces - Search. The problems were complex, the scale was massive, and the learning was immense.

@@ -1,0 +1,118 @@
+---
+title: "Pointer"
+description: "A Notion clone with better AI features and no subscription fees - built with Tauri, Next.js, Convex, and the Vercel AI SDK"
+---
+
+## Overview
+
+<Info>
+  **Project type**: Personal project (in development)  
+  **GitHub**: [github.com/ehcaw/pointer](https://github.com/ehcaw/pointer)
+</Info>
+
+Pointer is a desktop note-taking application that does everything Notion does but with better AI features and no subscription fees. I'm building it because I love Notion's functionality but don't want to pay $10/month for notes - and because I wanted to learn desktop development with Tauri.
+
+## The problem
+
+Notion is an incredible productivity tool, but:
+
+- **It's expensive**: Notion Pro costs $10/month for features that feel like they should be free
+- **AI features are limited**: The AI capabilities feel bolted on rather than deeply integrated
+- **It's not truly offline**: While Notion has offline support, it's clearly designed as a web-first app
+- **Vendor lock-in**: Your notes live on Notion's servers, making migration difficult
+
+## What I'm building
+
+A desktop note-taking app that combines the best of Notion's organizational capabilities with deeply integrated AI features:
+
+<CardGroup cols={2}>
+  <Card title="Block-based editor" icon="cube">
+    All the familiar Notion building blocks - paragraphs, headings, lists, databases, embeds, and more. Built with Tiptap for a smooth editing experience.
+  </Card>
+  <Card title="Real-time sync" icon="cloud">
+    Seamless synchronization across all your devices using Convex, so your notes are always up to date no matter where you access them.
+  </Card>
+  <Card title="AI writing assistance" icon="wand-magic-sparkles">
+    AI features that are actually useful - smart suggestions, content generation, summarization, and more, powered by the Vercel AI SDK.
+  </Card>
+  <Card title="Native desktop experience" icon="desktop">
+    Wrapped in Tauri for a true desktop experience with fast startup, native menus, keyboard shortcuts, and offline support.
+  </Card>
+</CardGroup>
+
+## Technical architecture
+
+The application is built with a modern stack designed for performance and developer productivity:
+
+```typescript
+const architecture = {
+  frontend: {
+    framework: 'Next.js',
+    editor: 'Tiptap',
+    styling: 'Tailwind CSS',
+    language: 'TypeScript'
+  },
+  backend: {
+    database: 'Convex',
+    sync: 'Convex real-time'
+  },
+  desktop: {
+    wrapper: 'Tauri (Rust)'
+  },
+  ai: {
+    sdk: 'Vercel AI SDK'
+  }
+};
+```
+
+### Why these technologies?
+
+<AccordionGroup>
+  <Accordion title="Tiptap for the editor">
+    Tiptap is a headless rich-text editor built on ProseMirror. It gives me complete control over the editing experience while handling all the complex text editing logic. The block-based architecture maps perfectly to Notion's content model.
+  </Accordion>
+  <Accordion title="Next.js for the web frontend">
+    Next.js provides the foundation for the web-based UI that Tauri wraps. Server components, API routes, and the excellent developer experience make it ideal for building complex applications quickly.
+  </Accordion>
+  <Accordion title="Convex for real-time sync">
+    Convex handles all the real-time synchronization between devices. Instead of building a custom sync engine, I can rely on Convex's conflict resolution and real-time capabilities.
+  </Accordion>
+  <Accordion title="Tauri for desktop">
+    Tauri wraps the web app in a native desktop shell, providing access to native APIs while keeping the bundle size small (much smaller than Electron). The Rust backend also enables performance-critical operations when needed.
+  </Accordion>
+  <Accordion title="Vercel AI SDK for AI features">
+    The Vercel AI SDK provides a consistent interface for working with various AI providers. This lets me build AI features without being locked into a single provider and makes it easy to swap models as better options become available.
+  </Accordion>
+</AccordionGroup>
+
+## Features in development
+
+I'm building out the following capabilities:
+
+<Steps>
+  <Step title="Core note-taking">
+    Basic block types (paragraphs, headings, lists, code blocks), page hierarchy, and rich text formatting. This is the foundation everything else builds on.
+  </Step>
+  <Step title="Databases">
+    Table, board, and list views for structured data - one of Notion's most powerful features that I want to replicate and improve.
+  </Step>
+  <Step title="AI assistance">
+    Smart writing suggestions, content generation, summarization of long notes, and intelligent search across all your content.
+  </Step>
+  <Step title="Quality of life features">
+    Markdown support for fast input, comprehensive keyboard shortcuts, templates, and quick capture functionality.
+  </Step>
+</Steps>
+
+## Why I'm building this
+
+Beyond not wanting to pay for Notion, this project is teaching me:
+
+- **Desktop development**: Learning Tauri and the differences between web and desktop app development
+- **Complex state management**: Handling real-time sync and conflict resolution
+- **Editor internals**: Understanding how rich-text editors work under the hood
+- **AI integration**: Building AI features that feel native rather than bolted on
+
+<Note>
+  Building this to learn desktop development and because paying $10/month for notes feels ridiculous. Follow progress on [GitHub](https://github.com/ehcaw/pointer).
+</Note>

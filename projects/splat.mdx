@@ -1,0 +1,174 @@
+---
+title: "Splat"
+description: "A Python CLI for agentic debugging that reads trace logs, runs your code, and suggests actual fixes"
+---
+
+## Overview
+
+<Info>
+  **Project type**: Personal project  
+  **GitHub**: [github.com/ehcaw/splat](https://github.com/ehcaw/splat)
+</Info>
+
+Splat is a Python CLI debugging tool that doesn't just find problems - it suggests actual code fixes. It reads your trace logs, runs your files to understand the problem, and proposes specific edits to resolve issues.
+
+## The problem
+
+Debugging is tedious. The typical workflow looks like:
+
+1. Code crashes with an error
+2. Read the traceback
+3. Find the relevant code
+4. Try to understand what went wrong
+5. Come up with a fix
+6. Test, rinse, repeat
+
+What if a tool could do steps 2-5 for you?
+
+## What I built
+
+An agentic debugging assistant that works with you:
+
+<CardGroup cols={2}>
+  <Card title="Trace log analysis" icon="list">
+    Splat reads Python trace logs and understands the execution flow that led to the error.
+  </Card>
+  <Card title="File execution" icon="play">
+    Runs your code to reproduce the problem and gather additional context about the failure.
+  </Card>
+  <Card title="Code edit suggestions" icon="pen-to-square">
+    Suggests specific, concrete code changes to fix the identified issues - not vague advice.
+  </Card>
+  <Card title="Agentic iteration" icon="rotate">
+    Can iterate on fixes, testing each change and refining until the problem is resolved.
+  </Card>
+</CardGroup>
+
+<Frame>
+  <img src="/splat/splat1.png" alt="Splat analyzing a Python error" />
+</Frame>
+
+<Frame>
+  <img src="/splat/splat2.png" alt="Splat suggesting code fixes" />
+</Frame>
+
+<Frame>
+  <img src="/splat/splat3.png" alt="Splat iteration on a fix" />
+</Frame>
+
+## How it works
+
+```python
+# Splat's debugging workflow
+async def debug_with_splat(file_path: str, error_trace: str):
+    # 1. Analyze the trace
+    analysis = await groq.analyze(
+        prompt="Analyze this Python traceback",
+        trace=error_trace
+    )
+    
+    # 2. Read relevant code
+    context = read_file(file_path)
+    
+    # 3. Generate fix suggestions
+    suggestions = await fetchai.suggest_edits(
+        analysis=analysis,
+        code=context,
+        prompt="Suggest specific code changes to fix this error"
+    )
+    
+    # 4. Apply and test (with user approval)
+    for suggestion in suggestions:
+        if user_approves(suggestion):
+            apply_edit(suggestion)
+            result = run_file(file_path)
+            if result.success:
+                return "Fixed!"
+    
+    return suggestions
+```
+
+### Technologies
+
+<AccordionGroup>
+  <Accordion title="Python CLI">
+    Built as a Python CLI for easy integration with existing Python workflows. Install it, run it on your buggy code, and get suggestions.
+  </Accordion>
+  <Accordion title="Groq">
+    Groq provides fast bug analysis. Speed matters for debugging - you want feedback quickly so you can iterate.
+  </Accordion>
+  <Accordion title="FetchAI">
+    FetchAI powers the code edit suggestions, generating specific, applicable code changes rather than vague advice.
+  </Accordion>
+</AccordionGroup>
+
+## Features
+
+### Trace analysis
+
+Splat understands Python tracebacks:
+
+- **Stack frame analysis**: Understands the call stack that led to the error
+- **Variable state**: Infers variable values at the point of failure
+- **Error pattern recognition**: Identifies common error patterns and their typical causes
+
+### Code execution
+
+- **Safe execution**: Runs code in a controlled environment
+- **State capture**: Captures program state at the point of failure
+- **Reproduction**: Reliably reproduces the error for analysis
+
+### Edit suggestions
+
+Splat provides concrete fixes:
+
+| Suggestion type | Example |
+|----------------|---------|
+| Type fixes | "Change `str` to `int` on line 42" |
+| Null checks | "Add null check before accessing `.name`" |
+| Logic fixes | "Swap the comparison operators on line 15" |
+| Import fixes | "Add `from typing import Optional`" |
+
+### Agentic iteration
+
+Splat can work autonomously:
+
+<Steps>
+  <Step title="Analyze">
+    Read the error trace and understand what went wrong.
+  </Step>
+  <Step title="Suggest">
+    Propose specific code changes to fix the issue.
+  </Step>
+  <Step title="Apply">
+    With your approval, apply the suggested changes.
+  </Step>
+  <Step title="Test">
+    Run the code again to verify the fix.
+  </Step>
+  <Step title="Iterate">
+    If the fix didn't work, analyze the new error and try again.
+  </Step>
+</Steps>
+
+## Use cases
+
+Splat is useful for:
+
+- **Quick debugging**: Get fix suggestions without deep diving into the code
+- **Learning**: Understand why your code broke and how to fix it
+- **Repetitive errors**: Common errors get fixed quickly with known patterns
+- **Second opinion**: When you're stuck, Splat might see something you missed
+
+## Design philosophy
+
+<Note>
+  Debugging is tedious - Splat suggests actual fixes instead of just finding problems, helping you get back to building faster.
+</Note>
+
+Splat is designed around a few principles:
+
+- **Concrete over abstract**: Specific code changes, not vague advice
+- **Fast feedback**: Quick analysis so you can iterate quickly
+- **User in control**: Suggestions, not automatic changes
+- **Learn from failures**: When fixes don't work, Splat learns and tries again
