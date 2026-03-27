@@ -14,17 +14,37 @@
     }
   },
   "navigation": {
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Documentation",
+          "icon": "book-open-cover",
+          "href": "https://mintlify.com/docs"
+        },
+        {
+          "anchor": "Blog",
+          "icon": "newspaper",
+          "href": "https://mintlify.com/blog"
+        }
+      ]
+    },
     "tabs": [
       {
         "tab": "Guides",
         "groups": [
           {
             "group": "Getting started",
-            "pages": ["index", "quickstart", "development"]
+            "pages": [
+              "index",
+              "development"
+            ]
           },
           {
             "group": "Customization",
-            "pages": ["essentials/settings", "essentials/navigation"]
+            "pages": [
+              "essentials/settings",
+              "essentials/navigation"
+            ]
           },
           {
             "group": "Writing content",
@@ -40,7 +60,8 @@
             "pages": [
               "ai-tools/cursor",
               "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "ai-tools/windsurf",
+              "quickstart"
             ]
           }
         ]
@@ -50,7 +71,9 @@
         "groups": [
           {
             "group": "About",
-            "pages": ["portfolio/about"]
+            "pages": [
+              "portfolio/about"
+            ]
           },
           {
             "group": "Experience",
@@ -83,11 +106,18 @@
         "groups": [
           {
             "group": "Star Wars",
-            "pages": ["movies/star-wars", "movies/star-wars-characters", "movies/star-wars-planets"]
+            "pages": [
+              "movies/star-wars",
+              "movies/star-wars-characters",
+              "movies/star-wars-planets"
+            ]
           },
           {
             "group": "Classic animation",
-            "pages": ["movies/tom-and-jerry", "movies/wild-kratts"]
+            "pages": [
+              "movies/tom-and-jerry",
+              "movies/wild-kratts"
+            ]
           }
         ]
       },
@@ -96,7 +126,9 @@
         "groups": [
           {
             "group": "API documentation",
-            "pages": ["api-reference/introduction"]
+            "pages": [
+              "api-reference/introduction"
+            ]
           },
           {
             "group": "Endpoint examples",
@@ -109,21 +141,7 @@
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
     "light": "/logo/light.svg",
