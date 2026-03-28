@@ -122,6 +122,19 @@
         ]
       },
       {
+        "tab": "Hobbies",
+        "groups": [
+          {
+            "group": "Hobbies",
+            "pages": [
+              "hobbies/pc",
+              "hobbies/keyboards",
+              "hobbies/coffee"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "API reference",
         "groups": [
           {
