@@ -146,13 +146,15 @@ Despite the time pressure, we delivered a functional tool that demonstrates the 
 
 ## Lessons learned
 
-1. **Context window size matters** - Large context windows fundamentally change what's possible. Being able to process an entire codebase without chunking simplifies architecture significantly.
+1. **Context window size matters** - Large context windows fundamentally change what's possible. Being able to process an entire codebase without chunking simplifies architecture significantly. Gemini 2.5's massive context window was a game-changer for this project—it could understand the entire codebase at once rather than piecing together fragments.
 
-2. **Change detection is essential** - For any tool that processes large codebases, incremental processing is necessary for acceptable performance.
+2. **Change detection is essential** - For any tool that processes large codebases, incremental processing is necessary for acceptable performance. File hashing provides a simple but effective solution that catches all changes with minimal overhead.
 
-3. **CLI UX matters** - Even command-line tools benefit from thoughtful interface design. Progress indicators, colors, and clear output make tools more pleasant to use.
+3. **CLI UX matters** - Even command-line tools benefit from thoughtful interface design. Progress indicators, colors, and clear output make tools more pleasant to use. Ink React brought React's component model to the CLI, making it easy to build a polished interface.
 
-4. **Documentation is a product** - Generated documentation needs to be useful, not just complete. Focusing on what developers actually need to know improves output quality.
+4. **Documentation is a product** - Generated documentation needs to be useful, not just complete. Focusing on what developers actually need to know—architecture, relationships, usage patterns—improves output quality dramatically over naive "document everything" approaches.
+
+5. **Hackathons force focus** - The 24-hour constraint at HackDavis forced us to ruthlessly prioritize features. This resulted in a more focused, coherent product than we might have built with unlimited time.
 
 ---
 

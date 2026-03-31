@@ -172,13 +172,15 @@ The time constraint forced us to prioritize ruthlessly, which resulted in a focu
 
 ## Lessons learned
 
-1. **Memory changes everything** - Adding persistence fundamentally transforms what an AI assistant can do. The same model becomes dramatically more useful with proper memory.
+1. **Memory changes everything** - Adding persistence fundamentally transforms what an AI assistant can do. The same model becomes dramatically more useful with proper memory. Siri forgets everything immediately—Dashi actually learns from our conversations.
 
-2. **Voice UX is hard** - Designing good voice interactions requires careful attention to latency, feedback, and error handling. Users are impatient with voice interfaces.
+2. **Voice UX is hard** - Designing good voice interactions requires careful attention to latency, feedback, and error handling. Users are impatient with voice interfaces and expect near-instantaneous responses. Every millisecond of latency erodes the conversational experience.
 
-3. **Letta abstracts complexity** - Managing AI memory manually would be enormously complex. Letta provides sensible defaults while allowing customization.
+3. **Letta abstracts complexity** - Managing AI memory manually would be enormously complex. Letta provides sensible defaults while allowing customization. It handles the hard problems of memory summarization, relevance scoring, and context optimization so I could focus on the user experience.
 
-4. **Desktop apps have advantages** - Unlike web or mobile, desktop apps can integrate deeply with the system and persist across sessions easily.
+4. **Desktop apps have advantages** - Unlike web or mobile, desktop apps can integrate deeply with the system and persist across sessions easily. Tauri made it possible to build a lightweight, cross-platform app with system-level access.
+
+5. **Tool use expands capabilities** - The MCP architecture for tool integration means Dashi isn't limited to conversation—it can take actions, search the web, and interact with external services. This transforms it from a chatbot into a true assistant.
 
 ---
 

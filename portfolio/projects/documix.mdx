@@ -155,13 +155,15 @@ Different users have different preferences and constraints:
 
 ## Lessons learned
 
-1. **Chunking strategy matters** - The quality of RAG depends heavily on how documents are split. Experiment with different approaches for different content types.
+1. **Chunking strategy matters** - The quality of RAG depends heavily on how documents are split. Experiment with different approaches for different content types. I found that semantic chunking that respects document structure—headings, paragraphs, code blocks—produces much better results than naive character-based splitting.
 
-2. **Embeddings are not magic** - Semantic search is powerful but imperfect. Understanding its limitations helps set appropriate user expectations.
+2. **Embeddings are not magic** - Semantic search is powerful but imperfect. Understanding its limitations helps set appropriate user expectations. Some queries work brilliantly; others fail in confusing ways. Being honest about these limitations builds more trust than overpromising.
 
-3. **Rate limiting is essential** - AI APIs are expensive. Even for personal projects, implementing rate limiting early saves money and prevents abuse.
+3. **Rate limiting is essential** - AI APIs are expensive. Even for personal projects, implementing rate limiting early saves money and prevents abuse. Redis made this straightforward to implement with sliding window rate limits.
 
-4. **Citations build trust** - Users are more likely to trust AI answers when they can verify the sources.
+4. **Citations build trust** - Users are more likely to trust AI answers when they can verify the sources. Tracking which chunks contributed to each response and displaying them prominently transforms the user experience from "magic black box" to "helpful research assistant."
+
+5. **Multiple LLM support pays off** - Different users have different requirements—some need privacy (Ollama), some need speed (Groq), some need quality (OpenAI). Supporting multiple providers increases the tool's utility for a broader audience.
 
 ---
 
