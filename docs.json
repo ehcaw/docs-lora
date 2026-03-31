@@ -84,7 +84,11 @@
         "groups": [
           {
             "group": "Star Wars",
-            "pages": ["movies/star-wars", "movies/star-wars-characters", "movies/star-wars-planets"]
+            "pages": [
+              "movies/star-wars",
+              "movies/star-wars-characters",
+              "movies/star-wars-planets"
+            ]
           },
           {
             "group": "Classic animation",
@@ -160,6 +164,11 @@
       "x": "https://x.com/mintlify",
       "github": "https://github.com/mintlify",
       "linkedin": "https://linkedin.com/company/mintlify"
+    }
+  },
+  "errors": {
+    "404": {
+      "redirect": false
     }
   }
 }
