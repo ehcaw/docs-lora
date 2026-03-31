@@ -168,7 +168,8 @@
   },
   "errors": {
     "404": {
-      "redirect": false
+      "redirect": false,
+      "description": "Check [google](google.com)"
     }
   }
 }
