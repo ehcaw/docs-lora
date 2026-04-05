@@ -98,13 +98,15 @@ Tauri provides native desktop capabilities with a much smaller footprint than El
 
 Building a Notion clone is an ambitious project. Here's what I've learned so far:
 
-1. **Rich text editing is hard** - There's a reason Notion took years to build. Handling edge cases in text editing—cursor positioning, selection, formatting—is surprisingly complex.
+1. **Rich text editing is hard** - There's a reason Notion took years to build. Handling edge cases in text editing—cursor positioning, selection, formatting—is surprisingly complex. I've spent more time than I expected debugging subtle issues with cursor behavior when switching between block types or handling nested lists. The ProseMirror architecture underlying Tiptap is powerful but has a steep learning curve.
 
-2. **Real-time sync adds complexity** - Keeping multiple clients in sync while handling offline scenarios and conflicts requires careful architecture.
+2. **Real-time sync adds complexity** - Keeping multiple clients in sync while handling offline scenarios and conflicts requires careful architecture. Convex handles much of this complexity, but understanding the underlying concepts of operational transforms and conflict resolution has been essential for building a robust system.
 
-3. **AI integration requires thought** - It's not enough to just add AI—the features need to be genuinely useful and not intrusive.
+3. **AI integration requires thought** - It's not enough to just add AI—the features need to be genuinely useful and not intrusive. I've iterated on the AI writing assistant multiple times, trying to find the right balance between being helpful and getting in the way. The goal is for AI features to feel like a natural extension of the writing experience, not a separate mode or distraction.
 
-4. **Desktop apps have unique challenges** - Managing multiple windows, system tray integration, and native menus all require platform-specific considerations.
+4. **Desktop apps have unique challenges** - Managing multiple windows, system tray integration, and native menus all require platform-specific considerations. Tauri abstracts much of this, but there are still edge cases around window management, file system access, and keyboard shortcuts that differ between macOS, Windows, and Linux.
+
+5. **Performance matters for note-taking** - Users expect their notes to load instantly and editing to feel snappy. I've had to optimize database queries, implement lazy loading for large documents, and carefully manage memory usage to ensure the app remains responsive even with thousands of notes.
 
 ## Current status
 
