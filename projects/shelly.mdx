@@ -1,0 +1,147 @@
+---
+title: "Shelly"
+description: "A terminal-based chatbot and code editor with AI agent features, all running in your terminal"
+---
+
+## Overview
+
+<Info>
+  **Project type**: Personal project  
+  **GitHub**: [github.com/ehcaw/shelly](https://github.com/ehcaw/shelly)
+</Info>
+
+Shelly is a TUI (Terminal User Interface) application that combines a chatbot with a simple code editor, all running in your terminal. It's built for developers who live in the terminal and want AI assistance without leaving their command-line workflow.
+
+## The problem
+
+Modern AI coding assistants are great, but they usually require:
+
+- Opening a browser or separate app
+- Context switching away from your terminal
+- Copy-pasting code back and forth
+- Dealing with GUI interfaces that don't fit your workflow
+
+For developers who spend most of their time in the terminal, this context switching is disruptive and inefficient.
+
+## What I built
+
+A terminal application that brings AI assistance directly into your command-line environment:
+
+<CardGroup cols={2}>
+  <Card title="TUI chat interface" icon="message">
+    A full-featured chat interface built with Textual that looks and feels native to the terminal, with syntax highlighting for code responses.
+  </Card>
+  <Card title="Integrated code editor" icon="file-code">
+    A simple but functional code editor within the TUI - write, edit, and test code without leaving the terminal.
+  </Card>
+  <Card title="AI agent capabilities" icon="robot">
+    Basic AI agent features for code assistance - the bot can understand your code context and provide relevant suggestions.
+  </Card>
+  <Card title="Terminal-native experience" icon="terminal">
+    Designed to feel like a natural part of your terminal workflow, with keyboard-driven navigation and familiar keybindings.
+  </Card>
+</CardGroup>
+
+<Frame>
+  <img src="/shelly/shelly1.png" alt="Shelly TUI showing the chat interface" />
+</Frame>
+
+<Frame>
+  <img src="/shelly/shelly2.png" alt="Shelly TUI showing the code editor panel" />
+</Frame>
+
+## Technical implementation
+
+Shelly is built entirely in Python using the Textual framework:
+
+```python
+# Simplified structure of Shelly
+from textual.app import App
+from textual.widgets import Header, Footer, Input, TextArea
+
+class ShellyApp(App):
+    """A terminal-based AI assistant and code editor."""
+    
+    def compose(self):
+        yield Header()
+        yield ChatPanel()      # AI conversation interface
+        yield CodeEditor()     # Built-in code editing
+        yield Footer()
+    
+    async def on_user_message(self, message):
+        # Send to AI with code context
+        context = self.code_editor.get_content()
+        response = await self.ai_agent.respond(message, context)
+        self.chat_panel.display(response)
+```
+
+### Technologies
+
+<AccordionGroup>
+  <Accordion title="Textual">
+    Textual is a Python framework for building terminal user interfaces. It provides a React-like development experience for the terminal, with widgets, layouts, and event handling that make building complex TUIs manageable.
+  </Accordion>
+  <Accordion title="AI APIs">
+    Shelly integrates with various AI providers for the agent features. The abstraction layer makes it easy to switch between providers or use local models.
+  </Accordion>
+</AccordionGroup>
+
+## Features
+
+### Chat interface
+
+The chat panel provides a full conversation interface:
+
+- **Syntax highlighting**: Code in AI responses is properly highlighted
+- **Message history**: Scroll through previous messages
+- **Context awareness**: The AI understands code you're working on in the editor
+
+### Code editor
+
+The integrated editor supports:
+
+- **Syntax highlighting**: For major programming languages
+- **Basic editing**: Cut, copy, paste, undo, redo
+- **File operations**: Open, save, and create files
+- **Code execution**: Run code directly from the editor
+
+### AI agent features
+
+The AI assistant can:
+
+- **Answer questions**: About code, APIs, best practices
+- **Explain code**: Break down complex logic
+- **Suggest improvements**: Based on what you're working on
+- **Generate code**: From natural language descriptions
+
+## Philosophy
+
+Shelly is built on the belief that sometimes the terminal is all you need. Not every task requires a full IDE with hundreds of features. For quick coding sessions, experiments, or working on remote servers, a terminal-native solution can be faster and more focused.
+
+<Steps>
+  <Step title="Minimal context switching">
+    Stay in the terminal where you're already working. No browser, no GUI app, just your terminal.
+  </Step>
+  <Step title="Keyboard-first">
+    Everything is accessible via keyboard shortcuts. Your hands never leave the keyboard.
+  </Step>
+  <Step title="Lightweight">
+    Starts instantly, uses minimal resources, and works over SSH.
+  </Step>
+  <Step title="Focused">
+    Does a few things well rather than trying to be a full IDE.
+  </Step>
+</Steps>
+
+## Use cases
+
+Shelly is ideal for:
+
+- **Remote development**: SSH into a server and get AI assistance
+- **Quick scripts**: Write and test code without opening an IDE
+- **Learning**: Interactive coding with AI explanations
+- **Terminal workflows**: When you're already in the terminal and don't want to switch contexts
+
+<Note>
+  Sometimes the terminal is all you need - I wanted to see how much I could fit into a TUI while keeping it fast and focused.
+</Note>

@@ -1,0 +1,157 @@
+---
+title: "Dashi"
+description: "A desktop voice assistant with actual memory - like Siri, but it remembers your conversations. Built at CalHacks AI 2025"
+---
+
+## Overview
+
+<Info>
+  **Project type**: Hackathon project (CalHacks AI 2025)  
+  **GitHub**: [github.com/ehcaw/dashi](https://github.com/ehcaw/dashi)
+</Info>
+
+Dashi is a desktop voice assistant that actually remembers your conversations. Unlike Siri, Alexa, or Google Assistant that forget everything the moment you finish speaking, Dashi maintains persistent memory across all your interactions and can use tools to actually get things done.
+
+## The problem
+
+Current voice assistants have a frustrating limitation: they have no memory. Every conversation starts fresh:
+
+- "Set a reminder to follow up with John about the project"
+- *Two days later*
+- "What was that reminder about John?"
+- "I'm sorry, I don't know what you're referring to"
+
+This makes voice assistants useful only for one-off tasks, not for anything requiring context or continuity.
+
+## What I built
+
+A voice assistant that learns and remembers:
+
+<CardGroup cols={2}>
+  <Card title="Persistent memory" icon="brain">
+    Uses Letta for memory management - Dashi remembers your conversations, preferences, and context indefinitely.
+  </Card>
+  <Card title="Voice interface" icon="microphone">
+    Speak naturally using Groq Whisper for fast, accurate speech-to-text conversion.
+  </Card>
+  <Card title="Tool support" icon="wrench">
+    Dashi can actually do things - search the web, create files, and more through MCP integrations.
+  </Card>
+  <Card title="Desktop native" icon="desktop">
+    Built with Tauri for a fast, native desktop experience that's always accessible.
+  </Card>
+</CardGroup>
+
+<Frame>
+  <img src="/dashi/dashi1.png" alt="Dashi desktop app interface" />
+</Frame>
+
+<Frame>
+  <img src="/dashi/dashi2.png" alt="Dashi showing conversation memory" />
+</Frame>
+
+<Frame>
+  <img src="/dashi/dashi3.png" alt="Dashi using tools to complete a task" />
+</Frame>
+
+## Technical architecture
+
+```typescript
+const dashiArchitecture = {
+  memory: {
+    provider: 'Letta',
+    purpose: 'Persistent conversation memory and learning'
+  },
+  speech: {
+    provider: 'Groq Whisper',
+    purpose: 'Fast speech-to-text conversion'
+  },
+  desktop: {
+    framework: 'Tauri',
+    purpose: 'Native desktop application'
+  },
+  tools: {
+    protocol: 'MCP',
+    integrations: ['Exa (web search)', 'file operations', 'more...']
+  }
+};
+```
+
+### How it works
+
+<Steps>
+  <Step title="Listen">
+    Press a hotkey or click the mic button to start listening. Dashi captures your speech and sends it to Groq Whisper.
+  </Step>
+  <Step title="Transcribe">
+    Groq Whisper converts your speech to text in near real-time, fast enough to feel instant.
+  </Step>
+  <Step title="Recall">
+    The Letta agent retrieves relevant memories - previous conversations, your preferences, ongoing tasks, and context.
+  </Step>
+  <Step title="Respond">
+    With full context, Dashi generates a response. If tools are needed, it executes them through MCPs.
+  </Step>
+  <Step title="Remember">
+    The interaction is stored in memory for future reference. Dashi learns and improves over time.
+  </Step>
+</Steps>
+
+### Technologies explained
+
+<AccordionGroup>
+  <Accordion title="Letta">
+    Letta provides the memory infrastructure that makes Dashi different. It handles storing, retrieving, and managing memories across conversations, letting Dashi build long-term understanding of your preferences and needs.
+  </Accordion>
+  <Accordion title="Groq Whisper">
+    Groq runs Whisper (OpenAI's speech recognition model) on their specialized hardware, providing incredibly fast transcription. This makes the voice interface feel responsive and natural.
+  </Accordion>
+  <Accordion title="Tauri">
+    Tauri wraps the application in a native desktop shell, providing system-level access (for hotkeys, notifications, etc.) while keeping the app fast and lightweight.
+  </Accordion>
+  <Accordion title="MCPs (Model Context Protocol)">
+    MCPs let Dashi connect to external tools and services. Exa provides web search, but the architecture supports adding any MCP-compatible tool.
+  </Accordion>
+</AccordionGroup>
+
+## Features
+
+### Persistent memory
+
+Dashi remembers everything relevant:
+
+| Memory type | Examples |
+|-------------|----------|
+| Facts | "My favorite coffee shop is Blue Bottle" |
+| Preferences | "I prefer detailed explanations over brief answers" |
+| Tasks | "I need to follow up with John next week" |
+| Context | "We were discussing the quarterly report yesterday" |
+
+### Voice interface
+
+- **Natural speech**: Talk normally - no need for specific phrases or commands
+- **Fast transcription**: Groq Whisper processes speech in near real-time
+- **Chat fallback**: Type when you don't want to talk
+
+### Tool capabilities
+
+Through MCP integrations, Dashi can:
+
+- Search the web for current information (Exa)
+- Create and modify files
+- Set reminders and manage tasks
+- More tools as they're added
+
+## The CalHacks AI 2025 story
+
+Built at CalHacks AI 2025, Dashi came from a simple frustration: Siri forgets everything immediately. Every conversation starts from scratch, making it impossible to build on previous interactions or have any continuity.
+
+The breakthrough was Letta's memory architecture, which finally made it possible to build an assistant that learns and remembers like a real assistant would.
+
+<Note>
+  Siri forgets everything immediately - Dashi actually learns from our conversations and gets better over time.
+</Note>
+
+## Why "Dashi"?
+
+Dashi is a Japanese word meaning "broth" or "stock" - the foundation of many dishes. Like a good broth that builds flavor over time, Dashi builds understanding through accumulated interactions. (Also, it's fun to say.)

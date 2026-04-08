@@ -1,0 +1,157 @@
+---
+title: "EliteCode"
+description: "Practice coding interview explanations with voice - get AI feedback on how you explain your solutions. Built at SFHacks 2023"
+---
+
+## Overview
+
+<Info>
+  **Project type**: Hackathon project (SFHacks 2023)  
+  **GitHub**: [github.com/ehcaw/sfhacks](https://github.com/ehcaw/sfhacks)
+</Info>
+
+EliteCode is a web application for practicing the verbal part of coding interviews. You explain your solution out loud, and AI gives you feedback on your explanation - helping you practice the communication skills that are just as important as coding skills in technical interviews.
+
+## The problem
+
+Coding interviews test two things:
+
+1. **Can you code?** - Solve the problem correctly
+2. **Can you communicate?** - Explain your thinking clearly
+
+Most interview prep focuses on #1. LeetCode, HackerRank, and similar platforms help you practice solving problems. But where do you practice explaining your solutions?
+
+The communication part trips up a lot of candidates:
+
+- **Thinking out loud** is awkward and unnatural
+- **Explaining while coding** requires multitasking
+- **Articulating tradeoffs** needs practice
+- **Handling questions** is a skill you develop through repetition
+
+## What I built
+
+A voice-first platform for practicing interview communication:
+
+<CardGroup cols={2}>
+  <Card title="Speech-to-text" icon="microphone">
+    Explain your solution by talking - Whisper transcribes your explanation accurately.
+  </Card>
+  <Card title="AI analysis" icon="brain">
+    OpenAI analyzes your explanation for clarity, completeness, and technical accuracy.
+  </Card>
+  <Card title="Voice feedback" icon="volume-high">
+    Get feedback through ElevenLabs text-to-speech, like having a mock interviewer respond.
+  </Card>
+  <Card title="Practice problems" icon="code">
+    A library of coding problems to practice explaining.
+  </Card>
+</CardGroup>
+
+## Technical architecture
+
+```typescript
+const eliteCodePipeline = {
+  // 1. Capture voice input
+  input: {
+    method: 'browser microphone',
+    transcription: 'Whisper'
+  },
+  
+  // 2. Analyze explanation
+  analysis: {
+    model: 'OpenAI 3.5 Turbo',
+    criteria: [
+      'clarity',
+      'completeness',
+      'technical accuracy',
+      'communication style'
+    ]
+  },
+  
+  // 3. Deliver feedback
+  output: {
+    text: 'on-screen feedback',
+    voice: 'ElevenLabs TTS'
+  }
+};
+```
+
+### Technologies
+
+<AccordionGroup>
+  <Accordion title="Next.js">
+    The web application is built with Next.js, providing a clean interface for selecting problems, recording explanations, and reviewing feedback.
+  </Accordion>
+  <Accordion title="Whisper">
+    OpenAI's Whisper model handles speech-to-text transcription, converting your verbal explanation into text that can be analyzed.
+  </Accordion>
+  <Accordion title="OpenAI 3.5 Turbo">
+    GPT-3.5 Turbo analyzes your transcribed explanation, checking for clarity, technical accuracy, and completeness.
+  </Accordion>
+  <Accordion title="ElevenLabs">
+    ElevenLabs converts the AI's feedback into natural-sounding speech, making the experience feel more like an actual mock interview.
+  </Accordion>
+</AccordionGroup>
+
+## Features
+
+### Voice-based practice
+
+The core workflow:
+
+<Steps>
+  <Step title="Select a problem">
+    Choose a coding problem from the library - classic interview questions like "Two Sum", "Valid Parentheses", etc.
+  </Step>
+  <Step title="Explain your approach">
+    Hit record and explain how you would solve the problem, just like you would in an actual interview.
+  </Step>
+  <Step title="Get transcription">
+    Whisper transcribes your explanation into text for analysis.
+  </Step>
+  <Step title="Receive feedback">
+    The AI analyzes your explanation and provides specific feedback on how to improve.
+  </Step>
+  <Step title="Hear the response">
+    ElevenLabs reads the feedback aloud, simulating interviewer feedback.
+  </Step>
+</Steps>
+
+### Feedback categories
+
+EliteCode evaluates explanations on several dimensions:
+
+| Category | What it checks |
+|----------|----------------|
+| Clarity | Is the explanation easy to follow? |
+| Completeness | Did you cover all the key points? |
+| Technical accuracy | Is your solution correct? |
+| Time/space complexity | Did you analyze efficiency? |
+| Edge cases | Did you consider boundary conditions? |
+| Communication style | How natural and confident do you sound? |
+
+### Practice modes
+
+- **Explanation mode**: Explain a solution you already know
+- **Thinking aloud mode**: Work through a problem while talking
+- **Q&A mode**: Answer follow-up questions about your solution
+
+## Why voice matters
+
+Text-based interview prep misses a crucial element: the actual communication experience. There's a big difference between:
+
+- Knowing the answer in your head
+- Writing it down
+- Explaining it verbally while someone watches
+
+EliteCode helps bridge that gap by forcing you to practice the verbal part - the part that actually happens in the interview.
+
+## SFHacks 2023
+
+Built at SFHacks 2023, EliteCode came from our shared frustration preparing for technical interviews. We were all good at LeetCode but felt unprepared for the verbal explanation part of interviews.
+
+The hackathon format was perfect for this project - we had a clear problem, a straightforward solution, and the right APIs to make it work in 24 hours.
+
+<Note>
+  Coding interviews are hard enough without fumbling through explanations - EliteCode helps you practice the talking part so you can focus on the coding part when it counts.
+</Note>
