@@ -96,6 +96,20 @@
         ]
       },
       {
+        "tab": "Hobbies",
+        "groups": [
+          {
+            "group": "Hobbies",
+            "pages": [
+              "hobbies/coffee",
+              "hobbies/fps-games",
+              "hobbies/keyboards",
+              "hobbies/pc"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "API reference",
         "openapi": ["api-reference/openapi.json"],
         "groups": [
