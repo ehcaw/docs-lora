@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "who is wache",
   "colors": {
     "primary": "#16A34A",
     "light": "#07C983",
@@ -161,15 +161,15 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/wacheeeeee",
+      "github": "https://github.com/ehcaw",
+      "linkedin": "https://linkedin.com/in/ryannguyenc"
     }
   },
   "errors": {
     "404": {
       "redirect": false,
-      "description": "Check [google](google.com)"
+      "description": "Check [google](https://google.com)"
     }
   }
 }
