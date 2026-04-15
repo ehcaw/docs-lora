@@ -3,6 +3,11 @@ name: "isolated diffs test"
 on:
   push:
     - repo: "ehcaw/workflows-testing"
+automerge: true
+notify:
+  slack:
+    channels:
+      - "social"
 ---
 
 # Agent Instructions
