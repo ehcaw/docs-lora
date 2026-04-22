@@ -113,7 +113,8 @@
             ]
           }
         ]
-      }
+      },
+      { "$ref": "./plugins/soundcheck/pages.json" }
     ],
     "global": {
       "anchors": [

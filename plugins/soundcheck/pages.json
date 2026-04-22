@@ -1,0 +1,16 @@
+{
+  "tab": "Soundcheck",
+  "openapi": {
+    "source": "plugins/soundcheck/openapi.yaml",
+    "directory": "plugins/soundcheck/api-reference"
+  },
+  "groups": [
+    {
+      "group": "Core concepts",
+      "pages": [
+        "plugins/soundcheck/core-concepts/checks",
+        "plugins/soundcheck/core-concepts/tracks"
+      ]
+    }
+  ]
+}
