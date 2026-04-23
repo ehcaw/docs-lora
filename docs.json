@@ -192,5 +192,10 @@
       "redirect": false,
       "description": "Check [google](https://google.com)"
     }
+  },
+  "api": {
+    "params": {
+      "post": ["format", "x-sensitivity", "x-beta", "x-priority", "x-tags", "x-config"]
+    }
   }
 }

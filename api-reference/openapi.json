@@ -113,9 +113,36 @@
             "type": "string",
             "readOnly": true,
             "description": "Notes visible only in the dashboard.",
+            "x-sensitivity": "internal-only",
             "x-mint": {
               "post": ["internal"]
             }
+          },
+          "betaFlag": {
+            "type": "boolean",
+            "description": "Tests boolean-true config rule (pill = key name).",
+            "x-beta": true
+          },
+          "disabledFlag": {
+            "type": "boolean",
+            "description": "Tests boolean-false config rule (no pill).",
+            "x-beta": false
+          },
+          "priority": {
+            "type": "integer",
+            "description": "Tests number config rule.",
+            "x-priority": 3
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Tests array-of-strings config rule (one pill per element).",
+            "x-tags": ["internal", "preview", "deprecated-soon"]
+          },
+          "opaqueConfig": {
+            "type": "string",
+            "description": "Tests object config rule (skipped).",
+            "x-config": { "nested": "value" }
           }
         }
       },
@@ -136,6 +163,7 @@
             "writeOnly": true,
             "minLength": 12,
             "description": "Password, never returned in responses.",
+            "x-sensitivity": "secret",
             "x-mint": {
               "post": ["sensitive"]
             }
