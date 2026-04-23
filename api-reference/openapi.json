@@ -23,7 +23,7 @@
             "schema": {
               "type": "string",
               "x-mint": {
-                "post": ["uuid"]
+                "post": ["uuid", "name", "date of birth"]
               }
             },
             "description": "The ID of the user to fetch."
