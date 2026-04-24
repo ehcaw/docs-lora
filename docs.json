@@ -22,30 +22,6 @@
             "group": "Getting started",
             "public": true,
             "pages": ["index", "quickstart", "development"]
-          },
-          {
-            "group": "Customization",
-            "public": true,
-            "pages": ["essentials/settings", "essentials/navigation"]
-          },
-          {
-            "group": "Writing content",
-            "public": true,
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "public": true,
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
-            ]
           }
         ]
       },
@@ -86,55 +62,15 @@
         ]
       },
       {
-        "tab": "Movies",
+        "tab": "Testing Features",
         "groups": [
           {
-            "group": "Star Wars",
+            "group": "Hubspot Card Types",
             "public": true,
-            "pages": [
-              "movies/star-wars",
-              "movies/star-wars-characters",
-              "movies/star-wars-planets"
-            ]
-          },
-          {
-            "group": "Classic animation",
-            "public": true,
-            "pages": ["movies/tom-and-jerry", "movies/wild-kratts"]
+            "pages": ["/cardstest"]
           }
         ]
-      },
-      {
-        "tab": "API reference",
-        "openapi": ["api-reference/openapi.json"],
-        "groups": [
-          {
-            "group": "API documentation",
-            "public": true,
-            "pages": ["api-reference/introduction"]
-          },
-          {
-            "group": "Endpoint examples",
-            "public": true,
-            "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Private",
-        "groups": [
-          {
-            "group": "Internal",
-            "pages": ["private/overview", "private/secrets"]
-          }
-        ]
-      },
-      { "$ref": "./plugins/soundcheck/pages.json" }
+      }
     ],
     "global": {
       "anchors": [
@@ -187,6 +123,11 @@
       "linkedin": "https://linkedin.com/in/ryannguyenc"
     }
   },
+  "banner": {
+    "content": "Color override supersedes type.",
+    "type": "critical",
+    "color": { "light": "#0EA5E9", "dark": "#0C4A6E" }
+  },
   "errors": {
     "404": {
       "redirect": false,
@@ -195,7 +136,14 @@
   },
   "api": {
     "params": {
-      "post": ["format", "x-sensitivity", "x-beta", "x-priority", "x-tags", "x-config"]
+      "post": [
+        "format",
+        "x-sensitivity",
+        "x-beta",
+        "x-priority",
+        "x-tags",
+        "x-config"
+      ]
     }
   }
 }

@@ -1,0 +1,87 @@
+---
+name: Cards Test
+description: Testing out the new typed Cards
+---
+
+# These are the new Typed Cards
+
+## Basic Cards 
+<Card type="info" title="Info">
+  Neutral informational card — use when you just want to set something aside.
+</Card>
+
+<Card type="note" title="Note">
+  Blue note card — additional context a reader may want.
+</Card>
+
+<Card type="tip" title="Tip">
+  Green tip card — a best practice or helpful suggestion.
+</Card>
+
+<Card type="check" title="Check">
+  Green check card — indicates a successful or completed state.
+</Card>
+
+<Card type="warning" title="Warning">
+  Yellow warning card — something the reader should be careful about.
+</Card>
+
+<Card type="danger" title="Danger">
+  Red danger card — destructive or irreversible action ahead.
+</Card>
+
+## Card Group
+<CardGroup cols={2}>
+  <Card type="info" title="Step 1">
+    Install the package with your preferred package manager.
+  </Card>
+  <Card type="tip" title="Step 2">
+    Run the setup command — it will walk you through the config.
+  </Card>
+  <Card type="warning" title="Step 3">
+    Back up your existing config file before the migration runs.
+  </Card>
+  <Card type="danger" title="Step 4">
+    This step will drop the legacy tables. There is no undo.
+  </Card>
+</CardGroup>
+
+## Typed Cards with Links
+<CardGroup cols={2}>
+  <Card type="note" title="API Reference" href="/api-reference">
+    Hover me — border stays blue, no primary-color flash.
+  </Card>
+  <Card type="warning" title="Breaking Changes" href="/changelog">
+    Hover me — border stays yellow.
+  </Card>
+  <Card type="danger" title="Deprecated" href="/deprecated">
+    Hover me — border stays red.
+  </Card>
+  <Card type="check" title="Migration Complete" href="/migrations">
+    Hover me — border stays green.
+  </Card>
+</CardGroup>
+
+## Card Groups with CTA
+<Card type="note" title="Read the Docs" href="https://example.com" cta="Learn more">
+  Themed card with a call-to-action button at the bottom.
+</Card>
+
+<Card type="check" title="Setup Complete" href="/dashboard" cta="Go to dashboard">
+  Green card to celebrate a finished step.
+</Card>
+
+## Parity Testing with Old Cards
+### Compare Card `type` vs Callout
+
+<CardGroup cols={2}>
+  <Card type="info" title="Info Card">
+    Card with type="info".
+  </Card>
+  <Card type="warning" title="Warning Card">
+    Card with type="warning".
+  </Card>
+</CardGroup>
+
+<Info>This is an `<Info>` callout.</Info>
+<Warning>This is a `<Warning>` callout.</Warning>
