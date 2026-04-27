@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
+  "theme": "almond",
   "name": "who is wache",
   "colors": {
     "primary": "#16A34A",
@@ -124,9 +124,9 @@
     }
   },
   "banner": {
-    "content": "Color override supersedes type.",
+    "content": "Color override supersedes type. This is a hella long banner. I'm going to repeat this a bunch of times. Color override supersedes type. This is a hella long banner. I'm going to repeat this a bunch of times Color override supersedes type. This is a hella long banner. I'm going to repeat this a bunch of times Color override supersedes type. This is a hella long banner. I'm going to repeat this a bunch of times Color override supersedes type. This is a hella long banner. I'm going to repeat this a bunch of times Color override supersedes type. This is a hella long banner. I'm going to repeat this a bunch of times ",
     "type": "critical",
-    "color": { "light": "#0EA5E9", "dark": "#0C4A6E" }
+    "dismissible": true
   },
   "errors": {
     "404": {
