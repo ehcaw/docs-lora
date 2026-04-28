@@ -88,10 +88,10 @@
             "group": "Hubspot Card Types",
             "public": true,
             "pages": [
-              "/cardstest"
+              "/cardstest",
+              "editor-cards"
             ]
-          },
-          "editor-cards"
+          }
         ]
       }
     ]
